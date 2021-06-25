@@ -6,20 +6,22 @@
 extern ROLE_t node_role;
 extern MODE_t node_mode;
 
+extern struct process button_pressed;
+
 PROCESS(main_process,"main_proc");
-AUTOSTART_PROCESSES(&main_process);
+AUTOSTART_PROCESSES(&main_process,&button_pressed);
 
 PROCESS_THREAD(main_process, ev, data){
-	static struct etimer et;
-
-	initialize_states(&event_blink_leds);
+	// static struct etimer et;
 
   	PROCESS_BEGIN();
 
-  	set_role(SLAVE);
-  	set_mode(CONFIG);
+  	initialize_states(&event_blink_leds);
 
-  	
+  	// set_role(SLAVE);
+  	// set_mode(CONFIG);
+
+
 
 	// etimer_set(&et, 10*CLOCK_SECOND);
 	// PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));

@@ -22,7 +22,9 @@ obj_zoul/events_threads.o: events_threads.c events_threads.h \
  ../../../contiki/core/./sys/pt.h ../../../contiki/core/./sys/procinit.h \
  ../../../contiki/core/./sys/loader.h ../../../contiki/core/./sys/clock.h \
  ../../../contiki/core/./sys/energest.h \
- ../../../contiki/core/./sys/rtimer.h ../../../contiki/core/./dev/leds.h
+ ../../../contiki/core/./sys/rtimer.h ../../../contiki/core/./dev/leds.h \
+ ../../../contiki/platform/zoul/./dev/button-sensor.h \
+ ../../../contiki/core/./lib/sensors.h states.h
 events_threads.c events_threads.h :
  ../../../contiki/core/./contiki.h :
  ../../../contiki/core/./contiki-version.h :
@@ -48,3 +50,5 @@ events_threads.c events_threads.h :
  ../../../contiki/core/./sys/loader.h ../../../contiki/core/./sys/clock.h :
  ../../../contiki/core/./sys/energest.h :
  ../../../contiki/core/./sys/rtimer.h ../../../contiki/core/./dev/leds.h :
+ ../../../contiki/platform/zoul/./dev/button-sensor.h :
+ ../../../contiki/core/./lib/sensors.h states.h :
