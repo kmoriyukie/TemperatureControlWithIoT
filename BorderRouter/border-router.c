@@ -362,7 +362,7 @@ set_prefix_64(uip_ipaddr_t *prefix_64)
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(border_router_process, ev, data)
 {
-  static struct etimer et;
+  static struct etimer et,et2;
 
   PROCESS_BEGIN();
 
@@ -394,6 +394,7 @@ PROCESS_THREAD(border_router_process, ev, data)
   coap_init_engine();
 
   etimer_set(&et, TOGGLE_INTERVAL * CLOCK_SECOND);
+  etimer_set(&et2, 2 * CLOCK_SECOND);
 
   char msg[100];
   uint8_t mode = 0;
@@ -404,12 +405,13 @@ PROCESS_THREAD(border_router_process, ev, data)
     request_prefix();
     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
   }
-
+  etimer_reset(&et);
   /* Now turn the radio on, but disable radio duty cycling.
    * Since we are the DAG root, reception delays would constrain mesh throughbut.
    */
   NETSTACK_MAC.off(1);
 
+  etimer_set(&et, CLOCK_SECOND);
 #if DEBUG || 1
   print_local_addresses();
 #endif
@@ -424,21 +426,21 @@ PROCESS_THREAD(border_router_process, ev, data)
 
       printf("--Toggle timer--\n");
 
-      coap_init_message(request, COAP_TYPE_CON, COAP_PUT, 0);
-      //coap_init_message(request, COAP_TYPE_CON, COAP_GET, 0);
+      //coap_init_message(request, COAP_TYPE_CON, COAP_PUT, 0);
+      coap_init_message(request, COAP_TYPE_CON, COAP_GET, 0);
 
-      //char *fullURL = "/test";
-      char *fullURL = "actuators/leds";
+      char *fullURL = "/hello";
+      /*char *fullURL = "actuators/leds";*/
       coap_set_header_uri_path(request, fullURL);
-      coap_set_header_uri_query(request,"?color=b");
+      //coap_set_header_uri_query(request,"?color=b");
 
       printf(fullURL);
       printf("\n");
 
 
-      sprintf(msg,"mode=on");
+      //sprintf(msg,"mode=on");
 
-      coap_set_payload(request, (uint8_t *)msg, sizeof(msg) - 1);
+      //coap_set_payload(request, (uint8_t *)msg, sizeof(msg) - 1);
 
       COAP_BLOCKING_REQUEST(&server_ipaddr, REMOTE_PORT, request,
                             client_chunk_handler);
