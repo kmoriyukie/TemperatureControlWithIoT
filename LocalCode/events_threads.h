@@ -5,9 +5,8 @@
 #define BLINK_INTERVAL 1//seconds
 #define N_BLINKS 5//N
 
-#define DEBOUNCE_TIME 0.15//seconds
+#define DEBOUNCE_TIME 0.12//seconds
 
-#include "stdlib.h"
 #include "stdint.h"
 #include "stdbool.h"
 
@@ -15,6 +14,6 @@ void event_blink_leds(uint8_t color);//0brgb
 
 uint8_t getColor(void);
 
-void led_ctr(bool state,const uint8_t color);
+void led_ctr(const uint8_t color);
 
 #endif

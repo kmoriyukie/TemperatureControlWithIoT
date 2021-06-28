@@ -28,11 +28,11 @@ PROCESS_THREAD(led_blink, ev, data){
 	printf("Led Event Started\n");
 	for(blink_counter = 0; blink_counter < N_BLINKS; blink_counter++){
 		etimer_set(&et, BLINK_TON*CLOCK_SECOND);
-		led_ctr(true,color);
+		led_ctr(color);
 		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
 
 		etimer_set(&et, BLINK_INTERVAL*CLOCK_SECOND);
-		led_ctr(false,color);
+		leds_off(LEDS_ALL);
 		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
 	}
 	leds_off(LEDS_ALL);
@@ -40,17 +40,13 @@ PROCESS_THREAD(led_blink, ev, data){
 	PROCESS_END();
 }
 
-void led_ctr(bool state,const uint8_t color){
-	if(state){
-		if((color&0b100)==0b100) leds_on(LEDS_RED);
-		if((color&0b010)==0b010) leds_on(LEDS_GREEN);
-		if((color&0b001)==0b001) leds_on(LEDS_BLUE);
-	}
-	else{
-		if((color&0b100)==0b100) leds_off(LEDS_RED);
-		if((color&0b010)==0b010) leds_off(LEDS_GREEN);
-		if((color&0b001)==0b001) leds_off(LEDS_BLUE);
-	}
+void led_ctr(const uint8_t color){
+	if((color&0b100)==0b100) leds_on(LEDS_RED);
+	else leds_off(LEDS_RED);
+	if((color&0b010)==0b010) leds_on(LEDS_GREEN);
+	else leds_off(LEDS_GREEN);
+	if((color&0b001)==0b001) leds_on(LEDS_BLUE);
+	else leds_off(LEDS_BLUE);
 }
 
 void event_blink_leds(uint8_t color_){//0brgb
@@ -95,13 +91,17 @@ PROCESS_THREAD(button_pressed, ev, data){
 	while(1){
 		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&debouncer) || etimer_expired(&et) || ((data == &button_sensor) && !button_debounce));
 		if(etimer_expired(&debouncer) && button_debounce){
-			if(button_sensor.value(BUTTON_SENSOR_VALUE_TYPE_LEVEL) == BUTTON_SENSOR_PRESSED_LEVEL){
-				button_debounce = true;
-				etimer_reset(&debouncer);
-			}
-			else{
+				#if CONTIKI_TARGET_ZOUL
+				if(button_sensor.value(BUTTON_SENSOR_VALUE_TYPE_LEVEL) == BUTTON_SENSOR_PRESSED_LEVEL){
+					button_debounce = true;
+					etimer_reset(&debouncer);
+				}
+				else{
+					button_debounce = false;
+				}
+				#else
 				button_debounce = false;
-			}
+				#endif
 		}
 		else{
 			if(data == &button_sensor){

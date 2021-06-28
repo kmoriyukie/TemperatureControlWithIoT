@@ -1,5 +1,5 @@
-obj_z1/events_threads.o: events_threads.c events_threads.h \
- ../../../contiki/core/./contiki.h \
+obj_z1/sens_humidity.o: sens_humidity.c sens_humidity.h \
+ ../../../contiki/core/./lib/sensors.h ../../../contiki/core/./contiki.h \
  ../../../contiki/core/./contiki-version.h \
  ../../../contiki/platform/z1/./contiki-conf.h \
  ../../../contiki/platform/z1/./platform-conf.h \
@@ -20,11 +20,9 @@ obj_z1/events_threads.o: events_threads.c events_threads.h \
  ../../../contiki/core/./sys/procinit.h \
  ../../../contiki/core/./sys/loader.h ../../../contiki/core/./sys/clock.h \
  ../../../contiki/core/./sys/energest.h \
- ../../../contiki/core/./dev/leds.h \
- ../../../contiki/core/./dev/button-sensor.h \
- ../../../contiki/core/./lib/sensors.h states.h
-events_threads.c events_threads.h :
- ../../../contiki/core/./contiki.h :
+ ../../../contiki/platform/z1/./dev/sky-sensors.h
+sens_humidity.c sens_humidity.h :
+ ../../../contiki/core/./lib/sensors.h ../../../contiki/core/./contiki.h :
  ../../../contiki/core/./contiki-version.h :
  ../../../contiki/platform/z1/./contiki-conf.h :
  ../../../contiki/platform/z1/./platform-conf.h :
@@ -45,6 +43,4 @@ events_threads.c events_threads.h :
  ../../../contiki/core/./sys/procinit.h :
  ../../../contiki/core/./sys/loader.h ../../../contiki/core/./sys/clock.h :
  ../../../contiki/core/./sys/energest.h :
- ../../../contiki/core/./dev/leds.h :
- ../../../contiki/core/./dev/button-sensor.h :
- ../../../contiki/core/./lib/sensors.h states.h :
+ ../../../contiki/platform/z1/./dev/sky-sensors.h :

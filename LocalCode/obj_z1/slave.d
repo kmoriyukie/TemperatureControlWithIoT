@@ -1,5 +1,4 @@
-obj_z1/events_threads.o: events_threads.c events_threads.h \
- ../../../contiki/core/./contiki.h \
+obj_z1/slave.o: slave.c slave.h msg.h ../../../contiki/core/./contiki.h \
  ../../../contiki/core/./contiki-version.h \
  ../../../contiki/platform/z1/./contiki-conf.h \
  ../../../contiki/platform/z1/./platform-conf.h \
@@ -19,12 +18,10 @@ obj_z1/events_threads.o: events_threads.c events_threads.h \
  ../../../contiki/core/./sys/rtimer.h ../../../contiki/core/./sys/pt.h \
  ../../../contiki/core/./sys/procinit.h \
  ../../../contiki/core/./sys/loader.h ../../../contiki/core/./sys/clock.h \
- ../../../contiki/core/./sys/energest.h \
- ../../../contiki/core/./dev/leds.h \
- ../../../contiki/core/./dev/button-sensor.h \
- ../../../contiki/core/./lib/sensors.h states.h
-events_threads.c events_threads.h :
- ../../../contiki/core/./contiki.h :
+ ../../../contiki/core/./sys/energest.h sens_temperature.h \
+ ../../../contiki/core/./lib/sensors.h sens_humidity.h sens_airflow.h \
+ sens_battery.h
+slave.c slave.h msg.h ../../../contiki/core/./contiki.h :
  ../../../contiki/core/./contiki-version.h :
  ../../../contiki/platform/z1/./contiki-conf.h :
  ../../../contiki/platform/z1/./platform-conf.h :
@@ -44,7 +41,6 @@ events_threads.c events_threads.h :
  ../../../contiki/core/./sys/rtimer.h ../../../contiki/core/./sys/pt.h :
  ../../../contiki/core/./sys/procinit.h :
  ../../../contiki/core/./sys/loader.h ../../../contiki/core/./sys/clock.h :
- ../../../contiki/core/./sys/energest.h :
- ../../../contiki/core/./dev/leds.h :
- ../../../contiki/core/./dev/button-sensor.h :
- ../../../contiki/core/./lib/sensors.h states.h :
+ ../../../contiki/core/./sys/energest.h sens_temperature.h :
+ ../../../contiki/core/./lib/sensors.h sens_humidity.h sens_airflow.h :
+ sens_battery.h :

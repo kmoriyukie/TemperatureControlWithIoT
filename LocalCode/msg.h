@@ -13,18 +13,24 @@
 /*---------------------------------------------------------------------------*/
 /* This data structure is used to store the packet content (payload) */
 
+#include "stdint.h"
+
 struct sensor_data{
-	float temperature;
-	float humidity;
-	float airflow;
-	float battery;
+	float temperature; // degrees celsius
+	float humidity; // xxx%
+	float airflow; // cm/s
+	uint8_t battery; // xxx%
 };
 
 struct slave_msg_t{
 	uint8_t  local_id;
 	uint8_t  remote_id;
-	struct sensor_data;
+	struct sensor_data sensor;
 };
+
+#define TEMPERATURE_CONST_0 0
+#define TEMPERATURE_CONST_1 1
+
 
 /*---------------------------------------------------------------------------*/
 #endif
