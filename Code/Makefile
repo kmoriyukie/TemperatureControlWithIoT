@@ -1,13 +1,10 @@
-all: printnodeid
+CONTIKI_PROJECT=printnodeid
+all: $(CONTIKI_PROJECT) 
 
-# Linker optimizations
-SMALL = 1
+CONTIKI = ../../../../contiki
 
-# Includes the project-conf configuration file
-CFLAGS += -DPROJECT_CONF_H=\"project-conf.h\"
+SMALL=1
 
-
-# This flag includes the IPv6 libraries
 CONTIKI_WITH_IPV6 = 1
-CONTIKI = ../../../../contiki/
 include $(CONTIKI)/Makefile.include
+
