@@ -14,8 +14,10 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "dev/leds.h"
+
+
 #include "er-coap-engine.h"
-#include "dev/button-sensor.h"
 
 #define DEBUG DEBUG_NONE
 #include "net/ip/uip-debug.h"
@@ -50,6 +52,7 @@ void client_chunk_handler(void *response)
   }else{
     if(returnCode==COAP_RESPONSE_OK){
       printf("OK!\n");
+      leds_toggle(LEDS_ALL);
     }else{
       printf("Server Error!\n\n");
     }
@@ -419,6 +422,7 @@ PROCESS_THREAD(border_router_process, ev, data)
   while(1) {
     PROCESS_YIELD();
     if (ev == sensors_event && data == &button_sensor) {
+      printf("\rButton!\n");
       PRINTF("Initiating global repair\n");
       rpl_repair_root(RPL_DEFAULT_INSTANCE);
     }

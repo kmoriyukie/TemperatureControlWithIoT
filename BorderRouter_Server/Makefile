@@ -15,9 +15,8 @@ CFLAGS += -DUIP_CONF_TCP=1
 CFLAGS += -DWEBSERVER=1
 PROJECT_SOURCEFILES += httpd-simple.c
 
-ifeq ($(PREFIX),)
- PREFIX = fd00::1/64
-endif
+PREFIX = aaaa::1/64
+
 
 APPS += er-coap
 APPS += rest-engine

@@ -66,5 +66,7 @@
 #define CC2538_RF_CONF_CHANNEL     26
 
 
+#undef UIP_CONF_DS6_DEFAULT_PREFIX
+#define UIP_CONF_DS6_DEFAULT_PREFIX 0xaaaa
 /*---------------------------------------------------------------------------*/
 #endif /* PROJECT_ROUTER_CONF_H_ */

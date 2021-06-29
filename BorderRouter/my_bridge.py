@@ -20,7 +20,7 @@ bufferSize  = 1024
 remoteCoAPServerIP = "fd00::c30c:0:0:2"
 remoteCoAPServerPort = 5683
 
-localCoAPClient = "fe80::212:4b00:89ab:cdef"
+localCoAPClient = "fd00::212:4b00:89ab:cdef"
 localCoAPPort = 5683
 
 def IPv6ServerThread(name):

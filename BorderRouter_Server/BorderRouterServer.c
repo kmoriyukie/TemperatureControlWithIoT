@@ -45,7 +45,6 @@ extern resource_t
   res_event,
   res_separate;
 
-
 PROCESS(border_router_process, "Border router process");
 
 #if WEBSERVER==0
