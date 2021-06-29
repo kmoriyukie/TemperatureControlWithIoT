@@ -4,15 +4,11 @@
 #define N_READINGS 8
 #define SR_READINGS 3
 
+#define READINGS_TIME 5 //Seconds
+#define MTRY 3
+#define TIMOUT 5 //Seconds
+
 #include "msg.h"
-
-// void reset_sensor_data(struct sensor_data *sensor);
-
-// void Passign_sensor_data(struct sensor_data *sensor,float temp,float hum,float air,float bat);
-
-// void filter(void);
-
-// void mean_sensor_data(struct sensor_data *sensor,uint8_t n);
 
 uint16_t read_temperature(void);
 
@@ -22,8 +18,14 @@ uint16_t read_airflow(void);
 
 uint16_t read_battery(void);
 
-void take_reading(struct sensor_data *sensor);
+void event_readings(/*struct sensot_data *sens*/);
 
-void event_readings(void);
+void exec_slave_working(void);
+
+void exit_slave_working(void);
+
+void exec_slave_config(void);
+
+void exit_slave_config(void);
 
 #endif

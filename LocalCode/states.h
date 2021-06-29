@@ -4,6 +4,8 @@
 #include "stdint.h"
 #include "stdbool.h"
 
+#include "msg.h"
+
 typedef enum{
 	MODE = 0,
 	ROLE = 1
@@ -19,6 +21,16 @@ typedef enum{
 	WORKING = 1
 } MODE_t;
 
+typedef enum{
+	NONE,
+	MASTER_CONFIG,
+	MASTER_WORKING,
+	SLAVE_CONFIG,
+	SLAVE_WORKING
+} task_running_t;
+
+// bool exit_flag = false;
+
 void initialize_states(void (*handle)(uint8_t));
 
 // void set_role(ROLE_t role_);
@@ -31,8 +43,8 @@ void state_exec_MASTER_CONFIG();
 
 void state_exec_MASTER_WORKING();
 
-void state_exec_SLAVE_CONFIG();
+// void state_exec_SLAVE_CONFIG();
 
-void state_exec_SLAVE_WORKING();
+// void state_exec_SLAVE_WORKING();
 
 #endif

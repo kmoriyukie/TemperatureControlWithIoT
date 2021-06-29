@@ -22,7 +22,7 @@ obj_z1/events_threads.o: events_threads.c events_threads.h \
  ../../../contiki/core/./sys/energest.h \
  ../../../contiki/core/./dev/leds.h \
  ../../../contiki/core/./dev/button-sensor.h \
- ../../../contiki/core/./lib/sensors.h states.h
+ ../../../contiki/core/./lib/sensors.h states.h msg.h
 events_threads.c events_threads.h :
  ../../../contiki/core/./contiki.h :
  ../../../contiki/core/./contiki-version.h :
@@ -47,4 +47,4 @@ events_threads.c events_threads.h :
  ../../../contiki/core/./sys/energest.h :
  ../../../contiki/core/./dev/leds.h :
  ../../../contiki/core/./dev/button-sensor.h :
- ../../../contiki/core/./lib/sensors.h states.h :
+ ../../../contiki/core/./lib/sensors.h states.h msg.h :
