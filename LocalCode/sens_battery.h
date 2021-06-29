@@ -50,4 +50,8 @@ extern const struct sensors_sensor battery_sensor;
 #define BATTERY_SENSOR "Battery"
 #define BATTERY_CONST (10.0/145.0)
 
+void sens_battery_initialize(void);
+
+uint16_t read_battery(void);
+
 #endif

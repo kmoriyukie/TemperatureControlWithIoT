@@ -53,4 +53,8 @@ extern const struct sensors_sensor humidity_sensor;
 
 #define HUMIDITY_CONST 100.0/99.0
 
+void sens_humidity_initialize(void);
+
+uint16_t read_humidity(void);
+
 #endif

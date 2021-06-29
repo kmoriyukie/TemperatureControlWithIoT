@@ -51,4 +51,8 @@ extern const struct sensors_sensor airflow_sensor;
 
 #define AIRFLOW_CONSTS_1 0.0022889
 
+void sens_airflow_initialize(void);
+
+uint16_t read_airflow(void);
+
 #endif

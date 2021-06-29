@@ -84,3 +84,16 @@ status(int type)
 /*---------------------------------------------------------------------------*/
 SENSORS_SENSOR(humidity_sensor, HUMIDITY_SENSOR,
                value, configure, status);
+
+
+void sens_humidity_initialize(void){
+	SENSORS_ACTIVATE(humidity_sensor);
+}
+
+uint16_t read_humidity(void){
+	#if CONTIKI_TARGET_ZOUL
+		return 60;
+	#else
+		return (uint16_t) (((uint16_t)humidity_sensor.value(0))*HUMIDITY_CONSTS_1);
+	#endif
+}

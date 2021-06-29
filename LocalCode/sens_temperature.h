@@ -51,4 +51,8 @@ extern const struct sensors_sensor temperature_sensor;
 #define TEMPERATURE_CONSTS_0 -50
 #define TEMPERATURE_CONSTS_1 0.0022889
 
+void sens_temperature_initialize(void);
+
+uint16_t read_temperature(void);
+
 #endif

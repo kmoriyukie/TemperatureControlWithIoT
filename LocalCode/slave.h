@@ -10,14 +10,6 @@
 
 #include "msg.h"
 
-uint16_t read_temperature(void);
-
-uint16_t read_humidity(void);
-
-uint16_t read_airflow(void);
-
-uint16_t read_battery(void);
-
 void event_readings(/*struct sensot_data *sens*/);
 
 void exec_slave_working(void);

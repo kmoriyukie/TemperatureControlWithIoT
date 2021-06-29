@@ -84,3 +84,21 @@ status(int type)
 /*---------------------------------------------------------------------------*/
 SENSORS_SENSOR(battery_sensor, BATTERY_SENSOR,
                value, configure, status);
+
+void sens_battery_initialize(void){
+	SENSORS_ACTIVATE(battery_sensor);
+}
+
+uint16_t read_battery(void){
+	#if CONTIKI_TARGET_ZOUL
+		static uint32_t batt;
+		batt = vdd3_sensor.value(CC2538_SENSORS_VALUE_TYPE_CONVERTED);
+		return (uint16_t) (10.0/145.0)*(batt-2750);
+	#else
+		static int batt;
+		batt = battery_sensor.value(0);
+		if(batt < 2.75*1000) return (uint8_t) 0;
+		else return (uint16_t) (battery_sensor.value(0)-2.75*1000);
+		return 0;
+	#endif
+}

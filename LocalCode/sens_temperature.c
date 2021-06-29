@@ -84,3 +84,16 @@ status(int type)
 /*---------------------------------------------------------------------------*/
 SENSORS_SENSOR(temperature_sensor, TEMPERATURE_SENSOR,
                value, configure, status);
+
+
+void sens_temperature_initialize(void){
+	SENSORS_ACTIVATE(temperature_sensor);
+}
+
+uint16_t read_temperature(void){
+	#if CONTIKI_TARGET_ZOUL
+		return 32;
+	#else
+		return (uint16_t) (((uint16_t)temperature_sensor.value(0))*TEMPERATURE_CONSTS_1 + TEMPERATURE_CONSTS_0);
+	#endif
+}

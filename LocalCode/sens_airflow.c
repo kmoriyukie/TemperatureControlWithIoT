@@ -84,3 +84,16 @@ status(int type)
 /*---------------------------------------------------------------------------*/
 SENSORS_SENSOR(airflow_sensor, AIRFLOW_SENSOR,
                value, configure, status);
+
+
+void sens_airflow_initialize(void){
+	SENSORS_ACTIVATE(airflow_sensor);
+}
+
+uint16_t read_airflow(void){
+	#if CONTIKI_TARGET_ZOUL
+		return 110;
+	#else
+		return (uint16_t) (((uint16_t)airflow_sensor.value(0))*AIRFLOW_CONSTS_1);
+	#endif
+}

@@ -77,18 +77,21 @@ PROCESS_THREAD(slave_working, ev, data){
 	PROCESS_END();
 }
 
+bool sensors_initialized = false;
+
 PROCESS_THREAD(take_readings, ev, data){
 	PROCESS_BEGIN();
 
-	#if CONTIKI_TARGET_ZOUL
+	if(!sensors_initialized){
+		#if CONTIKI_TARGET_ZOUL
 
-	#else
-	SENSORS_ACTIVATE(temperature_sensor);
-	SENSORS_ACTIVATE(humidity_sensor);
-	SENSORS_ACTIVATE(airflow_sensor);
-	SENSORS_ACTIVATE(battery_sensor);
-	#endif
-
+		#else
+		sens_temperature_initialize();
+		sens_humidity_initialize();
+		sens_airflow_initialize();
+		sens_battery_initialize();
+		#endif
+	}
 
 	static uint8_t i;
 
@@ -103,7 +106,6 @@ PROCESS_THREAD(take_readings, ev, data){
 	battery = 0;
 
 	for(i = 0; i < N_READINGS; i++){
-		// if(exit_working) break;
 		temperature += read_temperature();
 		humidity += read_humidity();
 		airflow += read_airflow();
@@ -126,44 +128,6 @@ PROCESS_THREAD(take_readings, ev, data){
 	// printf("Battery: %u%%\n",readings.battery);
 	reading_done_flag = true;
 	PROCESS_END();
-}
-
-uint16_t read_temperature(void){
-	#if CONTIKI_TARGET_ZOUL
-		return 32;
-	#else
-		return (uint16_t) (((uint16_t)temperature_sensor.value(0))*TEMPERATURE_CONSTS_1 + TEMPERATURE_CONSTS_0);
-	#endif
-}
-
-uint16_t read_humidity(void){
-	#if CONTIKI_TARGET_ZOUL
-		return 60;
-	#else
-		return (uint16_t) (((uint16_t)humidity_sensor.value(0))*HUMIDITY_CONSTS_1);
-	#endif
-}
-
-uint16_t read_airflow(void){
-	#if CONTIKI_TARGET_ZOUL
-		return 110;
-	#else
-		return (uint16_t) (((uint16_t)airflow_sensor.value(0))*AIRFLOW_CONSTS_1);
-	#endif
-}
-
-uint16_t read_battery(void){
-	#if CONTIKI_TARGET_ZOUL
-		static uint32_t batt;
-		batt = vdd3_sensor.value(CC2538_SENSORS_VALUE_TYPE_CONVERTED);
-		return (uint16_t) (10.0/145.0)*(batt-2750);
-	#else
-		static int batt;
-		batt = battery_sensor.value(0);
-		if(batt < 2.75*1000) return (uint8_t) 0;
-		else return (uint16_t) (battery_sensor.value(0)-2.75*1000);
-		return 0;
-	#endif
 }
 
 void event_readings(/*struct sensot_data *sens*/){
