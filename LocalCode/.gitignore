@@ -1,0 +1,20 @@
+# File types #
+##############
+*.a
+*.map
+*.hex
+*.elf
+*.zoul
+*.z1
+*.bin
+*.o
+# Files #
+#########
+symbols.h
+symbols.c
+
+# Folders #
+###########
+./LocalCode/obj_z1
+./LocalCode/obj_zoul
+
