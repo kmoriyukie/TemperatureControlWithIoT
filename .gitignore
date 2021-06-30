@@ -1,0 +1,16 @@
+# Contiki files #
+#################
+*.hex
+*.elf
+*.map
+*.bin
+*.zoul
+*.z1
+
+# Directories #
+###############
+Client/obj_zoul/
+Server/obj_zoul/
+
+
+

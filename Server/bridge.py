@@ -12,7 +12,6 @@ defaultPort = 5683
 bufferSize  = 1024
 
 CoAPServerIP = "aaaa::212:4b00:89ab:cdef"
-
 CoAPClientIP = "fd00::c30c:0:0:2"
 
 def FirstThread(name):
