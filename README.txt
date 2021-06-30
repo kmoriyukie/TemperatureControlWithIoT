@@ -38,14 +38,14 @@ IPV6_global_fd00_server: (Client) Mote tools -> Mote Interface Viewer -> IP Addr
 =======================================================================
 
 RE-Mote (Client) -> coap.me
-1. flash BorderRouterClient/border-router.bin
+1. flash Client/border-router.bin
 2. sudo ./tunslip6 -s /dev/zolertia fd00::1 (./run_tunslip.sh)
 3. python deec_coap_bridge_v2.py (localCoAPClient = "fd00::212:4b00:89ab:cdef")
 
 =======================================================================
 
 Cooja(Client) -> RE-Mote (Server)
-1. flash BorderRouterServer/BorderRouterServer.bin
+1. flash Server/main.bin
 2. sudo ./tunslip6 -s /dev/zolertia aaaa::1/64 (./run_tunslip.sh)
 3. (Node 1) Border Router
 4. Mote tools -> Serial Socket (SERVER) Start
