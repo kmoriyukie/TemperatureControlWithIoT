@@ -28,6 +28,10 @@ struct slave_msg_t{
 	struct sensor_data sensor;
 };
 
+// struct master_msg_t{
+	
+// };
+
 #define TEMPERATURE_CONST_0 0
 #define TEMPERATURE_CONST_1 1
 

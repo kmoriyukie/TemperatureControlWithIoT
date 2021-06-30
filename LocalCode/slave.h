@@ -8,12 +8,6 @@
 #define MTRY 3
 #define TIMOUT 5 //Seconds
 
-#include "msg.h"
-
-// void event_readings();
-
-void slave_initialize(void);
-
 void exec_slave_working(void);
 
 void exit_slave_working(void);

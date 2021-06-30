@@ -1,6 +1,6 @@
 #include "states.h"
 
-#include "events_threads.h"
+// #include "events_threads.h"
 
 #include "stdio.h"
 
@@ -12,9 +12,9 @@ MODE_t node_mode = CONFIG;
 
 task_running_t task_running = NONE;
 
-void (*blink_event_handle)(uint8_t);//0brgb
+void (*blink_event_handle)(void);//0brgb
 
-void initialize_states(void (*handle)(uint8_t)){
+void initialize_states(void (*handle)(void)){
 	blink_event_handle = handle;
 	static ROLE_t i_r = SLAVE;
 	set_state(ROLE,&i_r);
@@ -85,7 +85,7 @@ void set_state(STATETYPE_t type,void *value){
 		break;
 	}
 
-	(*blink_event_handle)(getColor());
+	(*blink_event_handle)();
 }
 
 

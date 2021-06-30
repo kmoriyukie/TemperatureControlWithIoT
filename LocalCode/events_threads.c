@@ -49,8 +49,8 @@ void led_ctr(const uint8_t color){
 	else leds_off(LEDS_BLUE);
 }
 
-void event_blink_leds(uint8_t color_){//0brgb
-	color = color_;
+void event_blink_leds(void){//0brgb
+	color = getColor();
 	if(process_is_running(&led_blink)) blink_counter = 0;
 	else process_start(&led_blink,"");
 }
@@ -113,7 +113,7 @@ PROCESS_THREAD(button_pressed, ev, data){
 			else{
 				switch(button_count){
 					case 1:
-						event_blink_leds(getColor());
+						event_blink_leds();
 					break;
 					case 2:
 						mod = !node_mode;

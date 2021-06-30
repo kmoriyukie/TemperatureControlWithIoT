@@ -1,4 +1,4 @@
-obj_zoul/slave.o: slave.c slave.h msg.h ../../../contiki/core/./contiki.h \
+obj_zoul/slave.o: slave.c slave.h ../../../contiki/core/./contiki.h \
  ../../../contiki/core/./contiki-version.h \
  ../../../contiki/platform/zoul/./contiki-conf.h project-conf.h \
  ../../../contiki/platform/zoul/remote-revb/board.h \
@@ -27,8 +27,8 @@ obj_zoul/slave.o: slave.c slave.h msg.h ../../../contiki/core/./contiki.h \
  ../../../contiki/cpu/cc2538/./dev/cc2538-sensors.h \
  ../../../contiki/cpu/cc2538/./dev/cc2538-temp-sensor.h \
  ../../../contiki/cpu/cc2538/./dev/vdd3-sensor.h \
- ../../../contiki/platform/zoul/./dev/button-sensor.h
-slave.c slave.h msg.h ../../../contiki/core/./contiki.h :
+ ../../../contiki/platform/zoul/./dev/button-sensor.h msg.h
+slave.c slave.h ../../../contiki/core/./contiki.h :
  ../../../contiki/core/./contiki-version.h :
  ../../../contiki/platform/zoul/./contiki-conf.h project-conf.h :
  ../../../contiki/platform/zoul/remote-revb/board.h :
@@ -57,4 +57,4 @@ slave.c slave.h msg.h ../../../contiki/core/./contiki.h :
  ../../../contiki/cpu/cc2538/./dev/cc2538-sensors.h :
  ../../../contiki/cpu/cc2538/./dev/cc2538-temp-sensor.h :
  ../../../contiki/cpu/cc2538/./dev/vdd3-sensor.h :
- ../../../contiki/platform/zoul/./dev/button-sensor.h :
+ ../../../contiki/platform/zoul/./dev/button-sensor.h msg.h :

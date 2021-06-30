@@ -10,7 +10,7 @@
 #include "stdint.h"
 #include "stdbool.h"
 
-void event_blink_leds(uint8_t color);//0brgb
+void event_blink_leds(void);//0brgb
 
 uint8_t getColor(void);
 

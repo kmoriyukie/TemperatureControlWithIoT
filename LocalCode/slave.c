@@ -15,6 +15,13 @@
 #include "stdbool.h"
 #include "stdio.h"
 
+#include "msg.h"
+
+/*---------------------------*/
+/*----------Working----------*/
+/*---------------------------*/
+
+
 static struct sensor_data readings;
 
 bool reading_done_flag = false;
@@ -31,18 +38,19 @@ PROCESS_THREAD(slave_working, ev, data){
 	etimer_set(&et, READINGS_TIME*CLOCK_SECOND);
 	etimer_set(&et_timeout, TIMOUT*CLOCK_SECOND);
 
-	bool timeout_flag = false;
+	static bool timeout_flag;
 	static int Ntry;
 
 	Ntry = 0;
 
 	printf("Slave Workinig\n");
 
-	while(1){
+	while(true){
 
 		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
 
 		reading_done_flag = false;
+		timeout_flag = false;
 
 		process_start(&take_readings,"");
 
@@ -50,7 +58,7 @@ PROCESS_THREAD(slave_working, ev, data){
 
 		while(reading_done_flag == false){
 			PROCESS_YIELD();
-			if(ev = etimer_expired(&et_timeout)){
+			if((ev = etimer_expired(&et_timeout))){
 				printf("TIMEOUT\n");
 				Ntry++;
 				if(Ntry >= MTRY){
@@ -70,8 +78,9 @@ PROCESS_THREAD(slave_working, ev, data){
 																				(int)(readings.airflow),
 																				readings.battery);
 
-			etimer_reset(&et);
 		}
+		
+		etimer_reset(&et);
 	}
 
 	PROCESS_END();
@@ -95,15 +104,19 @@ PROCESS_THREAD(take_readings, ev, data){
 
 	static uint8_t i;
 
-	static uint32_t temperature;
-	static uint32_t humidity;
-	static uint32_t airflow;
-	static uint16_t battery;
+	#if CONTIKI_TARGET_ZOUL
 
-	temperature = 0;
-	humidity = 0;
-	airflow = 0;
-	battery = 0;
+	#else
+		static uint32_t temperature;
+		static uint32_t humidity;
+		static uint32_t airflow;
+		static uint16_t battery;
+
+		temperature = 0;
+		humidity = 0;
+		airflow = 0;
+		battery = 0;
+	#endif
 
 	for(i = 0; i < N_READINGS; i++){
 		#if CONTIKI_TARGET_ZOUL
@@ -132,10 +145,6 @@ PROCESS_THREAD(take_readings, ev, data){
 	PROCESS_END();
 }
 
-// void event_readings(){
-// 	process_start(&take_readings,"");
-// }
-
 void exec_slave_working(void){
 	process_start(&slave_working,"");
 }
@@ -147,10 +156,24 @@ void exit_slave_working(void){
 	process_exit(&slave_working);
 }
 
-void exec_slave_config(void){
+/*--------------------------*/
+/*----------Config----------*/
+/*--------------------------*/
 
+PROCESS(slave_config, "Slave Config");
+
+PROCESS_THREAD(slave_config, ev, data){
+	PROCESS_BEGIN();
+
+
+
+	PROCESS_END();
+}
+
+void exec_slave_config(void){
+	process_start(&slave_config,"");
 }
 
 void exit_slave_config(void){
-
+	process_exit(&slave_config);
 }
