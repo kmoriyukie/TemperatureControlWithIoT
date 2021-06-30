@@ -1,12 +1,8 @@
 #include "contiki.h"
 #include "contiki-lib.h"
 #include "contiki-net.h"
-#include "net/ip/uip.h"
-#include "net/ipv6/uip-ds6.h"
-#include "net/rpl/rpl.h"
 
 #include "net/netstack.h"
-#include "dev/button-sensor.h"
 #include "dev/slip.h"
 
 #include <stdio.h>
@@ -14,43 +10,21 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "rest-engine.h"
-
 #define DEBUG DEBUG_NONE
 #include "net/ip/uip-debug.h"
+
+#include "net/ip/uip.h"
+#include "net/ipv6/uip-ds6.h"
+#include "net/rpl/rpl.h"
+
 
 static uip_ipaddr_t prefix;
 static uint8_t prefix_set;
 
-#if CONTIKI_TARGET_ZOUL
-#include "dev/adc-zoul.h"
-#include "dev/zoul-sensors.h"
-#else
-#include "dev/adxl345.h"
-#endif
-
-
-extern resource_t
-  res_hello,
-  res_leds,
-  res_toggle,
-#if CONTIKI_TARGET_ZOUL
-  res_mirror,
-  res_push,
-  res_sub,
-  res_zoul,
-#else /* Default is Z1 */
-  res_adxl345,
-#endif
-  res_event,
-  res_separate;
-
 PROCESS(border_router_process, "Border router process");
 
-AUTOSTART_PROCESSES(&border_router_process);
-
 /*---------------------------------------------------------------------------*/
-static void
+void
 print_local_addresses(void)
 {
   int i;
@@ -108,28 +82,7 @@ PROCESS_THREAD(border_router_process, ev, data)
 
   PROCESS_PAUSE();
 
-  rest_init_engine();
-
-  rest_activate_resource(&res_hello, "test/hello");
-  rest_activate_resource(&res_leds, "actuators/leds");
-  rest_activate_resource(&res_toggle, "actuators/toggle");
-  rest_activate_resource(&res_event, "sensors/button");
-  rest_activate_resource(&res_separate, "test/separate");
-
-#if CONTIKI_TARGET_ZOUL
-  rest_activate_resource(&res_push, "test/push");
-  rest_activate_resource(&res_sub, "test/sub");
-  rest_activate_resource(&res_zoul, "sensors/zoul");
-#else
-  rest_activate_resource(&res_adxl345, "sensors/adxl345");
-#endif
-
-  printf("\nCoAP server started\n");
-
-  SENSORS_ACTIVATE(button_sensor);
   PRINTF("RPL-Border router started\n");
-
-  /* Request prefix until it has been received */
   while(!prefix_set) {
     etimer_set(&et, CLOCK_SECOND);
     request_prefix();
@@ -138,20 +91,10 @@ PROCESS_THREAD(border_router_process, ev, data)
 
   NETSTACK_MAC.off(1);
 
-#if DEBUG || 1
   print_local_addresses();
-#endif
 
   while(1) {
     PROCESS_YIELD();
-    if (ev == sensors_event && data == &button_sensor) {
-      PRINTF("*******BUTTON*******\n");
-      PRINTF("Initiating global repair\n");
-      rpl_repair_root(RPL_DEFAULT_INSTANCE);
-
-      res_event.trigger();
-      res_separate.resume();
-    }
   }
 
   PROCESS_END();
