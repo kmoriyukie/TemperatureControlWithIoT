@@ -11,6 +11,11 @@ PROJECT_SOURCEFILES += slip-bridge.c
 
 PROJECT_SOURCEFILES += CoAPServer.c
 PROJECT_SOURCEFILES += borderRouter.c
+PROJECT_SOURCEFILES += mqttServer.c
+
+ifndef NODEID
+NODEID = 0x00
+endif
 
 CFLAGS += -DUIP_FALLBACK_INTERFACE=rpl_interface
 
@@ -19,14 +24,15 @@ PREFIX = aaaa::1/64
 
 APPS += er-coap
 APPS += rest-engine
+APPS += mqtt
+
 CONTIKI_TARGET_SOURCEFILES += sht25.c
 
 REST_RESOURCES_DIR = ./resources
 
 REST_RESOURCES_FILES = $(notdir $(shell find $(REST_RESOURCES_DIR) -name '*.c'))
 PROJECTDIRS += $(REST_RESOURCES_DIR)
-#PROJECT_SOURCEFILES += $(REST_RESOURCES_FILES)
-PROJECT_SOURCEFILES += res-toggle.c
+PROJECT_SOURCEFILES += $(REST_RESOURCES_FILES)
 
 CONTIKI_WITH_IPV6 = 1
 include $(CONTIKI)/Makefile.include
