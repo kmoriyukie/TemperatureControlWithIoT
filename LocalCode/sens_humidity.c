@@ -54,46 +54,52 @@
  
 
 #include "sens_humidity.h"
-#include "dev/sky-sensors.h"
-#include "contiki.h"
 
-#define INPUT_CHANNEL      (1 << INCH_12)
-#define INPUT_REFERENCE    SREF_1
-#define HUMIDITY_MEM    ADC12MEM12
+#if CONTIKI_TARGET_ZOUL
+ 
+#else 
 
-const struct sensors_sensor humidity_sensor;
+	#include "dev/sky-sensors.h"
 
-/*---------------------------------------------------------------------------*/
-static int
-value(int type)
-{
-  return HUMIDITY_MEM;
-}
-/*---------------------------------------------------------------------------*/
-static int
-configure(int type, int c)
-{
-  return sky_sensors_configure(INPUT_CHANNEL, INPUT_REFERENCE, type, c);
-}
-/*---------------------------------------------------------------------------*/
-static int
-status(int type)
-{
-  return sky_sensors_status(INPUT_CHANNEL, type);
-}
-/*---------------------------------------------------------------------------*/
-SENSORS_SENSOR(humidity_sensor, HUMIDITY_SENSOR,
-               value, configure, status);
+	#define INPUT_CHANNEL      (1 << INCH_12)
+	#define INPUT_REFERENCE    SREF_1
+	#define HUMIDITY_MEM    ADC12MEM12
+
+	const struct sensors_sensor humidity_sensor;
+
+	/*---------------------------------------------------------------------------*/
+	static int
+	value(int type)
+	{
+	  return HUMIDITY_MEM;
+	}
+	/*---------------------------------------------------------------------------*/
+	static int
+	configure(int type, int c)
+	{
+	  return sky_sensors_configure(INPUT_CHANNEL, INPUT_REFERENCE, type, c);
+	}
+	/*---------------------------------------------------------------------------*/
+	static int
+	status(int type)
+	{
+	  return sky_sensors_status(INPUT_CHANNEL, type);
+	}
+	/*---------------------------------------------------------------------------*/
+	SENSORS_SENSOR(humidity_sensor, HUMIDITY_SENSOR,
+	               value, configure, status);
 
 
-void sens_humidity_initialize(void){
-	SENSORS_ACTIVATE(humidity_sensor);
-}
+	void sens_humidity_initialize(void){
+		SENSORS_ACTIVATE(humidity_sensor);
+	}
 
-uint16_t read_humidity(void){
-	#if CONTIKI_TARGET_ZOUL
-		return 60;
-	#else
-		return (uint16_t) (((uint16_t)humidity_sensor.value(0))*HUMIDITY_CONSTS_1);
-	#endif
-}
+	uint16_t read_humidity(void){
+		#if CONTIKI_TARGET_ZOUL
+			return 60;
+		#else
+			return (uint16_t) (((uint16_t)humidity_sensor.value(0))*HUMIDITY_CONSTS_1);
+		#endif
+	}
+	
+#endif

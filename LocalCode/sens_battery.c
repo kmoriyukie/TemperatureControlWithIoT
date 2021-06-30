@@ -54,51 +54,57 @@
  
 
 #include "sens_battery.h"
-#include "dev/sky-sensors.h"
-#include "contiki.h"
 
-#define INPUT_CHANNEL      (1 << INCH_11)
-#define INPUT_REFERENCE    SREF_1
-#define BATTERY_MEM    ADC12MEM11
+#if CONTIKI_TARGET_ZOUL
+ 
+#else 
 
-const struct sensors_sensor battery_sensor;
+	#include "dev/sky-sensors.h"
 
-/*---------------------------------------------------------------------------*/
-static int
-value(int type)
-{
-  return BATTERY_MEM;
-}
-/*---------------------------------------------------------------------------*/
-static int
-configure(int type, int c)
-{
-  return sky_sensors_configure(INPUT_CHANNEL, INPUT_REFERENCE, type, c);
-}
-/*---------------------------------------------------------------------------*/
-static int
-status(int type)
-{
-  return sky_sensors_status(INPUT_CHANNEL, type);
-}
-/*---------------------------------------------------------------------------*/
-SENSORS_SENSOR(battery_sensor, BATTERY_SENSOR,
-               value, configure, status);
+	#define INPUT_CHANNEL      (1 << INCH_11)
+	#define INPUT_REFERENCE    SREF_1
+	#define BATTERY_MEM    ADC12MEM11
 
-void sens_battery_initialize(void){
-	SENSORS_ACTIVATE(battery_sensor);
-}
+	const struct sensors_sensor battery_sensor;
 
-uint16_t read_battery(void){
-	#if CONTIKI_TARGET_ZOUL
-		static uint32_t batt;
-		batt = vdd3_sensor.value(CC2538_SENSORS_VALUE_TYPE_CONVERTED);
-		return (uint16_t) (10.0/145.0)*(batt-2750);
-	#else
-		static int batt;
-		batt = battery_sensor.value(0);
-		if(batt < 2.75*1000) return (uint8_t) 0;
-		else return (uint16_t) (battery_sensor.value(0)-2.75*1000);
-		return 0;
-	#endif
-}
+	/*---------------------------------------------------------------------------*/
+	static int
+	value(int type)
+	{
+	  return BATTERY_MEM;
+	}
+	/*---------------------------------------------------------------------------*/
+	static int
+	configure(int type, int c)
+	{
+	  return sky_sensors_configure(INPUT_CHANNEL, INPUT_REFERENCE, type, c);
+	}
+	/*---------------------------------------------------------------------------*/
+	static int
+	status(int type)
+	{
+	  return sky_sensors_status(INPUT_CHANNEL, type);
+	}
+	/*---------------------------------------------------------------------------*/
+	SENSORS_SENSOR(battery_sensor, BATTERY_SENSOR,
+	               value, configure, status);
+
+	void sens_battery_initialize(void){
+		SENSORS_ACTIVATE(battery_sensor);
+	}
+
+	uint16_t read_battery(void){
+		#if CONTIKI_TARGET_ZOUL
+			static uint32_t batt;
+			batt = vdd3_sensor.value(CC2538_SENSORS_VALUE_TYPE_CONVERTED);
+			return (uint16_t) (10.0/145.0)*(batt-2750);
+		#else
+			static int batt;
+			batt = battery_sensor.value(0);
+			if(batt < 2.75*1000) return (uint8_t) 0;
+			else return (uint16_t) (battery_sensor.value(0)-2.75*1000);
+			return 0;
+		#endif
+	}
+
+#endif

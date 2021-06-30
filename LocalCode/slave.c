@@ -26,12 +26,12 @@ PROCESS_THREAD(slave_working, ev, data){
 	PROCESS_BEGIN();
 
 	static struct etimer et;
-	static struct etimer et_timout;
+	static struct etimer et_timeout;
 
 	etimer_set(&et, READINGS_TIME*CLOCK_SECOND);
-	etimer_set(&et_timout, TIMOUT*CLOCK_SECOND);
+	etimer_set(&et_timeout, TIMOUT*CLOCK_SECOND);
 
-	bool timout_flag = false;
+	bool timeout_flag = false;
 	static int Ntry;
 
 	Ntry = 0;
@@ -46,25 +46,25 @@ PROCESS_THREAD(slave_working, ev, data){
 
 		process_start(&take_readings,"");
 
-		etimer_reset(&et_timout);
+		etimer_reset(&et_timeout);
 
 		while(reading_done_flag == false){
 			PROCESS_YIELD();
-			if(ev = etimer_expired(&et_timout)){
-				printf("TIMOUT\n");
+			if(ev = etimer_expired(&et_timeout)){
+				printf("TIMEOUT\n");
 				Ntry++;
 				if(Ntry >= MTRY){
-					timout_flag = true;
+					timeout_flag = true;
 					break;
 				}
 				else{
 					process_start(&take_readings,"");
-					etimer_reset(&et_timout);
+					etimer_reset(&et_timeout);
 				}
 			}
 		}
 
-		if(!timout_flag){
+		if(!timeout_flag){
 			printf("Temperature: %i, Humidity: %i, AriFlow: %i, Battery: %u\n", (int)(readings.temperature),
 																				(int)(readings.humidity),
 																				(int)(readings.airflow),
@@ -106,11 +106,13 @@ PROCESS_THREAD(take_readings, ev, data){
 	battery = 0;
 
 	for(i = 0; i < N_READINGS; i++){
-		temperature += read_temperature();
-		humidity += read_humidity();
-		airflow += read_airflow();
-		battery += read_battery();
-
+		#if CONTIKI_TARGET_ZOUL
+		#else
+			temperature += read_temperature();
+			humidity += read_humidity();
+			airflow += read_airflow();
+			battery += read_battery();
+		#endif
 	}
 
 	#if CONTIKI_TARGET_ZOUL
@@ -130,9 +132,9 @@ PROCESS_THREAD(take_readings, ev, data){
 	PROCESS_END();
 }
 
-void event_readings(/*struct sensot_data *sens*/){
-	process_start(&take_readings,"");
-}
+// void event_readings(){
+// 	process_start(&take_readings,"");
+// }
 
 void exec_slave_working(void){
 	process_start(&slave_working,"");

@@ -1,5 +1,5 @@
 obj_z1/sens_temperature.o: sens_temperature.c sens_temperature.h \
- ../../../contiki/core/./lib/sensors.h ../../../contiki/core/./contiki.h \
+ ../../../contiki/core/./contiki.h \
  ../../../contiki/core/./contiki-version.h \
  ../../../contiki/platform/z1/./contiki-conf.h \
  ../../../contiki/platform/z1/./platform-conf.h \
@@ -20,9 +20,10 @@ obj_z1/sens_temperature.o: sens_temperature.c sens_temperature.h \
  ../../../contiki/core/./sys/procinit.h \
  ../../../contiki/core/./sys/loader.h ../../../contiki/core/./sys/clock.h \
  ../../../contiki/core/./sys/energest.h \
+ ../../../contiki/core/./lib/sensors.h \
  ../../../contiki/platform/z1/./dev/sky-sensors.h
 sens_temperature.c sens_temperature.h :
- ../../../contiki/core/./lib/sensors.h ../../../contiki/core/./contiki.h :
+ ../../../contiki/core/./contiki.h :
  ../../../contiki/core/./contiki-version.h :
  ../../../contiki/platform/z1/./contiki-conf.h :
  ../../../contiki/platform/z1/./platform-conf.h :
@@ -43,4 +44,5 @@ sens_temperature.c sens_temperature.h :
  ../../../contiki/core/./sys/procinit.h :
  ../../../contiki/core/./sys/loader.h ../../../contiki/core/./sys/clock.h :
  ../../../contiki/core/./sys/energest.h :
+ ../../../contiki/core/./lib/sensors.h :
  ../../../contiki/platform/z1/./dev/sky-sensors.h :

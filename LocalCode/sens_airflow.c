@@ -54,46 +54,52 @@
  
 
 #include "sens_airflow.h"
-#include "dev/sky-sensors.h"
-#include "contiki.h"
 
-#define INPUT_CHANNEL      (1 << INCH_13)
-#define INPUT_REFERENCE    SREF_1
-#define AIRFLOW_MEM    ADC12MEM13
+#if CONTIKI_TARGET_ZOUL
+ 
+#else 
 
-const struct sensors_sensor airflow_sensor;
+	#include "dev/sky-sensors.h"
 
-/*---------------------------------------------------------------------------*/
-static int
-value(int type)
-{
-  return AIRFLOW_MEM;
-}
-/*---------------------------------------------------------------------------*/
-static int
-configure(int type, int c)
-{
-  return sky_sensors_configure(INPUT_CHANNEL, INPUT_REFERENCE, type, c);
-}
-/*---------------------------------------------------------------------------*/
-static int
-status(int type)
-{
-  return sky_sensors_status(INPUT_CHANNEL, type);
-}
-/*---------------------------------------------------------------------------*/
-SENSORS_SENSOR(airflow_sensor, AIRFLOW_SENSOR,
-               value, configure, status);
+	#define INPUT_CHANNEL      (1 << INCH_13)
+	#define INPUT_REFERENCE    SREF_1
+	#define AIRFLOW_MEM    ADC12MEM13
+
+	const struct sensors_sensor airflow_sensor;
+
+	/*---------------------------------------------------------------------------*/
+	static int
+	value(int type)
+	{
+	  return AIRFLOW_MEM;
+	}
+	/*---------------------------------------------------------------------------*/
+	static int
+	configure(int type, int c)
+	{
+	  return sky_sensors_configure(INPUT_CHANNEL, INPUT_REFERENCE, type, c);
+	}
+	/*---------------------------------------------------------------------------*/
+	static int
+	status(int type)
+	{
+	  return sky_sensors_status(INPUT_CHANNEL, type);
+	}
+	/*---------------------------------------------------------------------------*/
+	SENSORS_SENSOR(airflow_sensor, AIRFLOW_SENSOR,
+	               value, configure, status);
 
 
-void sens_airflow_initialize(void){
-	SENSORS_ACTIVATE(airflow_sensor);
-}
+	void sens_airflow_initialize(void){
+		SENSORS_ACTIVATE(airflow_sensor);
+	}
 
-uint16_t read_airflow(void){
-	#if CONTIKI_TARGET_ZOUL
-		return 110;
-	#else
-		return (uint16_t) (((uint16_t)airflow_sensor.value(0))*AIRFLOW_CONSTS_1);
-	#endif
-}
+	uint16_t read_airflow(void){
+		#if CONTIKI_TARGET_ZOUL
+			return 110;
+		#else
+			return (uint16_t) (((uint16_t)airflow_sensor.value(0))*AIRFLOW_CONSTS_1);
+		#endif
+	}
+
+#endif

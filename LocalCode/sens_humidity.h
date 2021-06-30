@@ -43,18 +43,26 @@
 #ifndef SENS_HUMIDITY_H_
 #define SENS_HUMIDITY_H_
 
-#include "lib/sensors.h"
+	#include "contiki.h"
 
-extern const struct sensors_sensor humidity_sensor;
+	#if CONTIKI_TARGET_ZOUL
+ 
+	#else
 
-#define HUMIDITY_SENSOR "Humidity"
+		#include "lib/sensors.h"
 
-#define HUMIDITY_CONSTS_1 0.0015259
+		extern const struct sensors_sensor humidity_sensor;
 
-#define HUMIDITY_CONST 100.0/99.0
+		#define HUMIDITY_SENSOR "Humidity"
 
-void sens_humidity_initialize(void);
+		#define HUMIDITY_CONSTS_1 0.0015259
 
-uint16_t read_humidity(void);
+		#define HUMIDITY_CONST 100.0/99.0
+
+		void sens_humidity_initialize(void);
+
+		uint16_t read_humidity(void);
+
+	#endif
 
 #endif

@@ -1,9 +1,11 @@
-obj_z1/sens_airflow.o: sens_airflow.c sens_airflow.h \
+obj_zoul/sens_airflow.o: sens_airflow.c sens_airflow.h \
  ../../../contiki/core/./contiki.h \
  ../../../contiki/core/./contiki-version.h \
- ../../../contiki/platform/z1/./contiki-conf.h \
- ../../../contiki/platform/z1/./platform-conf.h \
- ../../../contiki/cpu/msp430/./msp430def.h project-conf.h \
+ ../../../contiki/platform/zoul/./contiki-conf.h project-conf.h \
+ ../../../contiki/platform/zoul/remote-revb/board.h \
+ ../../../contiki/cpu/cc2538/./dev/gpio.h \
+ ../../../contiki/cpu/cc2538/./reg.h \
+ ../../../contiki/cpu/cc2538/./dev/nvic.h \
  ../../../contiki/core/./contiki-default-conf.h \
  ../../../contiki/core/./sys/process.h ../../../contiki/core/./sys/pt.h \
  ../../../contiki/core/./sys/lc.h ../../../contiki/core/./sys/lc-switch.h \
@@ -15,19 +17,20 @@ obj_z1/sens_airflow.o: sens_airflow.c sens_airflow.h \
  ../../../contiki/core/./sys/etimer.h ../../../contiki/core/./sys/timer.h \
  ../../../contiki/core/./sys/etimer.h \
  ../../../contiki/core/./sys/rtimer.h \
- ../../../contiki/cpu/msp430/./rtimer-arch.h \
- ../../../contiki/core/./sys/rtimer.h ../../../contiki/core/./sys/pt.h \
- ../../../contiki/core/./sys/procinit.h \
+ ../../../contiki/cpu/cc2538/./rtimer-arch.h \
+ ../../../contiki/cpu/cc2538/./dev/gptimer.h \
+ ../../../contiki/core/./sys/pt.h ../../../contiki/core/./sys/procinit.h \
  ../../../contiki/core/./sys/loader.h ../../../contiki/core/./sys/clock.h \
  ../../../contiki/core/./sys/energest.h \
- ../../../contiki/core/./lib/sensors.h \
- ../../../contiki/platform/z1/./dev/sky-sensors.h
+ ../../../contiki/core/./sys/rtimer.h
 sens_airflow.c sens_airflow.h :
  ../../../contiki/core/./contiki.h :
  ../../../contiki/core/./contiki-version.h :
- ../../../contiki/platform/z1/./contiki-conf.h :
- ../../../contiki/platform/z1/./platform-conf.h :
- ../../../contiki/cpu/msp430/./msp430def.h project-conf.h :
+ ../../../contiki/platform/zoul/./contiki-conf.h project-conf.h :
+ ../../../contiki/platform/zoul/remote-revb/board.h :
+ ../../../contiki/cpu/cc2538/./dev/gpio.h :
+ ../../../contiki/cpu/cc2538/./reg.h :
+ ../../../contiki/cpu/cc2538/./dev/nvic.h :
  ../../../contiki/core/./contiki-default-conf.h :
  ../../../contiki/core/./sys/process.h ../../../contiki/core/./sys/pt.h :
  ../../../contiki/core/./sys/lc.h ../../../contiki/core/./sys/lc-switch.h :
@@ -39,10 +42,9 @@ sens_airflow.c sens_airflow.h :
  ../../../contiki/core/./sys/etimer.h ../../../contiki/core/./sys/timer.h :
  ../../../contiki/core/./sys/etimer.h :
  ../../../contiki/core/./sys/rtimer.h :
- ../../../contiki/cpu/msp430/./rtimer-arch.h :
- ../../../contiki/core/./sys/rtimer.h ../../../contiki/core/./sys/pt.h :
- ../../../contiki/core/./sys/procinit.h :
+ ../../../contiki/cpu/cc2538/./rtimer-arch.h :
+ ../../../contiki/cpu/cc2538/./dev/gptimer.h :
+ ../../../contiki/core/./sys/pt.h ../../../contiki/core/./sys/procinit.h :
  ../../../contiki/core/./sys/loader.h ../../../contiki/core/./sys/clock.h :
  ../../../contiki/core/./sys/energest.h :
- ../../../contiki/core/./lib/sensors.h :
- ../../../contiki/platform/z1/./dev/sky-sensors.h :
+ ../../../contiki/core/./sys/rtimer.h :

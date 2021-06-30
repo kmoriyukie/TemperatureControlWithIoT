@@ -43,16 +43,24 @@
 #ifndef SENS_ARIFLOW_H_
 #define SENS_ARIFLOW_H_
 
-#include "lib/sensors.h"
+	#include "contiki.h"
 
-extern const struct sensors_sensor airflow_sensor;
+	#if CONTIKI_TARGET_ZOUL
+ 
+	#else
 
-#define AIRFLOW_SENSOR "Air Flow"
+	#include "lib/sensors.h"
 
-#define AIRFLOW_CONSTS_1 0.0022889
+		extern const struct sensors_sensor airflow_sensor;
 
-void sens_airflow_initialize(void);
+		#define AIRFLOW_SENSOR "Air Flow"
 
-uint16_t read_airflow(void);
+		#define AIRFLOW_CONSTS_1 0.0022889
+
+		void sens_airflow_initialize(void);
+
+		uint16_t read_airflow(void);
+
+	#endif
 
 #endif

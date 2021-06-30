@@ -43,16 +43,24 @@
 #ifndef SENS_TEMPERATURE_H_
 #define SENS_TEMPERATURE_H_
 
-#include "lib/sensors.h"
+	#include "contiki.h"
 
-extern const struct sensors_sensor temperature_sensor;
+	#if CONTIKI_TARGET_ZOUL
+ 
+	#else
 
-#define TEMPERATURE_SENSOR "Temperature"
-#define TEMPERATURE_CONSTS_0 -50
-#define TEMPERATURE_CONSTS_1 0.0022889
+		#include "lib/sensors.h"
 
-void sens_temperature_initialize(void);
+		extern const struct sensors_sensor temperature_sensor;
 
-uint16_t read_temperature(void);
+		#define TEMPERATURE_SENSOR "Temperature"
+		#define TEMPERATURE_CONSTS_0 -50
+		#define TEMPERATURE_CONSTS_1 0.0022889
+
+		void sens_temperature_initialize(void);
+
+		uint16_t read_temperature(void);
+
+	#endif
 
 #endif

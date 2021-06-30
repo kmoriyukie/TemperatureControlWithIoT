@@ -10,7 +10,9 @@
 
 #include "msg.h"
 
-void event_readings(/*struct sensot_data *sens*/);
+// void event_readings();
+
+void slave_initialize(void);
 
 void exec_slave_working(void);
 

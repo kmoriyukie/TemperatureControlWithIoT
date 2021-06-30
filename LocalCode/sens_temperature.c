@@ -51,49 +51,54 @@
 //  *         Adam Dunkels <adam@sics.se>
 //  *         Joakim Eriksson <joakime@sics.se>
 //  *         Niclas Finne <nfi@sics.se>
- 
 
 #include "sens_temperature.h"
-#include "dev/sky-sensors.h"
-#include "contiki.h"
 
-#define INPUT_CHANNEL      (1 << INCH_10)
-#define INPUT_REFERENCE    SREF_1
-#define TEMPERATURE_MEM    ADC12MEM10
+#if CONTIKI_TARGET_ZOUL
+ 
+#else 
 
-const struct sensors_sensor temperature_sensor;
+	#include "dev/sky-sensors.h"
 
-/*---------------------------------------------------------------------------*/
-static int
-value(int type)
-{
-  return TEMPERATURE_MEM;
-}
-/*---------------------------------------------------------------------------*/
-static int
-configure(int type, int c)
-{
-  return sky_sensors_configure(INPUT_CHANNEL, INPUT_REFERENCE, type, c);
-}
-/*---------------------------------------------------------------------------*/
-static int
-status(int type)
-{
-  return sky_sensors_status(INPUT_CHANNEL, type);
-}
-/*---------------------------------------------------------------------------*/
-SENSORS_SENSOR(temperature_sensor, TEMPERATURE_SENSOR,
-               value, configure, status);
+	#define INPUT_CHANNEL      (1 << INCH_10)
+	#define INPUT_REFERENCE    SREF_1
+	#define TEMPERATURE_MEM    ADC12MEM10
+
+	const struct sensors_sensor temperature_sensor;
+
+	/*---------------------------------------------------------------------------*/
+	static int
+	value(int type)
+	{
+	  return TEMPERATURE_MEM;
+	}
+	/*---------------------------------------------------------------------------*/
+	static int
+	configure(int type, int c)
+	{
+	  return sky_sensors_configure(INPUT_CHANNEL, INPUT_REFERENCE, type, c);
+	}
+	/*---------------------------------------------------------------------------*/
+	static int
+	status(int type)
+	{
+	  return sky_sensors_status(INPUT_CHANNEL, type);
+	}
+	/*---------------------------------------------------------------------------*/
+	SENSORS_SENSOR(temperature_sensor, TEMPERATURE_SENSOR,
+	               value, configure, status);
 
 
-void sens_temperature_initialize(void){
-	SENSORS_ACTIVATE(temperature_sensor);
-}
+	void sens_temperature_initialize(void){
+		SENSORS_ACTIVATE(temperature_sensor);
+	}
 
-uint16_t read_temperature(void){
-	#if CONTIKI_TARGET_ZOUL
-		return 32;
-	#else
-		return (uint16_t) (((uint16_t)temperature_sensor.value(0))*TEMPERATURE_CONSTS_1 + TEMPERATURE_CONSTS_0);
-	#endif
-}
+	uint16_t read_temperature(void){
+		#if CONTIKI_TARGET_ZOUL
+			return 32;
+		#else
+			return (uint16_t) (((uint16_t)temperature_sensor.value(0))*TEMPERATURE_CONSTS_1 + TEMPERATURE_CONSTS_0);
+		#endif
+	}
+	
+#endif	

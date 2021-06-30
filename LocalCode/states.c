@@ -18,9 +18,6 @@ void initialize_states(void (*handle)(uint8_t)){
 	blink_event_handle = handle;
 	static ROLE_t i_r = SLAVE;
 	set_state(ROLE,&i_r);
-
-	// static MODE_t i_m = WORKING;
-	// set_state(MODE,&i_m);
 }
 
 void set_state(STATETYPE_t type,void *value){

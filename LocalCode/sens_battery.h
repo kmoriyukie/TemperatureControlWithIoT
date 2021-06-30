@@ -43,15 +43,23 @@
 #ifndef SENS_BATTERY_H_
 #define SENS_BATTERY_H_
 
-#include "lib/sensors.h"
+	#include "contiki.h"
 
-extern const struct sensors_sensor battery_sensor;
+	#if CONTIKI_TARGET_ZOUL
+ 
+	#else
 
-#define BATTERY_SENSOR "Battery"
-#define BATTERY_CONST (10.0/145.0)
+		#include "lib/sensors.h"
 
-void sens_battery_initialize(void);
+		extern const struct sensors_sensor battery_sensor;
 
-uint16_t read_battery(void);
+		#define BATTERY_SENSOR "Battery"
+		#define BATTERY_CONST (10.0/145.0)
+
+		void sens_battery_initialize(void);
+
+		uint16_t read_battery(void);
+
+	#endif
 
 #endif
