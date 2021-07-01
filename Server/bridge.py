@@ -12,9 +12,10 @@ defaultPort = 5683
 bufferSize  = 1024
 
 CoAPServerIP = "aaaa::212:4b00:89ab:cdef"
-CoAPClientIP = "fd00::c30c:0:0:2"
+ClientIP = "fd00::c30c:0:0:2"
 
 def FirstThread(name):
+	global ClientIP
 	print "Thread #1 Starting"
 	# Listen for incoming datagrams
 	while(True):
@@ -25,6 +26,7 @@ def FirstThread(name):
 
 		clientMsg = "Message from Client:{}".format(message)
 		clientIP  = "Client IP Address:{}".format(address)
+		ClientIP = address[0]
 
 		time.sleep(0.25)
 		# Forward Packet Into Remote Server
@@ -46,7 +48,7 @@ def SecondThread(name):
 
 		time.sleep(0.25)
 		# Forward Packet Into Remote Server
-		mySocket.sendto(message, (CoAPClientIP, defaultPort))
+		mySocket.sendto(message, (ClientIP, defaultPort))
 		print ("Process 2:")
 		print ("Message From {0}:{1} - {2}".format(address[0],address[1],message))
 

@@ -6,6 +6,7 @@
 *.zoul
 *.elf
 *.a
+*.z1
 
 # Directories #
 ###############
