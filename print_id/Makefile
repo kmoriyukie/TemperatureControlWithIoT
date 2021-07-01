@@ -1,7 +1,7 @@
 CONTIKI_PROJECT=printnodeid
 all: $(CONTIKI_PROJECT) 
 
-CONTIKI = ../../../../contiki
+CONTIKI = ../../../contiki
 
 SMALL=1
 

@@ -1,6 +1,6 @@
-all: simple_coap_client
+all: er-example-client
 
-CONTIKI = ../../../../../contiki
+CONTIKI = ../../../../contiki
 
 CFLAGS += -DPROJECT_CONF_H=\"project-conf.h\"
 
