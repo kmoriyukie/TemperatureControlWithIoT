@@ -33,8 +33,6 @@
 #define RECONNECT_ATTEMPTS         RETRY_FOREVER
 #define CONNECTION_STABLE_TIME     (CLOCK_SECOND * 5)
 /*---------------------------------------------------------------------------*/
-
-
 #define STATE_INIT                    0
 #define STATE_REGISTERED              1
 #define STATE_CONNECTING              2
@@ -53,6 +51,10 @@
 #define NET_CONNECT_PERIODIC        (CLOCK_SECOND >> 2)
 #define NO_NET_LED_DURATION         (NET_CONNECT_PERIODIC >> 1)
 /*---------------------------------------------------------------------------*/
+#define DEFAULT_PUBLISH_TOPIC     "deec/send"
+#define DEFAULT_SUBSCRIBE_TOPIC   "deec/receive"
+#define MQTT_BRIDGE_IP_ADDR  "fd00::1" // Tunslip VM IP
+
 /**
  * \brief Data structure declaration for the MQTT client configuration
  */

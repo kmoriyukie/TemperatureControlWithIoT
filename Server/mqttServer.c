@@ -129,30 +129,28 @@ mqtt_event(struct mqtt_connection *m, mqtt_event_t event, void *data)
   }
 }
 /*---------------------------------------------------------------------------*/
-static int
-construct_pub_topic(void)
+static int construct_pub_topic(void)
 {
-  int len = snprintf(pub_topic, BUFFER_SIZE, "zolertia/evt/%s",
-                     conf.event_type_id);
+  int len = snprintf(pub_topic, BUFFER_SIZE, DEFAULT_PUBLISH_TOPIC);
   if(len < 0 || len >= BUFFER_SIZE) {
     printf("Pub Topic too large: %d, Buffer %d\n", len, BUFFER_SIZE);
     return 0;
   }
 
+  printf("Publishing topic: %s\n", pub_topic);
+
   return 1;
 }
 /*---------------------------------------------------------------------------*/
-static int
-construct_sub_topic(void)
+static int construct_sub_topic(void)
 {
-  int len = snprintf(sub_topic, BUFFER_SIZE, "zolertia/cmd/%s",
-                     conf.cmd_type);
+  int len = snprintf(sub_topic, BUFFER_SIZE, DEFAULT_SUBSCRIBE_TOPIC);
   if(len < 0 || len >= BUFFER_SIZE) {
     printf("Sub Topic too large: %d, Buffer %d\n", len, BUFFER_SIZE);
     return 0;
   }
 
-  printf("Subscription topic %s\n", sub_topic);
+  printf("Subscription topic: %s\n", sub_topic);
 
   return 1;
 }
