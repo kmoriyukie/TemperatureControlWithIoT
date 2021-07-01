@@ -10,3 +10,6 @@
 ###############
 Server/obj_zoul
 Client/obj_zoul
+Cooja/Border Router/obj_z1
+Cooja/Cooja Client/obj_z1
+
