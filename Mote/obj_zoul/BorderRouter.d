@@ -1,5 +1,5 @@
 obj_zoul/BorderRouter.o: Connection/BorderRouter.c \
- ../../../contiki/core/./contiki.h \
+ ../../../contiki/core/./contiki-net.h ../../../contiki/core/./contiki.h \
  ../../../contiki/core/./contiki-version.h \
  ../../../contiki/platform/zoul/./contiki-conf.h project-conf.h \
  ../../../contiki/platform/zoul/remote-revb/board.h \
@@ -18,15 +18,12 @@ obj_zoul/BorderRouter.o: Connection/BorderRouter.c \
  ../../../contiki/core/./sys/etimer.h \
  ../../../contiki/core/./sys/rtimer.h \
  ../../../contiki/cpu/cc2538/./rtimer-arch.h \
+ ../../../contiki/core/./contiki.h \
  ../../../contiki/cpu/cc2538/./dev/gptimer.h \
  ../../../contiki/core/./sys/pt.h ../../../contiki/core/./sys/procinit.h \
  ../../../contiki/core/./sys/loader.h ../../../contiki/core/./sys/clock.h \
  ../../../contiki/core/./sys/energest.h \
  ../../../contiki/core/./sys/rtimer.h \
- ../../../contiki/core/./contiki-lib.h ../../../contiki/core/./contiki.h \
- ../../../contiki/core/./lib/list.h ../../../contiki/core/./lib/memb.h \
- ../../../contiki/core/./lib/mmem.h ../../../contiki/core/./lib/random.h \
- ../../../contiki/core/./contiki-net.h \
  ../../../contiki/core/./net/ip/tcpip.h \
  ../../../contiki/core/./net/ip/uip.h \
  ../../../contiki/core/./net/ip/uipopt.h \
@@ -61,6 +58,9 @@ obj_zoul/BorderRouter.o: Connection/BorderRouter.c \
  ../../../contiki/core/./net/ip/resolv.h \
  ../../../contiki/core/./net/ip/uip.h \
  ../../../contiki/core/./net/ip/psock.h \
+ ../../../contiki/core/./contiki-lib.h ../../../contiki/core/./lib/list.h \
+ ../../../contiki/core/./lib/memb.h ../../../contiki/core/./lib/mmem.h \
+ ../../../contiki/core/./lib/random.h \
  ../../../contiki/core/./net/ip/udp-socket.h \
  ../../../contiki/core/./net/ip/tcp-socket.h \
  ../../../contiki/core/./net/rime/rime.h \
@@ -96,13 +96,10 @@ obj_zoul/BorderRouter.o: Connection/BorderRouter.c \
  ../../../contiki/core/./net/rime/timesynch.h \
  ../../../contiki/core/./net/rime/trickle.h \
  ../../../contiki/core/./net/netstack.h \
- ../../../contiki/core/./dev/slip.h \
- ../../../contiki/core/./net/ip/uip-debug.h \
- ../../../contiki/core/./net/net-debug.h \
- ../../../contiki/core/./net/rpl/rpl.h \
+ ../../../contiki/core/./dev/slip.h ../../../contiki/core/./net/rpl/rpl.h \
  ../../../contiki/core/./net/rpl/rpl-conf.h
 Connection/BorderRouter.c :
- ../../../contiki/core/./contiki.h :
+ ../../../contiki/core/./contiki-net.h ../../../contiki/core/./contiki.h :
  ../../../contiki/core/./contiki-version.h :
  ../../../contiki/platform/zoul/./contiki-conf.h project-conf.h :
  ../../../contiki/platform/zoul/remote-revb/board.h :
@@ -121,15 +118,12 @@ Connection/BorderRouter.c :
  ../../../contiki/core/./sys/etimer.h :
  ../../../contiki/core/./sys/rtimer.h :
  ../../../contiki/cpu/cc2538/./rtimer-arch.h :
+ ../../../contiki/core/./contiki.h :
  ../../../contiki/cpu/cc2538/./dev/gptimer.h :
  ../../../contiki/core/./sys/pt.h ../../../contiki/core/./sys/procinit.h :
  ../../../contiki/core/./sys/loader.h ../../../contiki/core/./sys/clock.h :
  ../../../contiki/core/./sys/energest.h :
  ../../../contiki/core/./sys/rtimer.h :
- ../../../contiki/core/./contiki-lib.h ../../../contiki/core/./contiki.h :
- ../../../contiki/core/./lib/list.h ../../../contiki/core/./lib/memb.h :
- ../../../contiki/core/./lib/mmem.h ../../../contiki/core/./lib/random.h :
- ../../../contiki/core/./contiki-net.h :
  ../../../contiki/core/./net/ip/tcpip.h :
  ../../../contiki/core/./net/ip/uip.h :
  ../../../contiki/core/./net/ip/uipopt.h :
@@ -164,6 +158,9 @@ Connection/BorderRouter.c :
  ../../../contiki/core/./net/ip/resolv.h :
  ../../../contiki/core/./net/ip/uip.h :
  ../../../contiki/core/./net/ip/psock.h :
+ ../../../contiki/core/./contiki-lib.h ../../../contiki/core/./lib/list.h :
+ ../../../contiki/core/./lib/memb.h ../../../contiki/core/./lib/mmem.h :
+ ../../../contiki/core/./lib/random.h :
  ../../../contiki/core/./net/ip/udp-socket.h :
  ../../../contiki/core/./net/ip/tcp-socket.h :
  ../../../contiki/core/./net/rime/rime.h :
@@ -199,8 +196,5 @@ Connection/BorderRouter.c :
  ../../../contiki/core/./net/rime/timesynch.h :
  ../../../contiki/core/./net/rime/trickle.h :
  ../../../contiki/core/./net/netstack.h :
- ../../../contiki/core/./dev/slip.h :
- ../../../contiki/core/./net/ip/uip-debug.h :
- ../../../contiki/core/./net/net-debug.h :
- ../../../contiki/core/./net/rpl/rpl.h :
+ ../../../contiki/core/./dev/slip.h ../../../contiki/core/./net/rpl/rpl.h :
  ../../../contiki/core/./net/rpl/rpl-conf.h :
