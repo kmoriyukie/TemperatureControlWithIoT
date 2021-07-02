@@ -50,69 +50,57 @@
  #include "msg.h"
 
 
-static void res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
-
 static void res_post_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
 
-RESOURCE(res_config,
+RESOURCE(res_sensors,
          "title=\"Config\"",
-         res_get_handler,
+         NULL,
          res_post_handler,
          NULL,
          NULL);
 
-static void res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset){
-	static uint8_t size = 0;
-
-	const char *par = NULL;
-
-	static uint8_t ID = 0;
-
-	size = REST.get_query_variable(request, "ID", &par);
-	if(size > 3 || size < 1){
-		REST.set_response_payload(response, MSG_ERROR_INVALID_PARAMETERS, 16);
-		return;
-	}
-	else{
-		ID = atoi(par);
-
-		static struct MOTE_t *mote = NULL;
-
-		printf("Local ID: %i\n", ID);
-		if(!find_MOTE_localID(ID, &mote)){
-			REST.set_response_payload(response, MSG_MOTE_NOT_FOUND, 16);
-			return;
-		}
-
-		if(mote->remote_id == 0) REST.set_response_payload(response, MSG_FAILURE, 15);
-		else{
-			static char resp[10];
-			static uint8_t n_num;
-			if(mote->remote_id >= 0 && mote->remote_id <= 9) n_num = 1;
-			if(mote->remote_id >= 10 && mote->remote_id <= 99) n_num = 2;
-			if(mote->remote_id >= 100 && mote->remote_id <= 255) n_num = 3;
-			sprintf(resp,"{\"Response\": %i}",mote->remote_id);
-			REST.set_response_payload(response, resp, 9+n_num);
-		}
-	}
-}
 
 static void res_post_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset){
+
+	// Verificaçao do modo
+
+
 	static uint8_t *incoming = NULL;
 	static uint8_t size = 0;
 	size = REST.get_request_payload(request,(const uint8_t **)&incoming);
-	if(size > 11 || size < 9){
-		REST.set_response_payload(response, MSG_ERROR_INVALID_PARAMETERS, 16);
-		return;
-	}
-	static char json[11];
+
+
+	// if(size > 11 || size < 9){
+	// 	REST.set_response_payload(response, MSG_ERROR_INVALID_PARAMETERS, 16);
+	// 	return;
+	// }
+
+
+
+	//Verificaçao de tamanho
+
+
+	static char json[70];
 	memcpy(json,incoming,size);
 
-	static int params[1];
-	readJSON_i(json, params);
+	static uint8_t params_u[3];
+	static float params_f[3];
+	readJSON_uf(json, params_u, params_f);
 
-	if(add_MOTE((uint8_t) params[0])) REST.set_response_payload(response, MSG_SUCCESS, 15);
-	else REST.set_response_payload(response, MSG_MOTE_ALREADY_EXISTS, 16);
+	static struct slave_msg_t msg;
+
+	msg.local_id = params_u[0];
+	msg.remote_id = params_u[1];
+	msg.temperature = params_f[0];
+	msg.humidity = params_f[1];
+	msg.airflow = params_f[2];
+	msg.battery = params_u[2];
+
+	// printf("St:\n L_ID: %u, R_ID: %u, Temp: %i, Humi: %i, Air: %i, Bat: %u\n",params_u[0],params_u[1],(uint8_t)(params_f[0]*10),(uint8_t)(params_f[1]*10),(uint8_t)(params_f[2]*10),params_u[2]);
+
+	if(push_packet(&msg)) REST.set_response_payload(response, MSG_SUCCESS, 15);
+	else REST.set_response_payload(response, MSG_FAILURE, 15);
+
 }
 
 // MSG_SUCCESS

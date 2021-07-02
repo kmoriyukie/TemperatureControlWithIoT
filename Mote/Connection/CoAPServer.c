@@ -18,8 +18,8 @@
 #endif
 
 extern resource_t
-  res_toggle,
-  res_config;
+  res_config,
+  res_sensors;
 
 PROCESS(coap_server_process, "CoAP server process");
 
@@ -31,9 +31,10 @@ PROCESS_THREAD(coap_server_process, ev, data)
 
   rest_init_engine();
 
-  rest_activate_resource(&res_toggle, "actuators/toggle");  
+  // rest_activate_resource(&res_toggle, "actuators/toggle");  
 
   rest_activate_resource(&res_config, "config");  
+  rest_activate_resource(&res_sensors, "sensors");  
 
   // printf("\nCoAP server started\n");
 

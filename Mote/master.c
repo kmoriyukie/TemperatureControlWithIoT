@@ -68,7 +68,39 @@ PROCESS_THREAD(master_working, ev, data){
 	PROCESS_END();
 }
 
+bool push_packet(struct slave_msg_t *packet){
+	struct slave_msg_t *pck = NULL;
+	struct MOTE_t *mote = NULL;
+	if(find_MOTE_localID(packet->local_id, &mote)){
+		if(!(mote->remote_id == packet->remote_id)) return false;
+	}
+	else return false;
 
+	pck = malloc(sizeof(struct slave_msg_t));
+
+	pck->local_id = packet->local_id;
+	pck->remote_id = packet->remote_id;
+	pck->temperature = packet->temperature;
+	pck->humidity = packet->humidity;
+	pck->airflow = packet->airflow;
+	pck->battery = packet->battery;
+
+	list_add(packet_list,pck);
+
+	if(list_length(packet_list) >= CLOUD_PACKAGE_SIZE){
+		//Send
+	}
+
+	return true;
+}
+
+bool pop_packet(struct slave_msg_t **packet){
+	if(list_length(packet_list) <= 0) return false;
+
+	*packet = list_pop(packet_list);
+
+	return true;
+}
 
 
 /*--------------------------*/
@@ -92,7 +124,7 @@ PROCESS_THREAD(master_config, ev, data){
 
 bool add_MOTE(uint8_t ID){
 	struct MOTE_t *mote = NULL;
-	if(find_MOTE_localID(ID, mote)) return false;
+	if(find_MOTE_localID(ID, &mote)) return false;
 	else{
 		// printf("Mote ADD\n");
 		mote = malloc(sizeof(struct MOTE_t));
@@ -113,7 +145,7 @@ bool find_MOTE_localID(uint8_t ID, struct MOTE_t **item){
 	for(aux = list_head(motes_list);aux != NULL; aux = list_item_next(aux)){
 		if(aux->local_id == ID){
 			*item = aux;
-			printf("Remote_ID: %u\n", aux->remote_id);
+			// printf("Remote_ID: %u\n", aux->remote_id);
 			return true;
 		}
 	}

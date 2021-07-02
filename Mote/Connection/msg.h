@@ -26,7 +26,10 @@ struct sensor_data{
 struct slave_msg_t{
 	uint8_t local_id;
 	uint8_t remote_id;
-	struct sensor_data sensor;
+	float temperature; // degrees celsius
+	float humidity; // xxx%
+	float airflow; // cm/s
+	uint8_t battery; // xxx%
 };
 
 struct MOTE_t{
