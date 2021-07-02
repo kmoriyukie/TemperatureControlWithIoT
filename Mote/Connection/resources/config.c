@@ -31,9 +31,11 @@
 
 /**
  * \file
- *      Example resource
+ *      config.c
  * \author
- *      Matthias Kovatsch <kovatsch@inf.ethz.ch>
+ *      Lucyanno Frota
+ *  
+ *   Based on example code by Matthias Kovatsch <kovatsch@inf.ethz.ch>
  */
 
 #include "contiki.h"
@@ -43,7 +45,10 @@
 #include "rest-engine.h"
 #include "master.h"
 #include "stdbool.h"
-// #include "readJSON.c"
+#include "stdlib.h"
+
+ #include "msg.h"
+
 
 static void res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
 
@@ -57,19 +62,61 @@ RESOURCE(res_config,
          NULL);
 
 static void res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset){
-	
+	static uint8_t size = 0;
+
+	const char *par = NULL;
+
+	static uint8_t ID = 0;
+
+	size = REST.get_query_variable(request, "ID", &par);
+	if(size > 3 || size < 1){
+		REST.set_response_payload(response, MSG_ERROR_INVALID_PARAMETERS, 16);
+		return;
+	}
+	else{
+		ID = atoi(par);
+
+		static struct MOTE_t *mote = NULL;
+
+		printf("Local ID: %i\n", ID);
+		if(!find_MOTE_localID(ID, &mote)){
+			REST.set_response_payload(response, MSG_MOTE_NOT_FOUND, 16);
+			return;
+		}
+
+		if(mote->remote_id == 0) REST.set_response_payload(response, MSG_FAILURE, 15);
+		else{
+			static char resp[10];
+			static uint8_t n_num;
+			if(mote->remote_id >= 0 && mote->remote_id <= 9) n_num = 1;
+			if(mote->remote_id >= 10 && mote->remote_id <= 99) n_num = 2;
+			if(mote->remote_id >= 100 && mote->remote_id <= 255) n_num = 3;
+			sprintf(resp,"{\"Response\": %i}",mote->remote_id);
+			REST.set_response_payload(response, resp, 9+n_num);
+		}
+	}
 }
 
 static void res_post_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset){
 	static uint8_t *incoming = NULL;
 	static uint8_t size = 0;
 	size = REST.get_request_payload(request,(const uint8_t **)&incoming);
-	static char json[10];
+	if(size > 11 || size < 9){
+		REST.set_response_payload(response, MSG_ERROR_INVALID_PARAMETERS, 16);
+		return;
+	}
+	static char json[11];
 	memcpy(json,incoming,size);
-	printf("%s\n",json);
+
 	static int params[1];
 	readJSON_i(json, params);
 
-	add_MOTE((uint8_t) ID);
-	// printf("ID: %i\n",params[0]);
+	if(add_MOTE((uint8_t) params[0])) REST.set_response_payload(response, MSG_SUCCESS, 15);
+	else REST.set_response_payload(response, MSG_MOTE_ALREADY_EXISTS, 16);
 }
+
+// MSG_SUCCESS
+// MSG_FAILURE
+// MSG_ERROR_INVALID_PARAMETERS
+// MSG_MOTE_ALREADY_EXISTS
+// MSG_MOTE_NOT_FOUND

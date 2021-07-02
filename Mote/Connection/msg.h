@@ -24,22 +24,26 @@ struct sensor_data{
 };
 
 struct slave_msg_t{
-	uint8_t  local_id;
-	uint8_t  remote_id;
+	uint8_t local_id;
+	uint8_t remote_id;
 	struct sensor_data sensor;
 };
 
 struct MOTE_t{
-	uint8_t  local_id;
-	uint8_t  remote_id;
+	struct MOTE_t *next;
+	uint8_t local_id;
+	uint8_t remote_id;
 };
 
 // struct master_msg_t{
 	
 // };
-
-#define TEMPERATURE_CONST_0 0
-#define TEMPERATURE_CONST_1 1
+#define MSG_SUCCESS "{\"Response\": 1}" //15
+#define MSG_FAILURE "{\"Response\": 0}" //15
+#define MSG_ERROR_INVALID_PARAMETERS "{\"Response\": -1}" //16
+#define MSG_MOTE_ALREADY_EXISTS "{\"Response\": -2}" //16
+#define MSG_MOTE_NOT_FOUND "{\"Response\": -3}" //16
+#define MSG_CONFIG_MODE "{\"Response\": -9}" //16
 
 
 /*---------------------------------------------------------------------------*/

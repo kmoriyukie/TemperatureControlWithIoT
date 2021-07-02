@@ -19,6 +19,8 @@ void send_packets(void);
 
 bool add_MOTE(uint8_t ID);
 
+bool find_MOTE_localID(uint8_t ID, struct MOTE_t **item);
+
 void exec_master_working(void);
 
 void exit_master_working(void);
