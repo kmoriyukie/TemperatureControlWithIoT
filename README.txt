@@ -6,7 +6,11 @@ tunslip6 /dev/zolertia -> PC
 => bridge.py
 Cooja <-> /dev/zolertia
 RE-Mote (Client) -> coap.me
+=======================================================================
+BASICS:
 
+-> How to flash to RE-Mote:
+	flash /dev/zolertia/ FILE_NAME.bin
 
 =======================================================================
 Cooja (Client) -> Cooja (Server)
@@ -47,11 +51,13 @@ RE-Mote (Client) -> coap.me
 Cooja(Client) -> RE-Mote (Server)
 1. flash Server/main.bin
 2. sudo ./tunslip6 -s /dev/zolertia aaaa::1/64 (./run_tunslip.sh)
-3. (Node 1) Border Router
+3. (Node 1) Cooja/Border Router/border-router.c
 4. Mote tools -> Serial Socket (SERVER) Start
-5. (Node 2) Client
+5. (Node 2) Cooja/Cooja Client/er-example-client.c
 6. sudo ./tunslip6 -a localhost -p 60001 fd00::1/64 (/.run_tunslip2.sh)
 7. python bridge.py
 
 RE-Mote new address: aaaa...
+
+=======================================================================
 

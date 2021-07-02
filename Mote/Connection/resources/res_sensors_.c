@@ -31,9 +31,9 @@
 
 /**
  * \file
- *      config.c
+ *      res_sensors.c
  * \author
- *      Lucyanno Frota
+ *      Lucyanno Frota and Milena Mori
  *  
  *   Based on example code by Matthias Kovatsch <kovatsch@inf.ethz.ch>
  */

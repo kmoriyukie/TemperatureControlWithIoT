@@ -31,9 +31,9 @@
 
 /**
  * \file
- *      config.c
+ *      res_config.c
  * \author
- *      Lucyanno Frota
+ *      Lucyanno Frota and Milena Mori
  *  
  *   Based on example code by Matthias Kovatsch <kovatsch@inf.ethz.ch>
  */
@@ -78,7 +78,6 @@ static void res_get_handler(void *request, void *response, uint8_t *buffer, uint
 
 		static struct MOTE_t *mote = NULL;
 
-		// printf("Local ID: %i\n", ID);
 		if(!find_MOTE_localID(ID, &mote)){
 			REST.set_response_payload(response, MSG_MOTE_NOT_FOUND, 16);
 			return;

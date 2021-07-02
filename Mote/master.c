@@ -136,16 +136,10 @@ bool add_MOTE(uint8_t ID){
 }
 
 bool find_MOTE_localID(uint8_t ID, struct MOTE_t **item){
-	// item = list_head(motes_list);
-	// while(item != NULL){
-	// 	if(item->local_id == ID) return true;
-	// 	item = list_item_next(item);
-	// }
 	static struct MOTE_t *aux;
 	for(aux = list_head(motes_list);aux != NULL; aux = list_item_next(aux)){
 		if(aux->local_id == ID){
 			*item = aux;
-			// printf("Remote_ID: %u\n", aux->remote_id);
 			return true;
 		}
 	}
