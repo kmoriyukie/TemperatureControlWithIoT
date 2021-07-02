@@ -1,0 +1,74 @@
+DEFINES+=PROJECT_CONF_H=\"project-conf.h\"
+
+CONTIKI_PROJECT = main
+
+all: $(CONTIKI_PROJECT)
+
+ifndef NODEID
+NODEID = 0x00
+endif
+
+APPS += er-coap
+APPS += rest-engine
+APPS += mqtt
+
+
+
+
+SENSORS_DIR = ./Sensors
+CONNECTION_DIR = ./Connection
+# CONNECTION_BORDERROUTER_DIR = ./Connection/BorderRouter
+# CONNECTION_CoAP_DIR = ./Connection/CoAP
+CONNECTION_CoAP_RESOURCES_DIR = ./Connection/resources
+
+PROJECTDIRS += $(SENSORS_DIR)
+PROJECTDIRS += $(CONNECTION_DIR)
+# PROJECTDIRS += $(CONNECTION_BORDERROUTER_DIR)
+# PROJECTDIRS += $(CONNECTION_CoAP_DIR)
+PROJECTDIRS += $(CONNECTION_CoAP_RESOURCES_DIR)
+
+
+
+
+RESOURCES_FILES = events_threads.c states.c slave.c master.c readJSON.c
+PROJECT_SOURCEFILES += $(RESOURCES_FILES)
+
+#MAIN_FILES = $(notdir $(shell find . -name '*.c'))
+#PROJECT_SOURCEFILES += $(MAIN_FILES)
+
+SENSORS_RESOURCES_FILES = $(notdir $(shell find $(SENSORS_DIR) -name '*.c'))
+PROJECT_SOURCEFILES += $(SENSORS_RESOURCES_FILES)
+
+CONNECTION_FILES = $(notdir $(shell find $(CONNECTION_DIR) -name '*.c'))
+PROJECT_SOURCEFILES += $(CONNECTION_FILES)
+
+# CONNECTION_BORDERROUTER_FILES = $(notdir $(shell find $(CONNECTION_BORDERROUTER_DIR) -name '*.c'))
+# PROJECT_SOURCEFILES += $(CONNECTION_BORDERROUTER_FILES)
+
+# CONNECTION_CoAP_FILES = $(notdir $(shell find $(CONNECTION_CoAP_DIR) -name '*.c'))
+# PROJECT_SOURCEFILES += $(CONNECTION_CoAP_FILES)
+
+# PROJECT_SOURCEFILES += mqttServer.c
+
+
+
+CONTIKI_TARGET_SOURCEFILES += sht25.c
+REST_RESOURCES_FILES = $(notdir $(shell find $(CONNECTION_CoAP_RESOURCES_DIR) -name '*.c'))
+PROJECT_SOURCEFILES += $(REST_RESOURCES_FILES)
+
+
+
+CFLAGS += -DUIP_FALLBACK_INTERFACE=rpl_interface
+PREFIX = aaaa::1/64
+
+
+
+
+# Linker size optimization
+SMALL = 1
+
+CONTIKI_WITH_IPV6 = 1
+
+CONTIKI = ../../../contiki
+
+include $(CONTIKI)/Makefile.include
