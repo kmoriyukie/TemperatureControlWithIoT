@@ -11,10 +11,18 @@ static struct mqtt_message *msg_ptr = 0;
 static struct etimer publish_periodic_timer;
 static struct ctimer ct;
 static char *buf_ptr;
-static uint16_t seq_nr_value = 0;
 
 static mqtt_client_config_t conf;
 
+static struct slave
+{
+  uint8_t local_ID;
+  uint8_t remote_ID;
+};
+
+static struct slave child_list[BUFFER_SIZE];
+
+/*---------------------------------------------------------------------------*/
 
 void readJSON(const char *json, float *params, const int nParams){
     const static char sep1[] = ":";
@@ -147,7 +155,6 @@ static int construct_client_id(void)
                      linkaddr_node_addr.u8[2], linkaddr_node_addr.u8[5],
                      linkaddr_node_addr.u8[6], linkaddr_node_addr.u8[7]);
 
-  /* len < 0: Error. Len >= BUFFER_SIZE: Buffer too small */
   if(len < 0 || len >= BUFFER_SIZE) {
     printf("Client ID: %d, Buffer %d\n", len, BUFFER_SIZE);
     return 0;
@@ -176,8 +183,6 @@ static void update_config(void)
     printf("Fatal error. Pub topic larger than the buffer\n");
     return;
   }
-
-  seq_nr_value = 0;
 
   state = STATE_INIT;
 
@@ -220,12 +225,51 @@ static void subscribe(void)
   }
 }
 /*---------------------------------------------------------------------------*/
-static void publish_temperature(void)
+static void publishIDs(void){
+  int len;
+  int remaining = APP_BUFFER_SIZE;
+
+  buf_ptr = app_buffer;
+
+  len = snprintf(buf_ptr, remaining,
+                 "{"
+                 "\"]\":\"%u\","
+                 "\"Timestamp\":\"%ld\"",
+                 IEEE_ADDR_NODE_ID, clock_seconds()*1000);
+
+  if(len < 0 || len >= remaining) {
+    printf("Buffer too short. Have %d, need %d + \\0\n", remaining, len);
+    return;
+  }
+
+  remaining -= len;
+  buf_ptr += len;
+
+/*aux = cc2538_temp_sensor.value(CC2538_SENSORS_VALUE_TYPE_CONVERTED);
+  len = snprintf(buf_ptr, remaining, ",\"Core Temp\":\"%u.%02u\"", aux / 1000, aux % 1000);
+
+  remaining -= len;
+  buf_ptr += len;*/
+
+  len = snprintf(buf_ptr, remaining, "}");
+
+  if(len < 0 || len >= remaining) {
+    printf("Buffer too short. Have %d, need %d + \\0\n", remaining, len);
+    return;
+  }
+
+  mqtt_publish(&conn, NULL, pub_topic, (uint8_t *)app_buffer,
+               strlen(app_buffer), MQTT_QOS_LEVEL_0, MQTT_RETAIN_OFF);
+
+  printf("APP - Publish to %s: %s\n", pub_topic, app_buffer);
+}
+
+/*---------------------------------------------------------------------------*/
+static void publish_test(void)
 {
   int len;
   int remaining = APP_BUFFER_SIZE;
 
-  seq_nr_value++;
   buf_ptr = app_buffer;
 
   len = snprintf(buf_ptr, remaining,
@@ -308,7 +352,7 @@ static void state_machine(void)
       } else {
         leds_on(LEDS_GREEN);
         ctimer_set(&ct, PUBLISH_LED_ON_DURATION, publish_led_off, NULL);
-        publish_temperature();
+        publish_test();
       }
       etimer_set(&publish_periodic_timer, conf.pub_interval);
 
