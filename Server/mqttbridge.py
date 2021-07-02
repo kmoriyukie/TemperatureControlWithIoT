@@ -19,21 +19,14 @@ LOCAL_MQTT_URL = "localhost"
 # You may also try "test.mosquitto.org"
 
 # A topic to get information from the zolertia board(s):	 
-<<<<<<< HEAD
+
 SENSORS_TOPIC = "mote/send"
-=======
-SENSORS_TOPIC = "deec/send"
->>>>>>> de4c7013059f5ee83e1118a20fbf54606a682ad1
 
 # Address of the External MQTT Broker:
 EXTERNAL_MQTT_URL = "test.mosquitto.org"
 
 # A topic to get information from the external world:	 
-<<<<<<< HEAD
 EXTERNAL_TOPIC = "mote/receive"
-=======
-EXTERNAL_TOPIC = "deec/receive"
->>>>>>> de4c7013059f5ee83e1118a20fbf54606a682ad1
 
 #########################################################################
 

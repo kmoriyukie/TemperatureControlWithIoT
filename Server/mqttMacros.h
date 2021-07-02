@@ -53,15 +53,12 @@ static const char *broker_ip = MQTT_BRIDGE_IP_ADDR;
 #define RECONNECT_ATTEMPTS         RETRY_FOREVER
 #define CONNECTION_STABLE_TIME     (CLOCK_SECOND * 5)
 /*---------------------------------------------------------------------------*/
-<<<<<<< HEAD
 static struct timer connection_life;
 static uint8_t connect_attempt;
 /*---------------------------------------------------------------------------*/
 /* Various states */
 static uint8_t state;
 
-=======
->>>>>>> de4c7013059f5ee83e1118a20fbf54606a682ad1
 #define STATE_INIT                    0
 #define STATE_REGISTERED              1
 #define STATE_CONNECTING              2
@@ -79,14 +76,6 @@ static uint8_t state;
 /* A timeout used when waiting to connect to a network */
 #define NET_CONNECT_PERIODIC        (CLOCK_SECOND >> 2)
 #define NO_NET_LED_DURATION         (NET_CONNECT_PERIODIC >> 1)
-<<<<<<< HEAD
-=======
-/*---------------------------------------------------------------------------*/
-#define DEFAULT_PUBLISH_TOPIC     "deec/send"
-#define DEFAULT_SUBSCRIBE_TOPIC   "deec/receive"
-#define MQTT_BRIDGE_IP_ADDR  "fd00::1" // Tunslip VM IP
-
->>>>>>> de4c7013059f5ee83e1118a20fbf54606a682ad1
 /**
  * \brief Data structure declaration for the MQTT client configuration
  */
