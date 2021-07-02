@@ -114,8 +114,9 @@ PROCESS_THREAD(master_config, ev, data){
 
 	list_init(motes_list);
 
-	process_start(&coap_server_process, "CoAP process");
+	
 
+	process_start(&coap_server_process, "CoAP process");
 
 
 
