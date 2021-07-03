@@ -43,7 +43,7 @@
 #include <string.h>
 #include "contiki.h"
 #include "rest-engine.h"
-#include "master.h"
+#include "../../master.h"
 #include "stdbool.h"
 
 #include "msg.h"

@@ -17,11 +17,13 @@
 
 #include "msg.h"
 
+void send_packets(void);
+
 bool push_packet(struct slave_msg_t *packet);
 
 bool pop_packet(struct slave_msg_t **packet);
 
-void send_packets(void);
+void send_motes(void);
 
 bool add_MOTE(uint8_t ID);
 

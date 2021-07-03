@@ -1,6 +1,15 @@
 #include "master.h"
 
 #if CONTIKI_TARGET_ZOUL
+
+#include "mqtt_states.h"
+
+extern receive_mqtt_t RECEIVE_MODE;
+extern send_mqtt_t SEND_MODE;
+extern cloudmode_t CLOUD_MODE;
+
+extern struct process coap_server_process; //  /Connection/CoAPServer.c
+
 #include "dev/zoul-sensors.h"
 #else /* Assumes the Z1 mote */
 #include "sens_battery.h"
@@ -11,13 +20,7 @@
 #include "stdlib.h"
 #include "stdio.h"
 
-#include "mqtt_states.h"
 
-extern receive_mqtt_t RECEIVE_MODE;
-extern send_mqtt_t SEND_MODE;
-extern cloudmode_t CLOUD_MODE;
-
-extern struct process coap_server_process; //  /Connection/CoAPServer.c
 
 /*---------------------------*/
 /*----------Working----------*/
@@ -112,8 +115,13 @@ bool pop_packet(struct slave_msg_t **packet){
 /*----------Config----------*/
 /*--------------------------*/
 
+#if CONTIKI_TARGET_ZOUL
+
 extern struct process border_router_process; //  /Connection/BorderRouter.c
 extern struct process MQTTServerProcess; //  /Connection/mqttServer.c
+
+#else
+#endif
 
 static bool flag_mote_added = false;
 
@@ -121,6 +129,8 @@ PROCESS(master_config, "Master Config");
 
 PROCESS_THREAD(master_config, ev, data){
 	PROCESS_BEGIN();
+
+	#if CONTIKI_TARGET_ZOUL
 
 	// Initialization
 
@@ -160,15 +170,28 @@ PROCESS_THREAD(master_config, ev, data){
 				}
 				if((ev = etimer_expired(&et_timeout)) && (flag_mote_added == false)) break;
 			}
-
 			
+
 		break;
 		case STATUS_WORKING:
 
 		break;
 	}
 
+	#else
+	#endif
+
 	PROCESS_END();
+}
+
+void send_motes(void){
+	static uint8_t i;
+	static uint8_t j;
+	for(j = 0; j < list_length(motes_list); j+=5){
+		for(i = 0; i < 5; i++){
+			
+		}
+	}
 }
 
 bool add_MOTE(uint8_t ID){

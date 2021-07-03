@@ -4,7 +4,6 @@
 *.map
 *.hex
 *.elf
-<<<<<<< HEAD
 *.zoul
 *.z1
 *.bin
@@ -14,10 +13,8 @@
 #########
 symbols.h
 symbols.c
-=======
 *.a
 *.z1
->>>>>>> 2fd415ab062a3bf810882c723ed726ddb8981ed5
 
 # Folders #
 ###########

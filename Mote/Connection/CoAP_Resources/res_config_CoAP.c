@@ -43,12 +43,12 @@
 #include <string.h>
 #include "contiki.h"
 #include "rest-engine.h"
-#include "master.h"
+#include "../../master.h"
 #include "stdbool.h"
 #include "stdlib.h"
 
 #include "msg.h"
-#include "states.h"
+#include "../../states.h"
 
 extern ROLE_t node_role;
 extern MODE_t node_mode;
