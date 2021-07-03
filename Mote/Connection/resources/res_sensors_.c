@@ -45,7 +45,6 @@
 #include "rest-engine.h"
 #include "master.h"
 #include "stdbool.h"
-#include "stdlib.h"
 
 #include "msg.h"
 

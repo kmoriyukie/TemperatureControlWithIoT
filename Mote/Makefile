@@ -10,7 +10,7 @@ endif
 
 APPS += er-coap
 APPS += rest-engine
-APPS += mqtt
+# APPS += mqtt
 
 
 

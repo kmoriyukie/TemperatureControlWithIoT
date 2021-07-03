@@ -23,34 +23,6 @@ static struct slave
 static struct slave child_list[BUFFER_SIZE];
 
 /*---------------------------------------------------------------------------*/
-
-void readJSON(const char *json, float *params, const int nParams){
-    const static char sep1[] = ":";
-    const static char sep2[] = ",";
-    const static char sep3[] = "}";
-    char *ptr1;
-    char *ptr2;
-    char buff[16];
-    
-    int i,j;
-    for(i = 0; i < nParams; i++){
-        if(i == 0){
-            ptr1 = strstr(json,sep1);
-            ptr2 = strstr(json,sep2);
-        }
-        else{
-            if(i == nParams-1) ptr2 = strstr(ptr2+1,sep3);
-            else ptr2 = strstr(ptr2+1,sep2);
-        }
-        memset(buff,0,16);
-        for(j = 2; j < (ptr2-ptr1); j++){
-            buff[j-2] = ptr1[j];
-        }
-        params[i] = atof(buff);
-        ptr1 = strstr(ptr1+1,sep1);
-    }
-}
-/*---------------------------------------------------------------------------*/
 static void pub_handler(const char *topic, uint16_t topic_len, const uint8_t *chunk,
             uint16_t chunk_len)
 {

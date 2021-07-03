@@ -10,7 +10,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#define DEBUG DEBUG_NONE
+// #define DEBUG DEBUG_NONE
 #include "net/ip/uip-debug.h"
 
 #include "net/ip/uip.h"
@@ -24,24 +24,24 @@ static uint8_t prefix_set;
 PROCESS(border_router_process, "Border router process");
 
 /*---------------------------------------------------------------------------*/
-void
-print_local_addresses(void)
-{
-  int i;
-  uint8_t state;
+// void
+// print_local_addresses(void)
+// {
+//   int i;
+//   uint8_t state;
 
-  PRINTA("Server IPv6 addresses:\n");
-  for(i = 0; i < UIP_DS6_ADDR_NB; i++) {
-    state = uip_ds6_if.addr_list[i].state;
-    if(uip_ds6_if.addr_list[i].isused &&
-       (state == ADDR_TENTATIVE || state == ADDR_PREFERRED)) {
-      PRINTA(" ");
-      uip_debug_ipaddr_print(&uip_ds6_if.addr_list[i].ipaddr);
-      PRINTA("\n");
-    }
-  }
-}
-/*---------------------------------------------------------------------------*/
+//   PRINTA("Server IPv6 addresses:\n");
+//   for(i = 0; i < UIP_DS6_ADDR_NB; i++) {
+//     state = uip_ds6_if.addr_list[i].state;
+//     if(uip_ds6_if.addr_list[i].isused &&
+//        (state == ADDR_TENTATIVE || state == ADDR_PREFERRED)) {
+//       PRINTA(" ");
+//       uip_debug_ipaddr_print(&uip_ds6_if.addr_list[i].ipaddr);
+//       PRINTA("\n");
+//     }
+//   }
+// }
+// /*---------------------------------------------------------------------------*/
 void
 request_prefix(void)
 {
@@ -91,7 +91,7 @@ PROCESS_THREAD(border_router_process, ev, data)
 
   NETSTACK_MAC.off(1);
 
-  print_local_addresses();
+  // print_local_addresses();
 
   while(1) {
     PROCESS_YIELD();

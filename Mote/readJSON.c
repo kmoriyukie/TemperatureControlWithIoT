@@ -2,6 +2,7 @@
 #include "string.h"
 #include "stdint.h"
 
+/*
 void readJSON_i(const char *json, int *params){
     const static char sep1[] = ":";
     const static char sep2[] = ",";
@@ -58,6 +59,7 @@ void readJSON_f(const char *json, float *params){
         i++;
     }
 }
+*/
 
 void readJSON_uf(const char *json, uint8_t *params_u, float *params_f){
     const static char sep1[] = ":";
