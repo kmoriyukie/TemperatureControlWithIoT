@@ -1,14 +1,8 @@
-#include "contiki-conf.h"
-#include "rpl/rpl-private.h"
 #include "mqtt.h"
 #include "net/rpl/rpl.h"
-#include "net/ip/uip.h"
-#include "net/ipv6/uip-icmp6.h"
 #include "net/ipv6/sicslowpan.h"
 #include "sys/etimer.h"
 #include "sys/ctimer.h"
-#include "lib/sensors.h"
-#include "dev/leds.h"
 
 #include <string.h>
 
@@ -76,8 +70,6 @@ static uint8_t state;
 #define STATE_CONFIG_ERROR         0xFE
 #define STATE_ERROR                0xFF
 /*---------------------------------------------------------------------------*/
-#define CONFIG_EVENT_TYPE_ID_LEN     32
-#define CONFIG_CMD_TYPE_LEN          32
 #define CONFIG_IP_ADDR_STR_LEN       64
 /*---------------------------------------------------------------------------*/
 /* A timeout used when waiting to connect to a network */
@@ -87,9 +79,7 @@ static uint8_t state;
  * \brief Data structure declaration for the MQTT client configuration
  */
 typedef struct mqtt_client_config {
-  char event_type_id[CONFIG_EVENT_TYPE_ID_LEN];
-  char broker_ip[CONFIG_IP_ADDR_STR_LEN];
-  char cmd_type[CONFIG_CMD_TYPE_LEN];  
+  char broker_ip[CONFIG_IP_ADDR_STR_LEN];  
   clock_time_t pub_interval;
   uint16_t broker_port;
 } mqtt_client_config_t;
