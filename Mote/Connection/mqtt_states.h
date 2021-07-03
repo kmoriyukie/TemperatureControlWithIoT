@@ -1,0 +1,22 @@
+#ifndef MQTT_STATES_H_
+#define MQTT_STATES_H_
+
+typedef enum{
+	RECEIVE_NONE,
+	RECEIVE_CONFIG_CLOUDMODE_MODE,
+	RECEIVE_CONFIG_CLOUDMODE_SETCONFIG,
+	RECEIVE_CONFIG_IDS_ACK,
+	RECEIVE_CONFIG_IDS_REMLOC
+} receive_mqtt_t;
+
+typedef enum{
+	SEND_NONE,
+	SEND_CONFIG_CLOUDMODE_REQUEST,
+	SEND_CONFIG_IDS_REMLOC,
+	SEND_CONFIG_IDS_ACK
+} send_mqtt_t;
+
+static receive_mqtt_t RECEIVE_MODE;
+static send_mqtt_t SEND_MODE;
+
+#endif

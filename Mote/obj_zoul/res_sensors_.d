@@ -1,4 +1,4 @@
-obj_zoul/res_sensors_.o: Connection/resources/res_sensors_.c \
+obj_zoul/res_sensors_.o: Connection/CoAP_Resources/res_sensors_.c \
  ../../../contiki/core/./contiki.h \
  ../../../contiki/core/./contiki-version.h \
  ../../../contiki/platform/zoul/./contiki-conf.h project-conf.h \
@@ -29,7 +29,7 @@ obj_zoul/res_sensors_.o: Connection/resources/res_sensors_.c \
  ../../../contiki/core/./lib/mmem.h ../../../contiki/core/./lib/random.h \
  ../../../contiki/apps/rest-engine/rest-constants.h master.h \
  ../../../contiki/core/lib/list.h Connection/msg.h
-Connection/resources/res_sensors_.c :
+Connection/CoAP_Resources/res_sensors_.c :
  ../../../contiki/core/./contiki.h :
  ../../../contiki/core/./contiki-version.h :
  ../../../contiki/platform/zoul/./contiki-conf.h project-conf.h :

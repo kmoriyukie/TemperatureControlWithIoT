@@ -99,11 +99,11 @@
 /* Specific platform values */
 #if CONTIKI_TARGET_ZOUL
 #define BUFFER_SIZE                  64
-#define APP_BUFFER_SIZE              512
+#define APP_BUFFER_SIZE              128
 
 #else /* Default is Z1 */
-#define BUFFER_SIZE                  48
-#define APP_BUFFER_SIZE              256
+#define BUFFER_SIZE                  64
+#define APP_BUFFER_SIZE              128
 #define BOARD_STRING                 "Zolertia Z1 Node"
 #undef NBR_TABLE_CONF_MAX_NEIGHBORS
 #define NBR_TABLE_CONF_MAX_NEIGHBORS 3
@@ -116,6 +116,10 @@
 
 /* Maximum TCP segment size for outgoing segments of our socket */
 #define MAX_TCP_SEGMENT_SIZE       32
+
+
+#undef LPM_CONF_ENABLE
+#define LPM_CONF_ENABLE 0
 
 
 /*---------------------------------------------------------------------------*/

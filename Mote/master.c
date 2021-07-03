@@ -107,6 +107,9 @@ bool pop_packet(struct slave_msg_t **packet){
 /*----------Config----------*/
 /*--------------------------*/
 
+extern struct process border_router_process; //  /Connection/BorderRouter.c
+extern struct process MQTTServerProcess; //  /Connection/mqttServer.c
+
 PROCESS(master_config, "Master Config");
 
 PROCESS_THREAD(master_config, ev, data){
@@ -114,8 +117,10 @@ PROCESS_THREAD(master_config, ev, data){
 
 	list_init(motes_list);
 
-	
+	process_start(&border_router_process, "Border Router process");
 
+	process_start(&MQTTServerProcess, "MQTT Server process");
+	
 	process_start(&coap_server_process, "CoAP process");
 
 
