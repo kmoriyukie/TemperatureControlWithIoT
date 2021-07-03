@@ -1,6 +1,8 @@
 #include "slave.h"
 
 #include "contiki.h"
+#include "contiki-net.h"
+#include "er-coap-engine.h"
 
 #if CONTIKI_TARGET_ZOUL
 #include "dev/zoul-sensors.h"
@@ -9,6 +11,7 @@
 #include "sens_humidity.h"
 #include "sens_airflow.h"
 #include "sens_battery.h"
+#include <sys/node-id.h>
 #endif
 
 #include "stdint.h"
@@ -160,12 +163,56 @@ void exit_slave_working(void){
 /*----------Config----------*/
 /*--------------------------*/
 
+static uip_ipaddr_t server_ipaddr;
+
+#define REMOTE_PORT     UIP_HTONS(COAP_DEFAULT_PORT)
+#define SERVER_NODE(ipaddr)   uip_ip6addr(ipaddr, 0xfd00, 0, 0, 0, 0, 0, 0, 0x1) // Address of VM on TunSlip6 - fd00::1 
+
+void client_chunk_handler(void *response);
+
 PROCESS(slave_config, "Slave Config");
 
 PROCESS_THREAD(slave_config, ev, data){
 	PROCESS_BEGIN();
 
+	// CoAP Initialization
+	static struct etimer et_timeout;
+  	static coap_packet_t request[1];
+  	SERVER_NODE(&server_ipaddr);
+  	coap_init_engine();
 
+  	etimer_set(&et_timeout, TIMOUT * CLOCK_SECOND);
+
+  	static char msg[128];
+
+  	while(true) {
+  		PROCESS_YIELD();
+
+  		if(etimer_expired(&et_timeout)){
+  			coap_init_message(request, COAP_TYPE_CON, COAP_POST, 0);
+
+			char *fullURL = "config";
+
+			coap_set_header_uri_path(request, fullURL);
+
+			printf(fullURL);
+			printf("\n");
+
+			#if CONTIKI_TARGET_ZOUL
+				sprintf(msg,"{\"ID\": %u}\0",IEEE_ADDR_NODE_ID);
+			#else
+				sprintf(msg,"{\"ID\": %u}\0",node_id);
+			#endif
+
+			coap_set_payload(request, (uint8_t *)msg, sizeof(msg) - 1);
+
+			COAP_BLOCKING_REQUEST(&server_ipaddr, REMOTE_PORT, request,
+			                    client_chunk_handler);
+
+			etimer_reset(&et_timeout);
+  		}
+
+  }
 
 	PROCESS_END();
 }
@@ -177,3 +224,94 @@ void exec_slave_config(void){
 void exit_slave_config(void){
 	process_exit(&slave_config);
 }
+
+
+
+// PROCESS(CoAP_Client, "CoAP Client");
+// AUTOSTART_PROCESSES(&er_example_client);
+
+// uip_ipaddr_t server_ipaddr;
+
+// #define NUMBER_OF_URLS 4
+
+void client_chunk_handler(void *response){
+  int len = 0;
+  const uint8_t *payload = NULL;
+
+  coap_get_payload(response, &payload);
+
+  printf("Payload: %s\n", payload);
+
+  //Stop Condition
+
+  /*
+  // REST.get_response_payload(response, "asd", 16);
+
+  printf("Reply Received! Code: %d\n",returnCode);
+  if(returnCode==COAP_RESPONSE_NOT_FOUND){
+    printf("Service Not Found!\n\n");
+  }else{
+    if(returnCode==COAP_RESPONSE_OK){
+      printf("OK!\n");
+    }else{
+      printf("Server Error!\n\n");
+    }
+  }*/
+}
+
+// PROCESS_THREAD(CoAP_Client, ev, data)
+// {
+//   PROCESS_BEGIN();
+
+//   static struct etimer et;
+
+//   static coap_packet_t request[1];      /* This way the packet can be treated as pointer as usual. */
+
+//   SERVER_NODE(&server_ipaddr);
+
+//   /* receives all CoAP messages */
+//   coap_init_engine();
+
+//   //etimer_set(&et, TOGGLE_INTERVAL * CLOCK_SECOND);
+
+//     // SENSORS_ACTIVATE(button_sensor);
+
+//   char msg[100];
+//   uint8_t mode = 0;
+
+
+//   while(1) {
+//     PROCESS_YIELD();
+
+//     if(ev == sensors_event && data == &button_sensor) {
+
+//       printf("--Toggle timer--\n");
+
+//       //coap_init_message(request, COAP_TYPE_CON, COAP_PUT, 0);
+//       //coap_init_message(request, COAP_TYPE_CON, COAP_GET, 0);
+
+//       coap_init_message(request, COAP_TYPE_CON, COAP_POST, 0);
+
+//       char *fullURL = "actuators/toggle";
+//       //char *fullURL = "actuators/leds";
+//       coap_set_header_uri_path(request, fullURL);
+//       //coap_set_header_uri_query(request,"?len=10");
+
+//       printf(fullURL);
+//       printf("\n");
+
+//       //sprintf(msg,"mode=on");
+//       //coap_set_payload(request, (uint8_t *)msg, sizeof(msg) - 1);
+
+//       COAP_BLOCKING_REQUEST(&server_ipaddr, REMOTE_PORT, request,
+//                             client_chunk_handler);
+
+//       printf("\n--Done--\n");
+
+//       etimer_reset(&et);
+//     }
+
+//   }
+
+//   PROCESS_END();
+// }

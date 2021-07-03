@@ -104,13 +104,19 @@ static void res_post_handler(void *request, void *response, uint8_t *buffer, uin
 	if((node_role != MASTER) && (node_mode != CONFIG)) return;
 	static uint8_t *incoming = NULL;
 	static uint8_t size = 0;
-	size = REST.get_request_payload(request,(const uint8_t **)&incoming);
+	REST.get_request_payload(request,(const uint8_t **)&incoming);
+	size = strlen(incoming);
 	if(size > 11 || size < 9){
+		// printf("Size error: %u\n",size);
+		// char bla[64];
+		// memcpy(bla,incoming,size);
+		// printf("Merda: %s\n", bla);
 		REST.set_response_payload(response, MSG_ERROR_INVALID_PARAMETERS, 16);
 		return;
 	}
 	static char json[11];
 	memcpy(json,incoming,size);
+	// printf("Received: %s\n", json);
 
 	static int params[1];
 	readJSON_uf(json, params,NULL);
