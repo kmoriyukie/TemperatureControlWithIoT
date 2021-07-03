@@ -42,6 +42,8 @@
 
 #include "mqtt_states.h"
 
+#include "mqttCOM.h"
+
 //#include "res_config_mqtt.c"
 
 extern receive_mqtt_t RECEIVE_MODE;
@@ -67,13 +69,13 @@ void pub_handler(const char *topic, uint16_t topic_len, const uint8_t *chunk,
   printf("Pub Handler: topic='%s' (len=%u), chunk_len=%u, content: %s\n", topic, topic_len, chunk_len, chunk);
   
 
-  if(strcmp((char *)topic,CONFIG_CLOUDMODE_TOPIC)==0){
+  if(strcmp((char *)topic,CONFIG_CLOUD_CLOUDMODE_TOPIC)==0){
     printf("%s\n", topic);
-    receive_cloudmode();
+    receive_cloudmode(chunk,chunk_len);
     return;
   }
 
-  if(strcmp((char *)topic,CONFIG_ID_TOPIC)==0){
+  if(strcmp((char *)topic,CONFIG_CLOUD_ID_TOPIC)==0){
     printf("%s\n", topic);
     receive_ids();
     return;
@@ -184,28 +186,22 @@ void subscribe(void)
 {
   mqtt_status_t status;
 
-  status = mqtt_subscribe(&conn, NULL, sub_topic, MQTT_QOS_LEVEL_0);
+  status = mqtt_subscribe(&conn, NULL, CONFIG_CLOUD_CLOUDMODE_TOPIC, MQTT_QOS_LEVEL_0);
 
-  printf("APP - Subscribing to %s\n", sub_topic);
+  printf("APP - Subscribing to %s\n", CONFIG_CLOUD_CLOUDMODE_TOPIC);
   if(status == MQTT_STATUS_OUT_QUEUE_FULL) {
     printf("APP - Tried to subscribe but command queue was full!\n");
   }
 
-  status = mqtt_subscribe(&conn, NULL, CONFIG_CLOUDMODE_TOPIC, MQTT_QOS_LEVEL_0);
+  status = mqtt_subscribe(&conn, NULL, CONFIG_CLOUD_ID_TOPIC, MQTT_QOS_LEVEL_0);
 
-  printf("APP - Subscribing to %s\n", CONFIG_CLOUDMODE_TOPIC);
-  if(status == MQTT_STATUS_OUT_QUEUE_FULL) {
-    printf("APP - Tried to subscribe but command queue was full!\n");
-  }
-
-  status = mqtt_subscribe(&conn, NULL, CONFIG_ID_TOPIC, MQTT_QOS_LEVEL_0);
-
-  printf("APP - Subscribing to %s\n", CONFIG_ID_TOPIC);
+  printf("APP - Subscribing to %s\n", CONFIG_CLOUD_ID_TOPIC);
   if(status == MQTT_STATUS_OUT_QUEUE_FULL) {
     printf("APP - Tried to subscribe but command queue was full!\n");
   }
 }
 /*---------------------------------------------------------------------------*/
+/*
 static void publish_test(void)
 {
   int len;
@@ -232,7 +228,7 @@ static void publish_test(void)
 
   remaining -= len;
   buf_ptr += len;*/
-
+/*
   len = snprintf(buf_ptr, remaining, "}");
 
   if(len < 0 || len >= remaining) {
@@ -244,7 +240,7 @@ static void publish_test(void)
                strlen(app_buffer), MQTT_QOS_LEVEL_0, MQTT_RETAIN_OFF);
 
   printf("APP - Publish to %s: %s\n", pub_topic, app_buffer);
-}
+}*/
 
 /*---------------------------------------------------------------------------*/
 static void state_machine(void)
@@ -272,7 +268,7 @@ static void state_machine(void)
     break;
 
   case STATE_CONNECTING:
-    leds_on(LEDS_GREEN);
+    // leds_on(LEDS_GREEN);
     ctimer_set(&ct, CONNECTING_LED_DURATION, NULL, NULL);
     printf("Connecting (%u)\n", connect_attempt);
     break;
@@ -295,11 +291,14 @@ static void state_machine(void)
 
         switch(SEND_MODE){
           case SEND_NONE:
+            printf("MODE NONE\n");
           break;
           case SEND_CONFIG_CLOUDMODE_REQUEST:
+            printf("MODE CLOUDMODE\n");
             send_cloudmode();
           break;
           case SEND_CONFIG_IDS_REMLOC: case SEND_CONFIG_IDS_ACK:
+            printf("MODE IDS\n");
             send_ids();
           break;
         }
@@ -376,3 +375,42 @@ PROCESS_THREAD(MQTTServerProcess, ev, data)
   PROCESS_END();
 }
 /*---------------------------------------------------------------------------*/
+
+void mqttcom_pub(char *topic, char *msg){
+  // int len;
+  // int remaining = APP_BUFFER_SIZE;
+
+  // buf_ptr = app_buffer;
+
+  // len = snprintf(buf_ptr, remaining,
+  //                "{"
+  //                "\"Id\":\"%u\","
+  //                "\"Timestamp\":\"%ld\"",
+  //                IEEE_ADDR_NODE_ID, clock_seconds()*1000);
+
+  // if(len < 0 || len >= remaining) {
+  //   printf("Buffer too short. Have %d, need %d + \\0\n", remaining, len);
+  //   return;
+  // }
+
+  // remaining -= len;
+  // buf_ptr += len;
+
+  // len = snprintf(buf_ptr, remaining, "}");
+
+  // if(len < 0 || len >= remaining) {
+  //   printf("Buffer too short. Have %d, need %d + \\0\n", remaining, len);
+  //   return;
+  // }
+
+  printf("MQTTPUB -> TOPIC: %s\n    MSG: %s    Size: %u\n", topic,msg,strlen(msg));
+
+  mqtt_publish(&conn, NULL, topic, (uint8_t *)msg,
+               strlen(msg), MQTT_QOS_LEVEL_0, MQTT_RETAIN_OFF);
+
+  printf("APP - Publish to %s: %s\n", pub_topic, app_buffer);
+}
+
+// void mqttcom_rec(char *msg,uint16_t len){
+
+// }

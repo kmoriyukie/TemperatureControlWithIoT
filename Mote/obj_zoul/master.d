@@ -27,7 +27,8 @@ obj_zoul/master.o: master.c master.h ../../../contiki/core/./contiki.h \
  ../../../contiki/cpu/cc2538/./dev/cc2538-sensors.h \
  ../../../contiki/cpu/cc2538/./dev/cc2538-temp-sensor.h \
  ../../../contiki/cpu/cc2538/./dev/vdd3-sensor.h \
- ../../../contiki/platform/zoul/./dev/button-sensor.h
+ ../../../contiki/platform/zoul/./dev/button-sensor.h \
+ Connection/mqtt_states.h
 master.c master.h ../../../contiki/core/./contiki.h :
  ../../../contiki/core/./contiki-version.h :
  ../../../contiki/platform/zoul/./contiki-conf.h project-conf.h :
@@ -58,3 +59,4 @@ master.c master.h ../../../contiki/core/./contiki.h :
  ../../../contiki/cpu/cc2538/./dev/cc2538-temp-sensor.h :
  ../../../contiki/cpu/cc2538/./dev/vdd3-sensor.h :
  ../../../contiki/platform/zoul/./dev/button-sensor.h :
+ Connection/mqtt_states.h :

@@ -1,6 +1,9 @@
-#include "stdlib.h"
-#include "string.h"
+// #include "stdlib.h"
+// #include "string.h"
 #include "stdint.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /*
 void readJSON_i(const char *json, int *params){

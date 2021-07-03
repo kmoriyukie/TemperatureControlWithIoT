@@ -47,8 +47,11 @@
 #include "stdbool.h"
 #include "stdlib.h"
 
- #include "msg.h"
+#include "msg.h"
+#include "states.h"
 
+extern ROLE_t node_role;
+extern MODE_t node_mode;
 
 static void res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
 
@@ -62,6 +65,7 @@ RESOURCE(res_config,
          NULL);
 
 static void res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset){
+	if((node_role != MASTER) && (node_mode != CONFIG)) return;
 	static uint8_t size = 0;
 
 	const char *par = NULL;
@@ -97,6 +101,7 @@ static void res_get_handler(void *request, void *response, uint8_t *buffer, uint
 }
 
 static void res_post_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset){
+	if((node_role != MASTER) && (node_mode != CONFIG)) return;
 	static uint8_t *incoming = NULL;
 	static uint8_t size = 0;
 	size = REST.get_request_payload(request,(const uint8_t **)&incoming);

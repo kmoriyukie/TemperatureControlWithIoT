@@ -12,6 +12,11 @@ MODE_t node_mode = CONFIG;
 
 task_running_t task_running = NONE;
 
+// extern ROLE_t node_role;
+// extern MODE_t node_mode;
+
+// extern task_running_t task_running;
+
 void (*blink_event_handle)(void);//0brgb
 
 void initialize_states(void (*handle)(void)){

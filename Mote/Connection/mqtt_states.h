@@ -16,7 +16,15 @@ typedef enum{
 	SEND_CONFIG_IDS_ACK
 } send_mqtt_t;
 
-static receive_mqtt_t RECEIVE_MODE;
-static send_mqtt_t SEND_MODE;
+
+typedef enum{
+	STATUS_UNDEFINED,
+	STATUS_CONFIG,
+	STATUS_WORKING
+} cloudmode_t;
+
+receive_mqtt_t RECEIVE_MODE;
+send_mqtt_t SEND_MODE;
+cloudmode_t CLOUD_MODE;
 
 #endif

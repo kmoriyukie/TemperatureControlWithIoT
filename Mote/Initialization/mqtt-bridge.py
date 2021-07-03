@@ -19,7 +19,7 @@ LOCAL_MQTT_URL = "localhost"
 # You may also try "test.mosquitto.org"
 
 # A topic to get information from the zolertia board(s):	 
-SENSORS_TOPIC = "mote/send"
+# SENSORS_TOPIC = "mote/send"
 
 # Address of the Cloud MQTT Broker:
 CLOUD_MQTT_URL = "a2aqpcbaxix62g-ats.iot.eu-west-1.amazonaws.com"
@@ -28,15 +28,22 @@ CERT_PEM_FILE = "/home/user/GitHub/TemperatureControlWithIoT/Mote/Initialization
 PRIVATE_KEY_FILE = "/home/user/GitHub/TemperatureControlWithIoT/Mote/Initialization/iot_certs/9b94e0ec55-private.pem.key"
 
 # A topic to get information from the cloud:	 
-CLOUD_TOPIC = "zolertia/leds"
+CONFIG_MOTE_CLOUDMODE_TOPIC = "config/mote/cloudmode"
+CONFIG_CLOUD_CLOUDMODE_TOPIC = "config/cloud/cloudmode"
+
+CONFIG_MOTE_ID_TOPIC = "config/mote/ids"
+CONFIG_CLOUD_ID_TOPIC = "config/cloud/ids"
 
 #########################################################################
 
 # Callback for initial local network connection:
 def on_connect(local_client, userdata, flags, rc):
     print("Connected to local MQTT broker with result code " + str(rc))
-    local_client.subscribe(SENSORS_TOPIC)
-    print("Subscribed to local topic: " + SENSORS_TOPIC + "\n")
+    local_client.subscribe(CONFIG_MOTE_CLOUDMODE_TOPIC)
+    print("Subscribed to local topic: " + CONFIG_MOTE_CLOUDMODE_TOPIC + "\n")
+
+    local_client.subscribe(CONFIG_MOTE_ID_TOPIC)
+    print("Subscribed to local topic: " + CONFIG_MOTE_ID_TOPIC + "\n")
 
 # Callback for received message in the local network:
 def on_local_message(local_client, userdata, msg):
@@ -61,8 +68,12 @@ cloud_client.tls_set(CERTIFICATE_AUTH_FILE, CERT_PEM_FILE, PRIVATE_KEY_FILE, tls
 cloud_client.tls_insecure_set(False)
 cloud_client.connect(CLOUD_MQTT_URL, 8883, 60)
 print("Connected to the Cloud MQTT Broker.")
-cloud_client.subscribe(CLOUD_TOPIC)
-print("Subscribed to cloud topic: " + CLOUD_TOPIC + "\n")
+
+cloud_client.subscribe(CONFIG_CLOUD_CLOUDMODE_TOPIC)
+print("Subscribed to cloud topic: " + CONFIG_CLOUD_CLOUDMODE_TOPIC + "\n")
+
+cloud_client.subscribe(CONFIG_CLOUD_ID_TOPIC)
+print("Subscribed to cloud topic: " + CONFIG_CLOUD_ID_TOPIC + "\n")
 
 # Then conect to the Local MQTT Client:
 local_client = mqtt.Client()

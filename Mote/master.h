@@ -9,6 +9,8 @@
 #define MTRY 3
 #define TIMOUT 5 //Seconds
 
+#define DISC_TIMOUT 20 //Seconds
+
 #include "contiki.h"
 #include "list.h"
 #include "stdbool.h"

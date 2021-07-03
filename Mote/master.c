@@ -9,8 +9,13 @@
 #include "msg.h"
 // #include "stdbool.h"
 #include "stdlib.h"
-
 #include "stdio.h"
+
+#include "mqtt_states.h"
+
+extern receive_mqtt_t RECEIVE_MODE;
+extern send_mqtt_t SEND_MODE;
+extern cloudmode_t CLOUD_MODE;
 
 extern struct process coap_server_process; //  /Connection/CoAPServer.c
 
@@ -110,10 +115,17 @@ bool pop_packet(struct slave_msg_t **packet){
 extern struct process border_router_process; //  /Connection/BorderRouter.c
 extern struct process MQTTServerProcess; //  /Connection/mqttServer.c
 
+static bool flag_mote_added = false;
+
 PROCESS(master_config, "Master Config");
 
 PROCESS_THREAD(master_config, ev, data){
 	PROCESS_BEGIN();
+
+	// Initialization
+
+	RECEIVE_MODE = RECEIVE_NONE;
+	SEND_MODE = SEND_NONE;
 
 	list_init(motes_list);
 
@@ -123,7 +135,38 @@ PROCESS_THREAD(master_config, ev, data){
 	
 	process_start(&coap_server_process, "CoAP process");
 
+	// Configuration
 
+	RECEIVE_MODE = RECEIVE_NONE;
+	SEND_MODE = SEND_CONFIG_CLOUDMODE_REQUEST;
+
+
+	while(CLOUD_MODE == STATUS_UNDEFINED){
+		PROCESS_YIELD();
+	}
+
+	static struct etimer et_timeout;
+
+	switch(CLOUD_MODE){
+		case STATUS_UNDEFINED:
+		break;
+		case STATUS_CONFIG:
+			etimer_set(&et_timeout, DISC_TIMOUT*CLOCK_SECOND);
+			while(true){
+				PROCESS_YIELD();
+				if(flag_mote_added){
+					flag_mote_added = false;
+					etimer_reset(&et_timeout);
+				}
+				if((ev = etimer_expired(&et_timeout)) && (flag_mote_added == false)) break;
+			}
+
+			
+		break;
+		case STATUS_WORKING:
+
+		break;
+	}
 
 	PROCESS_END();
 }
@@ -137,6 +180,7 @@ bool add_MOTE(uint8_t ID){
 		mote->local_id = ID;
 		mote->remote_id = 0;
 		list_add(motes_list,mote);
+		flag_mote_added = true;
 		return true;
 	}
 }
