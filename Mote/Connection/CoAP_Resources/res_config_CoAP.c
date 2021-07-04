@@ -49,6 +49,7 @@
 
 #include "msg.h"
 #include "../../states.h"
+#include "readJSON.h"
 
 extern ROLE_t node_role;
 extern MODE_t node_mode;
@@ -108,12 +109,17 @@ static void res_post_handler(void *request, void *response, uint8_t *buffer, uin
 	size = strlen(incoming);
 	if(size > 11 || size < 9){
 		// printf("Size error: %u\n",size);
-		// char bla[64];
-		// memcpy(bla,incoming,size);
-		// printf("Merda: %s\n", bla);
+		char bla[64];
+		memcpy(bla,incoming,size);
+		// printf("MSG");
+		// printf("MSG: %s\n", bla);
 		REST.set_response_payload(response, MSG_ERROR_INVALID_PARAMETERS, 16);
 		return;
 	}
+	char bla[64];
+	memcpy(bla,incoming,size);
+	// printf("MSG");
+	// printf("MSG: %s\n", bla);
 	static char json[11];
 	memcpy(json,incoming,size);
 	// printf("Received: %s\n", json);

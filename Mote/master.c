@@ -189,7 +189,7 @@ void send_motes(void){
 	static uint8_t j;
 	for(j = 0; j < list_length(motes_list); j+=5){
 		for(i = 0; i < 5; i++){
-			
+
 		}
 	}
 }

@@ -117,7 +117,7 @@ obj_z1/./../slave.o: ../slave.c ../slave.h \
  ../Sensors/sens_temperature.h ../../../../contiki/core/./lib/sensors.h \
  ../Sensors/sens_humidity.h ../Sensors/sens_airflow.h \
  ../Sensors/sens_battery.h ../../../../contiki/core/./sys/node-id.h \
- ../Connection/msg.h
+ ../readJSON.h ../Connection/msg.h
 ../slave.c ../slave.h :
  ../../../../contiki/core/./contiki.h :
  ../../../../contiki/core/./contiki-version.h :
@@ -237,4 +237,4 @@ obj_z1/./../slave.o: ../slave.c ../slave.h \
  ../Sensors/sens_temperature.h ../../../../contiki/core/./lib/sensors.h :
  ../Sensors/sens_humidity.h ../Sensors/sens_airflow.h :
  ../Sensors/sens_battery.h ../../../../contiki/core/./sys/node-id.h :
- ../Connection/msg.h :
+ ../readJSON.h ../Connection/msg.h :

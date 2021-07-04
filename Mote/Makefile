@@ -5,7 +5,7 @@ CONTIKI_PROJECT = main
 all: $(CONTIKI_PROJECT)
 
 ifndef NODEID
-NODEID = 0xff
+NODEID = 0x00
 endif
 
 APPS += er-coap

@@ -18,6 +18,7 @@
 #include "stdbool.h"
 #include "stdio.h"
 
+#include "readJSON.h"
 #include "msg.h"
 
 bool ID_sended = false;
@@ -171,7 +172,9 @@ static uip_ipaddr_t server_ipaddr;
 #define REMOTE_PORT     UIP_HTONS(COAP_DEFAULT_PORT)
 #define SERVER_NODE(ipaddr)   uip_ip6addr(ipaddr, 0xfd00, 0, 0, 0, 0, 0, 0, 0x1) // Address of VM on TunSlip6 - fd00::1 
 
-void client_chunk_handler(void *response);
+void config_post_handler(void *response);
+
+void config_get_handler(void *response);
 
 PROCESS(slave_config, "Slave Config");
 
@@ -192,7 +195,7 @@ PROCESS_THREAD(slave_config, ev, data){
   		PROCESS_YIELD();
 
   		if(etimer_expired(&et_timeout)){
-  			coap_init_message(request, COAP_TYPE_CON, COAP_GET, 0);
+  			coap_init_message(request, COAP_TYPE_CON, COAP_POST, 0);
 
 			char *confgURL = "config";
 
@@ -212,7 +215,7 @@ PROCESS_THREAD(slave_config, ev, data){
 			COAP_BLOCKING_REQUEST(&server_ipaddr, REMOTE_PORT, request,
 			                    config_post_handler);
 
-
+			printf("End of Q\n");
 			// if(ID_sended) break;
 
 			etimer_reset(&et_timeout);
@@ -226,7 +229,7 @@ PROCESS_THREAD(slave_config, ev, data){
   		PROCESS_YIELD();
 
   		if(etimer_expired(&et_timeout)){
-  			coap_init_message(request, COAP_TYPE_CON, COAP_POST, 0);
+  			coap_init_message(request, COAP_TYPE_CON, COAP_GET, 0);
 
 			char getremoteidURL[15];
 
@@ -286,13 +289,16 @@ void config_post_handler(void *response){
   int len = 0;
   const uint8_t *payload = NULL;
 
+  printf("Post Handler\n");
+
   coap_get_payload(response, &payload);
+  printf("Post Handler: %s\n", payload);
 
   static int params[1];
 
   readJSON_uf(payload, params,NULL);
 
-  if((params[0] == 1) && (params[0] == -2)) ID_sended = true;
+  if((params[0] == 1) || (params[0] == -2)) ID_sended = true;
   else ID_sended = false;
 }
 
@@ -302,7 +308,9 @@ void config_get_handler(void *response){
 
   coap_get_payload(response, &payload);
 
-  // static int params[1];
+  printf("Get Handler: %s\n", payload);
+
+  static int params[1];
 
   readJSON_uf(payload, params,NULL);
   
@@ -310,59 +318,3 @@ void config_get_handler(void *response){
   else remote_ID = 0;
 }
 
-// PROCESS_THREAD(CoAP_Client, ev, data)
-// {
-//   PROCESS_BEGIN();
-
-//   static struct etimer et;
-
-//   static coap_packet_t request[1];      /* This way the packet can be treated as pointer as usual. */
-
-//   SERVER_NODE(&server_ipaddr);
-
-//   /* receives all CoAP messages */
-//   coap_init_engine();
-
-//   //etimer_set(&et, TOGGLE_INTERVAL * CLOCK_SECOND);
-
-//     // SENSORS_ACTIVATE(button_sensor);
-
-//   char msg[100];
-//   uint8_t mode = 0;
-
-
-//   while(1) {
-//     PROCESS_YIELD();
-
-//     if(ev == sensors_event && data == &button_sensor) {
-
-//       printf("--Toggle timer--\n");
-
-//       //coap_init_message(request, COAP_TYPE_CON, COAP_PUT, 0);
-//       //coap_init_message(request, COAP_TYPE_CON, COAP_GET, 0);
-
-//       coap_init_message(request, COAP_TYPE_CON, COAP_POST, 0);
-
-//       char *fullURL = "actuators/toggle";
-//       //char *fullURL = "actuators/leds";
-//       coap_set_header_uri_path(request, fullURL);
-//       //coap_set_header_uri_query(request,"?len=10");
-
-//       printf(fullURL);
-//       printf("\n");
-
-//       //sprintf(msg,"mode=on");
-//       //coap_set_payload(request, (uint8_t *)msg, sizeof(msg) - 1);
-
-//       COAP_BLOCKING_REQUEST(&server_ipaddr, REMOTE_PORT, request,
-//                             client_chunk_handler);
-
-//       printf("\n--Done--\n");
-
-//       etimer_reset(&et);
-//     }
-
-//   }
-
-//   PROCESS_END();
-// }
