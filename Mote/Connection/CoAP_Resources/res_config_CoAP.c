@@ -121,6 +121,11 @@ static void res_post_handler(void *request, void *response, uint8_t *buffer, uin
 	static int params[1];
 	readJSON_uf(json, params,NULL);
 
+	if(params[0] <= 0){
+		REST.set_response_payload(response, MSG_ERROR_INVALID_PARAMETERS, 16);
+		return;
+	}
+
 	if(add_MOTE((uint8_t) params[0])) REST.set_response_payload(response, MSG_SUCCESS, 15);
 	else REST.set_response_payload(response, MSG_MOTE_ALREADY_EXISTS, 16);
 }

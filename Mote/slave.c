@@ -20,6 +20,9 @@
 
 #include "msg.h"
 
+bool ID_sended = false;
+uint8_t remote_ID = 0;
+
 /*---------------------------*/
 /*----------Working----------*/
 /*---------------------------*/
@@ -185,17 +188,17 @@ PROCESS_THREAD(slave_config, ev, data){
 
   	static char msg[128];
 
-  	while(true) {
+  	while(!ID_sended) {
   		PROCESS_YIELD();
 
   		if(etimer_expired(&et_timeout)){
-  			coap_init_message(request, COAP_TYPE_CON, COAP_POST, 0);
+  			coap_init_message(request, COAP_TYPE_CON, COAP_GET, 0);
 
-			char *fullURL = "config";
+			char *confgURL = "config";
 
-			coap_set_header_uri_path(request, fullURL);
+			coap_set_header_uri_path(request, confgURL);
 
-			printf(fullURL);
+			printf(confgURL);
 			printf("\n");
 
 			#if CONTIKI_TARGET_ZOUL
@@ -207,12 +210,57 @@ PROCESS_THREAD(slave_config, ev, data){
 			coap_set_payload(request, (uint8_t *)msg, sizeof(msg) - 1);
 
 			COAP_BLOCKING_REQUEST(&server_ipaddr, REMOTE_PORT, request,
-			                    client_chunk_handler);
+			                    config_post_handler);
+
+
+			// if(ID_sended) break;
+
+			etimer_reset(&et_timeout);
+  		}
+  	}
+
+  	printf("ID sended. Waiting for remote ID.\n");
+
+  	etimer_reset(&et_timeout);
+  	while(remote_ID == 0){
+  		PROCESS_YIELD();
+
+  		if(etimer_expired(&et_timeout)){
+  			coap_init_message(request, COAP_TYPE_CON, COAP_POST, 0);
+
+			char getremoteidURL[15];
+
+			#if CONTIKI_TARGET_ZOUL
+				sprintf(getremoteidURL,"config?ID=%u",IEEE_ADDR_NODE_ID);
+			#else
+				sprintf(getremoteidURL,"config?ID=%u",node_id);
+			#endif
+
+			coap_set_header_uri_path(request, getremoteidURL);
+
+			printf(getremoteidURL);
+			printf("\n");
+
+			// #if CONTIKI_TARGET_ZOUL
+			// 	sprintf(msg,"{\"ID\": %u}\0",IEEE_ADDR_NODE_ID);
+			// #else
+			// 	sprintf(msg,"{\"ID\": %u}\0",node_id);
+			// #endif
+
+			// coap_set_payload(request, (uint8_t *)msg, sizeof(msg) - 1);
+
+			COAP_BLOCKING_REQUEST(&server_ipaddr, REMOTE_PORT, request,
+			                    config_get_handler);
+
+
+			// if(ID_sended) break;
 
 			etimer_reset(&et_timeout);
   		}
 
-  }
+  		printf("Remote ID received.\n");
+
+  	}
 
 	PROCESS_END();
 }
@@ -234,29 +282,32 @@ void exit_slave_config(void){
 
 // #define NUMBER_OF_URLS 4
 
-void client_chunk_handler(void *response){
+void config_post_handler(void *response){
   int len = 0;
   const uint8_t *payload = NULL;
 
   coap_get_payload(response, &payload);
 
-  printf("Payload: %s\n", payload);
+  static int params[1];
 
-  //Stop Condition
+  readJSON_uf(payload, params,NULL);
 
-  /*
-  // REST.get_response_payload(response, "asd", 16);
+  if((params[0] == 1) && (params[0] == -2)) ID_sended = true;
+  else ID_sended = false;
+}
 
-  printf("Reply Received! Code: %d\n",returnCode);
-  if(returnCode==COAP_RESPONSE_NOT_FOUND){
-    printf("Service Not Found!\n\n");
-  }else{
-    if(returnCode==COAP_RESPONSE_OK){
-      printf("OK!\n");
-    }else{
-      printf("Server Error!\n\n");
-    }
-  }*/
+void config_get_handler(void *response){
+  int len = 0;
+  const uint8_t *payload = NULL;
+
+  coap_get_payload(response, &payload);
+
+  // static int params[1];
+
+  readJSON_uf(payload, params,NULL);
+  
+  if((params[0] > 1) && (params[0] < 255)) remote_ID = params[0];
+  else remote_ID = 0;
 }
 
 // PROCESS_THREAD(CoAP_Client, ev, data)

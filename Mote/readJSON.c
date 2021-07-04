@@ -1,6 +1,6 @@
 // #include "stdlib.h"
 // #include "string.h"
-#include "stdint.h"
+// #include "stdint.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -64,14 +64,14 @@ void readJSON_f(const char *json, float *params){
 }
 */
 
-void readJSON_uf(const char *json, uint8_t *params_u, float *params_f){
+void readJSON_uf(const char *json, int *params_u, float *params_f){
     const static char sep1[] = ":";
     const static char sep2[] = ",";
     const static char sep3[] = "}";
     char *ptr1 = NULL;
     char *ptr2 = NULL;
     char buff[16];
-    uint8_t i = 0; uint8_t f = 0;
+    int i = 0; int f = 0;
     while((i+f) == 0 || (ptr1 != NULL && ptr2 != NULL)){
         if((i+f) == 0){
             ptr1 = strstr(json,sep1);
