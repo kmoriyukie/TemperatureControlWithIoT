@@ -37,9 +37,6 @@
 #undef NETSTACK_CONF_RDC
 #define NETSTACK_CONF_RDC          nullrdc_driver
 
-#undef IEEE802154_CONF_PANID
-#define IEEE802154_CONF_PANID      0xDEEC
-
 #ifndef QUEUEBUF_CONF_NUM
 #define QUEUEBUF_CONF_NUM          4
 #endif
@@ -56,9 +53,6 @@
 #endif
 
 /* The following are Z1 specific */
-#undef RF_CHANNEL
-#define RF_CHANNEL	               26
-
 #undef CC2420_CONF_CHANNEL
 #define CC2420_CONF_CHANNEL        26
 
@@ -86,24 +80,25 @@
 #define DEFAULT_EVENT_TYPE_ID        "status"
 #define DEFAULT_SUBSCRIBE_CMD_TYPE   "leds"
 #define DEFAULT_BROKER_PORT          1883
-#define DEFAULT_PUBLISH_INTERVAL     (45 * CLOCK_SECOND)
+#define DEFAULT_PUBLISH_INTERVAL     (25 * CLOCK_SECOND)
 #define DEFAULT_KEEP_ALIVE_TIMER     60
-
+/*
 #undef IEEE802154_CONF_PANID
 #define IEEE802154_CONF_PANID        0xABCD
-
+*/
 /* The following are Zoul (RE-Mote, etc) specific */
 #undef CC2538_RF_CONF_CHANNEL
 #define CC2538_RF_CONF_CHANNEL       26
 
 /* Specific platform values */
 #if CONTIKI_TARGET_ZOUL
-#define BUFFER_SIZE                  64
-#define APP_BUFFER_SIZE              128
+#define BUFFER_SIZE                  128
+#define APP_BUFFER_SIZE              256
 
 #else /* Default is Z1 */
-#define BUFFER_SIZE                  64
-#define APP_BUFFER_SIZE              128
+#define BUFFER_SIZE                  128
+#define APP_BUFFER_SIZE              256
+#undef BOARD_STRING
 #define BOARD_STRING                 "Zolertia Z1 Node"
 #undef NBR_TABLE_CONF_MAX_NEIGHBORS
 #define NBR_TABLE_CONF_MAX_NEIGHBORS 3
@@ -123,4 +118,46 @@
 
 
 /*---------------------------------------------------------------------------*/
+
+#undef RPL_CONF_MAX_DAG_PER_INSTANCE
+#define RPL_CONF_MAX_DAG_PER_INSTANCE     1
+
+#undef NETSTACK_CONF_MAC
+#define NETSTACK_CONF_MAC     nullmac_driver
+
+/* Increase rpl-border-router IP-buffer when using more than 64. */
+#undef REST_MAX_CHUNK_SIZE
+#define REST_MAX_CHUNK_SIZE            48
+
+/* Estimate your header size, especially when using Proxy-Uri. */
+/*
+   #undef COAP_MAX_HEADER_SIZE
+   #define COAP_MAX_HEADER_SIZE           70
+ */
+
+/* Multiplies with chunk size, be aware of memory constraints. */
+#undef COAP_MAX_OPEN_TRANSACTIONS
+#define COAP_MAX_OPEN_TRANSACTIONS     4
+
+/* Must be <= open transactions, default is COAP_MAX_OPEN_TRANSACTIONS-1. */
+/*
+   #undef COAP_MAX_OBSERVERS
+   #define COAP_MAX_OBSERVERS             2
+ */
+
+/* Filtering .well-known/core per query can be disabled to save space. */
+#undef COAP_LINK_FORMAT_FILTERING
+#define COAP_LINK_FORMAT_FILTERING     0
+#undef COAP_PROXY_OPTION_PROCESSING
+#define COAP_PROXY_OPTION_PROCESSING   0
+
+/* Turn of DAO ACK to make code smaller */
+#undef RPL_CONF_WITH_DAO_ACK
+#define RPL_CONF_WITH_DAO_ACK          0
+
+#undef RPL_CONF_OF
+#define RPL_CONF_OF                    rpl_of0
+
+/* Enable client-side support for COAP observe */
+#define COAP_OBSERVE_CLIENT 1
 #endif /* PROJECT_ROUTER_CONF_H_ */
