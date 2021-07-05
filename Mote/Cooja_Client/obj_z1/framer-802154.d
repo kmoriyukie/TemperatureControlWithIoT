@@ -4,7 +4,7 @@ obj_z1/framer-802154.o: ../../../../contiki/core/net/mac/framer-802154.c \
  ../../../../contiki/core/./net/mac/frame802154.h \
  ../../../../contiki/platform/z1/./contiki-conf.h \
  ../../../../contiki/platform/z1/./platform-conf.h \
- ../../../../contiki/cpu/msp430/./msp430def.h ../project-conf.h \
+ ../../../../contiki/cpu/msp430/./msp430def.h project-conf.h \
  ../../../../contiki/core/./net/linkaddr.h \
  ../../../../contiki/core/./net/llsec/llsec802154.h \
  ../../../../contiki/core/./net/ip/uip.h \
@@ -43,7 +43,7 @@ obj_z1/framer-802154.o: ../../../../contiki/core/net/mac/framer-802154.c \
  ../../../../contiki/core/./net/mac/frame802154.h :
  ../../../../contiki/platform/z1/./contiki-conf.h :
  ../../../../contiki/platform/z1/./platform-conf.h :
- ../../../../contiki/cpu/msp430/./msp430def.h ../project-conf.h :
+ ../../../../contiki/cpu/msp430/./msp430def.h project-conf.h :
  ../../../../contiki/core/./net/linkaddr.h :
  ../../../../contiki/core/./net/llsec/llsec802154.h :
  ../../../../contiki/core/./net/ip/uip.h :

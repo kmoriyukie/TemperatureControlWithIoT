@@ -1,7 +1,7 @@
 obj_z1/rpl-timers.o: ../../../../contiki/core/net/rpl/rpl-timers.c \
  ../../../../contiki/platform/z1/./contiki-conf.h \
  ../../../../contiki/platform/z1/./platform-conf.h \
- ../../../../contiki/cpu/msp430/./msp430def.h ../project-conf.h \
+ ../../../../contiki/cpu/msp430/./msp430def.h project-conf.h \
  ../../../../contiki/core/./net/rpl/rpl-private.h \
  ../../../../contiki/core/./net/rpl/rpl.h \
  ../../../../contiki/core/./net/rpl/rpl-conf.h \
@@ -65,7 +65,7 @@ obj_z1/rpl-timers.o: ../../../../contiki/core/net/rpl/rpl-timers.c \
 ../../../../contiki/core/net/rpl/rpl-timers.c :
  ../../../../contiki/platform/z1/./contiki-conf.h :
  ../../../../contiki/platform/z1/./platform-conf.h :
- ../../../../contiki/cpu/msp430/./msp430def.h ../project-conf.h :
+ ../../../../contiki/cpu/msp430/./msp430def.h project-conf.h :
  ../../../../contiki/core/./net/rpl/rpl-private.h :
  ../../../../contiki/core/./net/rpl/rpl.h :
  ../../../../contiki/core/./net/rpl/rpl-conf.h :

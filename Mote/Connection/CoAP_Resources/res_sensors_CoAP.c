@@ -70,7 +70,7 @@ static void res_post_handler(void *request, void *response, uint8_t *buffer, uin
 
 
 	// if(size > 11 || size < 9){
-	// 	REST.set_response_payload(response, MSG_ERROR_INVALID_PARAMETERS, 16);
+	// 	REST.set_response_payload(response, MSG_ERROR_INVALID_PARAMETERS, 17);
 	// 	return;
 	// }
 
@@ -97,8 +97,8 @@ static void res_post_handler(void *request, void *response, uint8_t *buffer, uin
 
 	// printf("St:\n L_ID: %u, R_ID: %u, Temp: %i, Humi: %i, Air: %i, Bat: %u\n",params_u[0],params_u[1],(uint8_t)(params_f[0]*10),(uint8_t)(params_f[1]*10),(uint8_t)(params_f[2]*10),params_u[2]);
 
-	if(push_packet(&msg)) REST.set_response_payload(response, MSG_SUCCESS, 15);
-	else REST.set_response_payload(response, MSG_FAILURE, 15);
+	if(push_packet(&msg)) REST.set_response_payload(response, MSG_SUCCESS, 16);
+	else REST.set_response_payload(response, MSG_FAILURE, 16);
 
 }
 

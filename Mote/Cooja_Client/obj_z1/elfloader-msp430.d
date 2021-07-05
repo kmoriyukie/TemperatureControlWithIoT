@@ -7,7 +7,7 @@ obj_z1/elfloader-msp430.o: \
  ../../../../contiki/core/./contiki-version.h \
  ../../../../contiki/platform/z1/./contiki-conf.h \
  ../../../../contiki/platform/z1/./platform-conf.h \
- ../../../../contiki/cpu/msp430/./msp430def.h ../project-conf.h \
+ ../../../../contiki/cpu/msp430/./msp430def.h project-conf.h \
  ../../../../contiki/core/./contiki-default-conf.h \
  ../../../../contiki/core/./sys/process.h \
  ../../../../contiki/core/./sys/pt.h ../../../../contiki/core/./sys/lc.h \
@@ -39,7 +39,7 @@ obj_z1/elfloader-msp430.o: \
  ../../../../contiki/core/./contiki-version.h :
  ../../../../contiki/platform/z1/./contiki-conf.h :
  ../../../../contiki/platform/z1/./platform-conf.h :
- ../../../../contiki/cpu/msp430/./msp430def.h ../project-conf.h :
+ ../../../../contiki/cpu/msp430/./msp430def.h project-conf.h :
  ../../../../contiki/core/./contiki-default-conf.h :
  ../../../../contiki/core/./sys/process.h :
  ../../../../contiki/core/./sys/pt.h ../../../../contiki/core/./sys/lc.h :

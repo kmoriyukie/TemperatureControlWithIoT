@@ -75,7 +75,7 @@ static void res_get_handler(void *request, void *response, uint8_t *buffer, uint
 
 	size = REST.get_query_variable(request, "ID", &par);
 	if(size > 3 || size < 1){
-		REST.set_response_payload(response, MSG_ERROR_INVALID_PARAMETERS, 16);
+		REST.set_response_payload(response, MSG_ERROR_INVALID_PARAMETERS, 17);
 		return;
 	}
 	else{
@@ -84,11 +84,11 @@ static void res_get_handler(void *request, void *response, uint8_t *buffer, uint
 		static struct MOTE_t *mote = NULL;
 
 		if(!find_MOTE_localID(ID, &mote)){
-			REST.set_response_payload(response, MSG_MOTE_NOT_FOUND, 16);
+			REST.set_response_payload(response, MSG_MOTE_NOT_FOUND, 17);
 			return;
 		}
 
-		if(mote->remote_id == 0) REST.set_response_payload(response, MSG_FAILURE, 15);
+		if(mote->remote_id == 0) REST.set_response_payload(response, MSG_FAILURE, 16);
 		else{
 			static char resp[10];
 			static uint8_t n_num;
@@ -113,7 +113,7 @@ static void res_post_handler(void *request, void *response, uint8_t *buffer, uin
 		memcpy(bla,incoming,size);
 		// printf("MSG");
 		// printf("MSG: %s\n", bla);
-		REST.set_response_payload(response, MSG_ERROR_INVALID_PARAMETERS, 16);
+		REST.set_response_payload(response, MSG_ERROR_INVALID_PARAMETERS, 17);
 		return;
 	}
 	char bla[64];
@@ -128,12 +128,12 @@ static void res_post_handler(void *request, void *response, uint8_t *buffer, uin
 	readJSON_uf(json, params,NULL);
 
 	if(params[0] <= 0){
-		REST.set_response_payload(response, MSG_ERROR_INVALID_PARAMETERS, 16);
+		REST.set_response_payload(response, MSG_ERROR_INVALID_PARAMETERS, 17);
 		return;
 	}
 
-	if(add_MOTE((uint8_t) params[0])) REST.set_response_payload(response, MSG_SUCCESS, 15);
-	else REST.set_response_payload(response, MSG_MOTE_ALREADY_EXISTS, 16);
+	if(add_MOTE((uint8_t) params[0])) REST.set_response_payload(response, MSG_SUCCESS, 16);
+	else REST.set_response_payload(response, MSG_MOTE_ALREADY_EXISTS, 17);
 }
 
 // MSG_SUCCESS

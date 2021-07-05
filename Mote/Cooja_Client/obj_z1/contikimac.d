@@ -2,7 +2,7 @@ obj_z1/contikimac.o: \
  ../../../../contiki/core/net/mac/contikimac/contikimac.c \
  ../../../../contiki/platform/z1/./contiki-conf.h \
  ../../../../contiki/platform/z1/./platform-conf.h \
- ../../../../contiki/cpu/msp430/./msp430def.h ../project-conf.h \
+ ../../../../contiki/cpu/msp430/./msp430def.h project-conf.h \
  ../../../../contiki/core/./dev/leds.h \
  ../../../../contiki/core/./dev/radio.h \
  ../../../../contiki/core/./dev/watchdog.h \
@@ -81,7 +81,7 @@ obj_z1/contikimac.o: \
  ../../../../contiki/core/net/mac/contikimac/contikimac.c :
  ../../../../contiki/platform/z1/./contiki-conf.h :
  ../../../../contiki/platform/z1/./platform-conf.h :
- ../../../../contiki/cpu/msp430/./msp430def.h ../project-conf.h :
+ ../../../../contiki/cpu/msp430/./msp430def.h project-conf.h :
  ../../../../contiki/core/./dev/leds.h :
  ../../../../contiki/core/./dev/radio.h :
  ../../../../contiki/core/./dev/watchdog.h :

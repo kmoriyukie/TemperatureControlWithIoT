@@ -4,6 +4,8 @@
 #include "stdio.h"
 #include "string.h"
 
+static float my_pow(int v,int p);
+static float my_atof(char *);
 
 static float my_pow(int v,int p){
     int i;

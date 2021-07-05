@@ -1,7 +1,7 @@
 obj_z1/trickle-timer.o: ../../../../contiki/core/lib/trickle-timer.c \
  ../../../../contiki/platform/z1/./contiki-conf.h \
  ../../../../contiki/platform/z1/./platform-conf.h \
- ../../../../contiki/cpu/msp430/./msp430def.h ../project-conf.h \
+ ../../../../contiki/cpu/msp430/./msp430def.h project-conf.h \
  ../../../../contiki/core/./lib/trickle-timer.h \
  ../../../../contiki/core/./sys/ctimer.h \
  ../../../../contiki/core/./sys/etimer.h \
@@ -16,7 +16,7 @@ obj_z1/trickle-timer.o: ../../../../contiki/core/lib/trickle-timer.c \
 ../../../../contiki/core/lib/trickle-timer.c :
  ../../../../contiki/platform/z1/./contiki-conf.h :
  ../../../../contiki/platform/z1/./platform-conf.h :
- ../../../../contiki/cpu/msp430/./msp430def.h ../project-conf.h :
+ ../../../../contiki/cpu/msp430/./msp430def.h project-conf.h :
  ../../../../contiki/core/./lib/trickle-timer.h :
  ../../../../contiki/core/./sys/ctimer.h :
  ../../../../contiki/core/./sys/etimer.h :

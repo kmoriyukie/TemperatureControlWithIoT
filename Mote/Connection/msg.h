@@ -2,14 +2,13 @@
 #define MSG_
 /*---------------------------------------------------------------------------*/
 /* This is the UDP port used to send and receive data */
-#define UDP_CLIENT_PORT   8765
+/*#define UDP_CLIENT_PORT   8765
 #define UDP_SERVER_PORT   5678
 
 #define TX_POWER  -16
 
 #define CHANNEL   26
-#define PANID     0xDEEC
-
+*/
 /*---------------------------------------------------------------------------*/
 /* This data structure is used to store the packet content (payload) */
 
@@ -41,12 +40,12 @@ struct MOTE_t{
 // struct master_msg_t{
 	
 // };
-#define MSG_SUCCESS "{\"Response\": 1}" //15
-#define MSG_FAILURE "{\"Response\": 0}" //15
-#define MSG_ERROR_INVALID_PARAMETERS "{\"Response\": -1}" //16
-#define MSG_MOTE_ALREADY_EXISTS "{\"Response\": -2}" //16
-#define MSG_MOTE_NOT_FOUND "{\"Response\": -3}" //16
-#define MSG_CONFIG_MODE "{\"Response\": -9}" //16
+#define MSG_SUCCESS "{\"Response\": 1}\n" //16
+#define MSG_FAILURE "{\"Response\": 0}\n" //16
+#define MSG_ERROR_INVALID_PARAMETERS "{\"Response\": -1}\n" //17
+#define MSG_MOTE_ALREADY_EXISTS "{\"Response\": -2}\n" //17
+#define MSG_MOTE_NOT_FOUND "{\"Response\": -3}\n" //17
+#define MSG_CONFIG_MODE "{\"Response\": -9}\n" //17
 
 
 /*---------------------------------------------------------------------------*/

@@ -6,7 +6,7 @@ obj_z1/autostart.o: ../../../../contiki/core/sys/autostart.c \
  ../../../../contiki/core/./sys/cc.h \
  ../../../../contiki/platform/z1/./contiki-conf.h \
  ../../../../contiki/platform/z1/./platform-conf.h \
- ../../../../contiki/cpu/msp430/./msp430def.h ../project-conf.h \
+ ../../../../contiki/cpu/msp430/./msp430def.h project-conf.h \
  ../../../../contiki/core/./sys/cc-gcc.h
 ../../../../contiki/core/sys/autostart.c :
  ../../../../contiki/core/./sys/autostart.h :
@@ -16,5 +16,5 @@ obj_z1/autostart.o: ../../../../contiki/core/sys/autostart.c \
  ../../../../contiki/core/./sys/cc.h :
  ../../../../contiki/platform/z1/./contiki-conf.h :
  ../../../../contiki/platform/z1/./platform-conf.h :
- ../../../../contiki/cpu/msp430/./msp430def.h ../project-conf.h :
+ ../../../../contiki/cpu/msp430/./msp430def.h project-conf.h :
  ../../../../contiki/core/./sys/cc-gcc.h :

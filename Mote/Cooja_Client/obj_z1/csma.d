@@ -3,7 +3,7 @@ obj_z1/csma.o: ../../../../contiki/core/net/mac/csma.c \
  ../../../../contiki/core/./net/mac/mac.h \
  ../../../../contiki/platform/z1/./contiki-conf.h \
  ../../../../contiki/platform/z1/./platform-conf.h \
- ../../../../contiki/cpu/msp430/./msp430def.h ../project-conf.h \
+ ../../../../contiki/cpu/msp430/./msp430def.h project-conf.h \
  ../../../../contiki/core/./dev/radio.h \
  ../../../../contiki/core/./net/packetbuf.h \
  ../../../../contiki/core/./net/linkaddr.h \
@@ -51,7 +51,7 @@ obj_z1/csma.o: ../../../../contiki/core/net/mac/csma.c \
  ../../../../contiki/core/./net/mac/mac.h :
  ../../../../contiki/platform/z1/./contiki-conf.h :
  ../../../../contiki/platform/z1/./platform-conf.h :
- ../../../../contiki/cpu/msp430/./msp430def.h ../project-conf.h :
+ ../../../../contiki/cpu/msp430/./msp430def.h project-conf.h :
  ../../../../contiki/core/./dev/radio.h :
  ../../../../contiki/core/./net/packetbuf.h :
  ../../../../contiki/core/./net/linkaddr.h :

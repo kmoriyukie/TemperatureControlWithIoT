@@ -4,7 +4,7 @@ obj_z1/rpl-ext-header.o: \
  ../../../../contiki/core/./net/ip/uipopt.h \
  ../../../../contiki/platform/z1/./contiki-conf.h \
  ../../../../contiki/platform/z1/./platform-conf.h \
- ../../../../contiki/cpu/msp430/./msp430def.h ../project-conf.h \
+ ../../../../contiki/cpu/msp430/./msp430def.h project-conf.h \
  ../../../../contiki/core/./net/ip/tcpip.h \
  ../../../../contiki/core/./contiki.h \
  ../../../../contiki/core/./contiki-version.h \
@@ -67,7 +67,7 @@ obj_z1/rpl-ext-header.o: \
  ../../../../contiki/core/./net/ip/uipopt.h :
  ../../../../contiki/platform/z1/./contiki-conf.h :
  ../../../../contiki/platform/z1/./platform-conf.h :
- ../../../../contiki/cpu/msp430/./msp430def.h ../project-conf.h :
+ ../../../../contiki/cpu/msp430/./msp430def.h project-conf.h :
  ../../../../contiki/core/./net/ip/tcpip.h :
  ../../../../contiki/core/./contiki.h :
  ../../../../contiki/core/./contiki-version.h :

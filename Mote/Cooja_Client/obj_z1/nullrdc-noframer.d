@@ -4,7 +4,7 @@ obj_z1/nullrdc-noframer.o: \
  ../../../../contiki/core/./net/mac/rdc.h \
  ../../../../contiki/platform/z1/./contiki-conf.h \
  ../../../../contiki/platform/z1/./platform-conf.h \
- ../../../../contiki/cpu/msp430/./msp430def.h ../project-conf.h \
+ ../../../../contiki/cpu/msp430/./msp430def.h project-conf.h \
  ../../../../contiki/core/./net/mac/mac.h \
  ../../../../contiki/core/./dev/radio.h \
  ../../../../contiki/core/./net/llsec/llsec802154.h \
@@ -48,7 +48,7 @@ obj_z1/nullrdc-noframer.o: \
  ../../../../contiki/core/./net/mac/rdc.h :
  ../../../../contiki/platform/z1/./contiki-conf.h :
  ../../../../contiki/platform/z1/./platform-conf.h :
- ../../../../contiki/cpu/msp430/./msp430def.h ../project-conf.h :
+ ../../../../contiki/cpu/msp430/./msp430def.h project-conf.h :
  ../../../../contiki/core/./net/mac/mac.h :
  ../../../../contiki/core/./dev/radio.h :
  ../../../../contiki/core/./net/llsec/llsec802154.h :

@@ -3,7 +3,7 @@ obj_z1/phase.o: ../../../../contiki/core/net/mac/phase.c \
  ../../../../contiki/core/./net/linkaddr.h \
  ../../../../contiki/platform/z1/./contiki-conf.h \
  ../../../../contiki/platform/z1/./platform-conf.h \
- ../../../../contiki/cpu/msp430/./msp430def.h ../project-conf.h \
+ ../../../../contiki/cpu/msp430/./msp430def.h project-conf.h \
  ../../../../contiki/core/./sys/timer.h \
  ../../../../contiki/core/./sys/clock.h \
  ../../../../contiki/core/./sys/rtimer.h \
@@ -51,7 +51,7 @@ obj_z1/phase.o: ../../../../contiki/core/net/mac/phase.c \
  ../../../../contiki/core/./net/linkaddr.h :
  ../../../../contiki/platform/z1/./contiki-conf.h :
  ../../../../contiki/platform/z1/./platform-conf.h :
- ../../../../contiki/cpu/msp430/./msp430def.h ../project-conf.h :
+ ../../../../contiki/cpu/msp430/./msp430def.h project-conf.h :
  ../../../../contiki/core/./sys/timer.h :
  ../../../../contiki/core/./sys/clock.h :
  ../../../../contiki/core/./sys/rtimer.h :
