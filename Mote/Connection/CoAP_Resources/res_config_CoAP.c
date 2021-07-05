@@ -109,15 +109,15 @@ static void res_post_handler(void *request, void *response, uint8_t *buffer, uin
 	size = strlen(incoming);
 	if(size > 11 || size < 9){
 		// printf("Size error: %u\n",size);
-		char bla[64];
-		memcpy(bla,incoming,size);
+		// char bla[64];
+		// memcpy(bla,incoming,size);
 		// printf("MSG");
 		// printf("MSG: %s\n", bla);
 		REST.set_response_payload(response, MSG_ERROR_INVALID_PARAMETERS, 17);
 		return;
 	}
-	char bla[64];
-	memcpy(bla,incoming,size);
+	// char bla[64];
+	// memcpy(bla,incoming,size);
 	// printf("MSG");
 	// printf("MSG: %s\n", bla);
 	static char json[11];

@@ -8,6 +8,7 @@
 #include "stdlib.h"
 #include "stdint.h"
 #include "stdio.h"
+#include "stdbool.h"
 
 #include "mqttCOM.h"
 // #include "mqttMacros.h"
@@ -16,6 +17,11 @@ extern receive_mqtt_t RECEIVE_MODE;
 extern send_mqtt_t SEND_MODE;
 extern cloudmode_t CLOUD_MODE;
 
+void readJSON_uf(const char *json, int *params_u, float *params_f);
+
+bool ids_sent = false;
+
+bool msg_sent = false;
 
 // extern struct mqtt_connection conn;
 // extern char *pub_topic;
@@ -32,7 +38,7 @@ void receive_cloudmode(const char *msg,uint16_t len){
 
 	// Change CLOUD_MODE
 
-	uint8_t params_u[1];
+	int params_u[1];
 	readJSON_uf(msg, params_u,NULL);
 
 	switch(params_u[0]){
@@ -80,7 +86,7 @@ static list_t *aux_motes_list;
 
 void receive_ids(void);
 
-void send_ids(void);
+void send_local_ids(void);
 
 void set_ID_list(list_t *list){
 	aux_motes_list = list;
@@ -96,21 +102,21 @@ void receive_ids(void){
 	// Receive end of ids - N_ids
 }
 
-void send_ids(void){
+void send_local_ids(void){
 	// For {
 	// 		Send local ids
 	// }
 	//
 	// Send end of ids - N_ids
 
-
+	ids_sent = false;
 	
 	static uint8_t i;
 	static uint8_t j;
 
 	static char buff[70];
 
-	static uint8_t ids_buff[5];
+	static int ids_buff[5];
 
 	static struct MOTE_t *aux;
 
@@ -130,11 +136,11 @@ void send_ids(void){
 
 		}
 
-		sprintf(buff,"{\"local_IDs\": {\"l%u\": %u,"
-									  "\"l%u\": %u,"
-									  "\"l%u\": %u,"
-									  "\"l%u\": %u,"
-									  "\"l%u\": %u}}\n",
+		sprintf(buff,"{\"local_IDs\": {\"l%u\": %i,"
+									  "\"l%u\": %i,"
+									  "\"l%u\": %i,"
+									  "\"l%u\": %i,"
+									  "\"l%u\": %i}}",
 									 j+1,ids_buff[0],
 									 j+2,ids_buff[1],
 									 j+3,ids_buff[2],
@@ -142,9 +148,18 @@ void send_ids(void){
 									 j+5,ids_buff[4]);
 
 		mqttcom_pub(CONFIG_MOTE_ID_TOPIC,buff);
+
 	}
 
+	// Confirmation
 
+	static char siz[12];
+
+	sprintf(siz,"{\"N\": %u}",list_length(*aux_motes_list));
+	mqttcom_pub(CONFIG_MOTE_ID_TOPIC,siz);
+
+
+	ids_sent = true;
 
 
 

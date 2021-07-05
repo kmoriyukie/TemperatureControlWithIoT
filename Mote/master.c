@@ -120,36 +120,51 @@ bool pop_packet(struct slave_msg_t **packet){
 extern struct process border_router_process; //  /Connection/BorderRouter.c
 extern struct process MQTTServerProcess; //  /Connection/mqttServer.c
 
+extern bool ids_sent;
+
 #else
 #endif
 
 static uint8_t flag_mote_added = 0;
 
-PROCESS(master_config, "Master Config");
-PROCESS(config_cloudmode_request, "Config CLOUDMODE request");
-PROCESS(config_addingMotes_request, "Config Adding Motes");
+
+PROCESS(master_config, "");
+PROCESS(config_cloudmode_request, "");
+PROCESS(config_cloudmode_conf, "");
+PROCESS(config_cloudmode_sendLocalIDS, "");
+PROCESS(config_cloudmode_work, "");
+
+// static process_event_t e_config_cloudmode_request, e_config_cloudmode_conf, e_config_cloudmode_sendLocalIDS;
 
 PROCESS_THREAD(config_cloudmode_request, ev, data){
     PROCESS_BEGIN();
 
     #if CONTIKI_TARGET_ZOUL
+    static int ret = 0;
+    static int *dat = NULL;
+	// PROCESS_PAUSE();
 
-	PROCESS_PAUSE();
+	// e_config_cloudmode_request = process_alloc_event();
 
     static struct etimer et_timeout;
 
     while(CLOUD_MODE == STATUS_UNDEFINED){
     	SEND_MODE = SEND_CONFIG_CLOUDMODE_REQUEST;
-    	// printf("While\n");
-    	// printf("Send mode: %u, CLoudn mode: %u\n",SEND_MODE,CLOUD_MODE);
         PROCESS_YIELD();
-        if(ev == PROCESS_EVENT_POLL) etimer_set(&et_timeout, DISC_TIMOUT*CLOCK_SECOND);
+        dat = data;
+        if(dat != NULL){
+        	if(*dat == 10) etimer_set(&et_timeout, DISC_TIMOUT*CLOCK_SECOND);
+        }
         if(etimer_expired(&et_timeout)) etimer_reset(&et_timeout);
     }
 
     SEND_MODE = SEND_NONE;
 
-    process_poll(&master_config);
+    printf("CLOUDMODE DONE\n");
+
+    // process_poll(&master_config);
+
+    process_post(&master_config, PROCESS_EVENT_CONTINUE, &ret);
 
     #else
     #endif
@@ -157,62 +172,88 @@ PROCESS_THREAD(config_cloudmode_request, ev, data){
     PROCESS_END();
 }
 
-PROCESS_THREAD(config_addingMotes_request, ev, data){
+PROCESS_THREAD(config_cloudmode_conf, ev, data){
     PROCESS_BEGIN();
 
     #if CONTIKI_TARGET_ZOUL
+    static int ret = 1;
+    static int *dat = NULL;
+	// PROCESS_PAUSE();
 
-	PROCESS_PAUSE();
+	// e_config_cloudmode_conf = process_alloc_event();
 
 	static struct etimer et_timeout;
 
-	switch(CLOUD_MODE){
-		case STATUS_UNDEFINED:
-		break;
-		case STATUS_CONFIG:
-			etimer_set(&et_timeout, DISC_TIMOUT*CLOCK_SECOND);
-			// etimer_reset(&et_timeout);
-			while(1){
-				PROCESS_YIELD();
-				if(ev == PROCESS_EVENT_POLL){
-					if(flag_mote_added == 1){
-						flag_mote_added = 0;
-						etimer_reset(&et_timeout2);
-					}
-					else break;
-				}
-
-				// if(etimer_expired(&et_timeout)){
-				// 	printf("\n\n\nexpired__\n\n\n");
-				// 	if(flag_mote_added == false) break;
-				// 	else etimer_reset(&et_timeout);
-				// }
-				// if(flag_mote_added){
-				// 	printf("\n\n\nmote add__\n\n\n");
-				// 	flag_mote_added = false;
-				// 	etimer_reset(&et_timeout);
-				// }
-				// etimer_reset(&et_timeout);
-			}
-			
-			printf("Sending IDS to cloud\n");
-			SEND_MODE = SEND_CONFIG_IDS_REMLOC;
-			// send_motes();
-
-		break;
-		case STATUS_WORKING:
-			printf("Exec Working\n");
-
-		break;
+	while(true){
+		PROCESS_YIELD();
+		dat = data;
+		if(dat != NULL){
+        	if(*dat == 11) etimer_set(&et_timeout, DISC_TIMOUT*CLOCK_SECOND);
+        }
+        if(etimer_expired(&et_timeout)){
+        	if(flag_mote_added){
+        		flag_mote_added = false;
+        		etimer_reset(&et_timeout);
+        	}
+        	else break;
+        }
 	}
 
-    process_poll(&master_config);
+	printf("ADD MOTES DONE\n");
+
+
+	process_post(&master_config, PROCESS_EVENT_CONTINUE, &ret);
+    // process_poll(&master_config);
 
     #else
     #endif
 
     PROCESS_END();
 }
+
+PROCESS_THREAD(config_cloudmode_sendLocalIDS, ev, data){
+    PROCESS_BEGIN();
+
+    #if CONTIKI_TARGET_ZOUL
+    static int ret = 2;
+    static int *dat = NULL;
+
+	// PROCESS_PAUSE();
+
+	// e_config_cloudmode_sendLocalIDS = process_alloc_event();
+
+	// printf("Send IDS thread\n");
+
+	static struct etimer et_timeout;
+
+	while(true){
+		SEND_MODE = SEND_CONFIG_IDS_REMLOC;
+		PROCESS_YIELD();
+		dat = data;
+		// printf("Send IDS\n");
+		if(dat != NULL){
+        	if(*dat == 12) etimer_set(&et_timeout, DISC_TIMOUT*CLOCK_SECOND);
+        }
+        if(etimer_expired(&et_timeout)){
+        	if(!ids_sent) etimer_reset(&et_timeout);
+			else break;
+        }
+	}
+
+	SEND_MODE = SEND_NONE;
+
+	printf("SEND IDS DONE\n");
+
+	process_post(&master_config, PROCESS_EVENT_CONTINUE, &ret);
+    // process_poll(&master_config);
+
+    #else
+    #endif
+
+    PROCESS_END();
+}
+
+void set_ID_list(list_t *list);
 
 PROCESS_THREAD(master_config, ev, data){
 	PROCESS_BEGIN();
@@ -220,6 +261,8 @@ PROCESS_THREAD(master_config, ev, data){
 	PROCESS_PAUSE();
 
 	#if CONTIKI_TARGET_ZOUL
+	static int *ret;
+	ret = malloc(sizeof(int));
 
 	// Initialization
 
@@ -227,6 +270,10 @@ PROCESS_THREAD(master_config, ev, data){
 	SEND_MODE = SEND_NONE;
 
 	list_init(motes_list);
+
+	process_start(&config_cloudmode_request,&data);
+	process_start(&config_cloudmode_conf,&data);
+	process_start(&config_cloudmode_sendLocalIDS,&data);
 
 	process_start(&border_router_process, "Border Router process");
 
@@ -236,19 +283,94 @@ PROCESS_THREAD(master_config, ev, data){
 
 	set_ID_list(&motes_list);
 
-	// Configuration
-
-	process_start(&config_cloudmode_request,&data);
 	PROCESS_PAUSE();
+
+	// Requesting CloudMode
+	*ret = 10;
+	process_post(&config_cloudmode_request, PROCESS_EVENT_MSG, ret);
+
+	while(true){
+		// PROCESS_YIELD_UNTIL(ev == PROCESS_EVENT);
+		PROCESS_WAIT_EVENT();
+
+		if(data != NULL){
+			int *dat = data;
+			if(*dat == 0){
+				// Return from -> Requesting CloudMode
+
+				switch(CLOUD_MODE){
+					case STATUS_UNDEFINED:
+						printf("ERROR, UNDEFINED CLOUDMODE\n");
+					break;
+					case STATUS_CONFIG:
+						// Requesting Add Motes
+						*ret = 11;
+						process_post(&config_cloudmode_conf, PROCESS_EVENT_MSG, ret);
+					break;
+					case STATUS_WORKING:
+					break;
+				}
+			}
+			if(*dat == 1){
+				// Return from -> Add Motes
+
+				// Sending Ids
+				*ret = 12;
+				process_post(&config_cloudmode_sendLocalIDS, PROCESS_EVENT_MSG, ret);
+			}
+			if(*dat == 2){
+				break;
+			}
+
+		/*switch(ev){
+			case e_config_cloudmode_request:
+
+			break;
+			case e_config_cloudmode_conf:
+			break;
+			case config_cloudmode_sendLocalIDS:
+			break;
+		}*/
+		}
+	}
+
+	// process_start(&config_cloudmode_request,&data);
+	// PROCESS_PAUSE();
+
+	/*
 	process_poll(&config_cloudmode_request);
 	PROCESS_YIELD_UNTIL(ev == PROCESS_EVENT_POLL);
 
+	switch(CLOUD_MODE){
+		case STATUS_UNDEFINED:
+		break;
+		case STATUS_CONFIG:
+
+			process_start(&config_cloudmode_conf,&data);
+			// PROCESS_PAUSE();
+			process_poll(&config_cloudmode_conf);
+			PROCESS_YIELD_UNTIL(ev == PROCESS_EVENT_POLL);
+
+			// Sending Local Ids
+			// int a = 5;
+
+			// process_start(&config_cloudmode_sendLocalIDS,&data);
+			// // PROCESS_PAUSE();
+			// process_poll(&config_cloudmode_sendLocalIDS);
+			// PROCESS_YIELD_UNTIL(ev == PROCESS_EVENT_POLL);
+
+		break;
+		case STATUS_WORKING:
+			printf("Exec Working\n");
+
+		break;
+	}*/
+
+
+
 	// Adding Motes
 
-	process_start(&config_addingMotes_request,&data);
-	PROCESS_PAUSE();
-	process_poll(&config_addingMotes_request);
-	PROCESS_YIELD_UNTIL(ev == PROCESS_EVENT_POLL);
+	
 
 
 
@@ -411,7 +533,7 @@ PROCESS_THREAD(master_config, ev, data){
 	// 	}
 	// }
 
-	SEND_MODE = SEND_NONE;
+	// SEND_MODE = SEND_NONE;
 
 	printf("\n\n\nOUT WHILE\n\n\n");
 
@@ -468,6 +590,12 @@ PROCESS_THREAD(master_config, ev, data){
 	#endif
 
 	PROCESS_END();
+}
+
+PROCESS_THREAD(config_cloudmode_work, ev, data){
+    PROCESS_BEGIN();
+
+    PROCESS_END();
 }
 
 void send_motes(void){

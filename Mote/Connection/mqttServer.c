@@ -200,47 +200,6 @@ void subscribe(void)
     printf("APP - Tried to subscribe but command queue was full!\n");
   }
 }
-/*---------------------------------------------------------------------------*/
-/*
-static void publish_test(void)
-{
-  int len;
-  int remaining = APP_BUFFER_SIZE;
-
-  buf_ptr = app_buffer;
-
-  len = snprintf(buf_ptr, remaining,
-                 "{"
-                 "\"Id\":\"%u\","
-                 "\"Timestamp\":\"%ld\"",
-                 IEEE_ADDR_NODE_ID, clock_seconds()*1000);
-
-  if(len < 0 || len >= remaining) {
-    printf("Buffer too short. Have %d, need %d + \\0\n", remaining, len);
-    return;
-  }
-
-  remaining -= len;
-  buf_ptr += len;
-
-/*aux = cc2538_temp_sensor.value(CC2538_SENSORS_VALUE_TYPE_CONVERTED);
-  len = snprintf(buf_ptr, remaining, ",\"Core Temp\":\"%u.%02u\"", aux / 1000, aux % 1000);
-
-  remaining -= len;
-  buf_ptr += len;*/
-/*
-  len = snprintf(buf_ptr, remaining, "}");
-
-  if(len < 0 || len >= remaining) {
-    printf("Buffer too short. Have %d, need %d + \\0\n", remaining, len);
-    return;
-  }
-
-  mqtt_publish(&conn, NULL, pub_topic, (uint8_t *)app_buffer,
-               strlen(app_buffer), MQTT_QOS_LEVEL_0, MQTT_RETAIN_OFF);
-
-  printf("APP - Publish to %s: %s\n", pub_topic, app_buffer);
-}*/
 
 /*---------------------------------------------------------------------------*/
 static void state_machine(void)
@@ -297,9 +256,11 @@ static void state_machine(void)
             printf("MODE CLOUDMODE\n");
             send_cloudmode();
           break;
-          case SEND_CONFIG_IDS_REMLOC: case SEND_CONFIG_IDS_ACK:
+          case SEND_CONFIG_IDS_REMLOC: 
             printf("MODE IDS\n");
-            send_ids();
+            send_local_ids();
+          break;
+          case SEND_CONFIG_IDS_ACK:
           break;
         }
       }
