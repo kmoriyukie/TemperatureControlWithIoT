@@ -47,7 +47,7 @@ PROCESS_THREAD(slave_working, ev, data){
 	static struct etimer et_timeout;
 
 	etimer_set(&et, READINGS_TIME*CLOCK_SECOND);
-	etimer_set(&et_timeout, TIMOUT*CLOCK_SECOND);
+	etimer_set(&et_timeout, TIMEOUT*CLOCK_SECOND);
 
 	static bool timeout_flag;
 	static int Ntry;
@@ -192,37 +192,17 @@ PROCESS_THREAD(slave_config, ev, data){
 
   	PROCESS_PAUSE();
 	// CoAP Initialization
-	static struct etimer et;
+	static struct etimer et_timeout;
   	static coap_packet_t request[1];
   	SERVER_NODE(&server_ipaddr);
   	coap_init_engine();
 
-	etimer_set(&et, 10 * CLOCK_SECOND);
+	etimer_set(&et_timeout, TIMEOUT * CLOCK_SECOND);
 
   	// etimer_set(&et_timeout, TIMOUT * CLOCK_SECOND);
 
   	static char msg[128];
 
- //  	coap_init_message(request, COAP_TYPE_CON, COAP_POST, 0);
-
-	// char *confgURL = "config";
-
-	// coap_set_header_uri_path(request, confgURL);
-
-	// printf(confgURL);
-	// printf("\n");
-
-	// #if CONTIKI_TARGET_ZOUL
-	// 	sprintf(msg,"{\"ID\": %u}\n\0",IEEE_ADDR_NODE_ID);
-	// #else
-	// 	sprintf(msg,"{\"ID\": %u}\n\0",node_id);
-	// #endif
-
-	// coap_set_payload(request, (uint8_t *)msg, sizeof(msg) - 1);
-
-
-
-  	
 	coap_init_message(request, COAP_TYPE_CON, COAP_POST, 0);
 
 	char *confgURL = "config";
@@ -267,10 +247,19 @@ PROCESS_THREAD(slave_config, ev, data){
 	printf(getremoteidURL);
 	printf("\n");
 
+	// etimer_reset(&et_timeout);
+
   	while(remote_ID == 0){
-  		COAP_BLOCKING_REQUEST(&server_ipaddr, REMOTE_PORT, request,
+  		PROCESS_YIELD();
+  		if(etimer_expired(&et_timeout)){
+  			COAP_BLOCKING_REQUEST(&server_ipaddr, REMOTE_PORT, request,
 	                    config_get_handler);
+  			etimer_reset(&et_timeout);
+  		}
+
   	}
+
+  	printf("ID config DONE\n");
 /*
   	etimer_reset(&et_timeout);
   	while(remote_ID == 0){

@@ -7,9 +7,9 @@
 
 
 #define MTRY 3
-#define TIMOUT 5 //Seconds
+#define MASTER_TIMOUT 5 //Seconds
 
-#define DISC_TIMOUT 20 //Seconds
+#define DISC_TIMOUT 5 //Seconds
 
 #include "contiki.h"
 #include "list.h"
@@ -24,6 +24,8 @@ bool push_packet(struct slave_msg_t *packet);
 bool pop_packet(struct slave_msg_t **packet);
 
 void send_motes(void);
+
+void send_ID_packet(char *buff);
 
 bool add_MOTE(uint8_t ID);
 

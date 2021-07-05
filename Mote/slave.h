@@ -6,7 +6,7 @@
 
 #define READINGS_TIME 5 //Seconds
 #define MTRY 3
-#define TIMOUT 15 //Seconds
+#define TIMEOUT 15 //Seconds
 
 void exec_slave_working(void);
 

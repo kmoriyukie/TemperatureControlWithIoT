@@ -66,7 +66,7 @@ static mqtt_client_config_t conf;
 void pub_handler(const char *topic, uint16_t topic_len, const uint8_t *chunk,
             uint16_t chunk_len)
 {
-  printf("Pub Handler: topic='%s' (len=%u), chunk_len=%u, content: %s\n", topic, topic_len, chunk_len, chunk);
+  // printf("Pub Handler: topic='%s' (len=%u), chunk_len=%u, content: %s\n", topic, topic_len, chunk_len, chunk);
   
 
   if(strcmp((char *)topic,CONFIG_CLOUD_CLOUDMODE_TOPIC)==0){
@@ -403,7 +403,7 @@ void mqttcom_pub(char *topic, char *msg){
   //   return;
   // }
 
-  printf("MQTTPUB -> TOPIC: %s\n    MSG: %s    Size: %u\n", topic,msg,strlen(msg));
+  // printf("MQTTPUB -> TOPIC: %s\n    MSG: %s    Size: %u\n", topic,msg,strlen(msg));
 
   mqtt_publish(&conn, NULL, topic, (uint8_t *)msg,
                strlen(msg), MQTT_QOS_LEVEL_0, MQTT_RETAIN_OFF);
