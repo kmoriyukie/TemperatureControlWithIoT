@@ -23,13 +23,13 @@ bool push_packet(struct slave_msg_t *packet);
 
 bool pop_packet(struct slave_msg_t **packet);
 
-void send_motes(void);
-
 void send_ID_packet(char *buff);
 
 bool add_MOTE(uint8_t ID);
 
 bool find_MOTE_localID(uint8_t ID, struct MOTE_t **item);
+
+bool update_MOTE_IDs(uint8_t local_ID, uint8_t remote_ID);
 
 void exec_master_working(void);
 

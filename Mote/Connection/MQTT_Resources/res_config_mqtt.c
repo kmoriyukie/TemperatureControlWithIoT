@@ -21,7 +21,10 @@ void readJSON_uf(const char *json, int *params_u, float *params_f);
 
 bool ids_sent = false;
 
-bool msg_sent = false;
+// bool msg_sent = false;
+
+uint8_t mote_count = 0;
+bool ids_received = false;
 
 // extern struct mqtt_connection conn;
 // extern char *pub_topic;
@@ -38,10 +41,10 @@ void receive_cloudmode(const char *msg,uint16_t len){
 
 	// Change CLOUD_MODE
 
-	int params_u[1];
+	int params_u[2];
 	readJSON_uf(msg, params_u,NULL);
 
-	switch(params_u[0]){
+	switch(params_u[1]){
 		case 0:
 			CLOUD_MODE = STATUS_CONFIG;
 			printf("\n\nCLOUD Config Mode\n\n\n");
@@ -84,7 +87,7 @@ void set_ID_list(list_t *list);
 
 static list_t *aux_motes_list;
 
-void receive_ids(void);
+void receive_ids(const char *msg,uint16_t len);
 
 void send_local_ids(void);
 
@@ -92,7 +95,9 @@ void set_ID_list(list_t *list){
 	aux_motes_list = list;
 }
 
-void receive_ids(void){
+// void readJSON_uf(const char *json, int *params_u, float *params_f);
+
+void receive_ids(const char *msg,uint16_t len){
 	// receive ids_confirmation
 
 	// For {
@@ -100,6 +105,60 @@ void receive_ids(void){
 	// }
 	//
 	// Receive end of ids - N_ids
+
+
+
+	// remote_count
+
+	ids_received = false;
+
+
+	static uint8_t i;
+	static int param_i[8];
+	readJSON_i(msg,param_i);
+
+	// printf("Rec\n");
+
+	// for (i = 0; i < sizeof(param_u)/sizeof(int); ++i)
+	// {
+	// 	printf("%i\n", param_u[i]);
+	// }
+
+
+	for(i = 0; i < 3; i++){
+		// printf("%i\n", param_u[i]);
+		if(param_i[2*i+1] != -1) update_MOTE_IDs(param_i[2*i+1],param_i[2*i+2]);
+		printf("L: %i, R: %i\n",param_i[2*i+1],param_i[2*i+2]);
+	}
+
+	printf("IDS1\n");
+
+	if(param_i[7] != -1) ids_received = true;
+	else ids_received = false;
+
+	// ids_received = (param_i[7] != -1);
+
+	printf("IDS2\n");
+
+	// if(len < 88 || len > 110){
+	// 	printf("INVALID MESSAGE\n");
+	// 	return;
+	// }
+	// else{
+	// 	static uint8_t i;
+	// 	int param_u[11];
+	// 	readJSON_uf(msg,param_u,NULL);
+
+	// 	for(i = 0; i < 5; i++){
+	// 		if(param_u[i*2] != -1) update_MOTE_IDs(param_u[i*2],param_u[i*2+1]);
+	// 	}
+
+	// 	ids_received = (param_u[10] != -1);
+
+	// }
+
+
+
 }
 
 void send_local_ids(void){
@@ -112,9 +171,9 @@ void send_local_ids(void){
 	ids_sent = false;
 	
 	static uint8_t i;
-	static uint8_t j;
+	// static uint8_t j;
 
-	static char buff[70];
+	static char buff[80];
 
 	static int ids_buff[5];
 
@@ -122,9 +181,10 @@ void send_local_ids(void){
 
 	aux = list_head(*aux_motes_list);
 
-	for(j = 0; j < list_length(*aux_motes_list); j+=5){
-
-		for(i = 0; i < 5; i++){
+	if(mote_count < list_length(*aux_motes_list)){
+		// msg_sent = false;
+		for(i = 0; i < mote_count; i++) aux = list_item_next(aux);
+		for(i = mote_count; i < mote_count+5; i++){
 			if(aux == NULL){
 				ids_buff[i] = -1;
 				continue;
@@ -136,30 +196,41 @@ void send_local_ids(void){
 
 		}
 
-		sprintf(buff,"{\"local_IDs\": {\"l%u\": %i,"
+		if(mote_count+5>=list_length(*aux_motes_list)){
+			sprintf(buff,"{\"local_IDs\": {\"l%u\": %i,"
 									  "\"l%u\": %i,"
 									  "\"l%u\": %i,"
 									  "\"l%u\": %i,"
-									  "\"l%u\": %i}}",
-									 j+1,ids_buff[0],
-									 j+2,ids_buff[1],
-									 j+3,ids_buff[2],
-									 j+4,ids_buff[3],
-									 j+5,ids_buff[4]);
+									  "\"l%u\": %i},\"N\": %u}",
+									 mote_count+1,ids_buff[0],
+									 mote_count+2,ids_buff[1],
+									 mote_count+3,ids_buff[2],
+									 mote_count+4,ids_buff[3],
+									 mote_count+5,ids_buff[4],list_length(*aux_motes_list));
+		}
+		else{
+			sprintf(buff,"{\"local_IDs\": {\"l%u\": %i,"
+									  "\"l%u\": %i,"
+									  "\"l%u\": %i,"
+									  "\"l%u\": %i,"
+									  "\"l%u\": %i},\"N\": %u}",
+									 mote_count+1,ids_buff[0],
+									 mote_count+2,ids_buff[1],
+									 mote_count+3,ids_buff[2],
+									 mote_count+4,ids_buff[3],
+									 mote_count+5,ids_buff[4],-1);
+		}
+
 
 		mqttcom_pub(CONFIG_MOTE_ID_TOPIC,buff);
-
+		mote_count+=5;
 	}
+	else ids_sent = true;
+
+	// for(j = 0; j < list_length(*aux_motes_list); j+=5){
+	// }
 
 	// Confirmation
-
-	static char siz[12];
-
-	sprintf(siz,"{\"N\": %u}",list_length(*aux_motes_list));
-	mqttcom_pub(CONFIG_MOTE_ID_TOPIC,siz);
-
-
-	ids_sent = true;
 
 
 

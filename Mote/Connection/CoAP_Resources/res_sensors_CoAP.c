@@ -48,6 +48,7 @@
 
 #include "msg.h"
 
+void readJSON_uf(const char *json, int *params_u, float *params_f);
 
 static void res_post_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
 

@@ -29,10 +29,9 @@ PRIVATE_KEY_FILE = "/home/user/GitHub/TemperatureControlWithIoT/Mote/Initializat
 
 # A topic to get information from the cloud:	 
 CONFIG_MOTE_CLOUDMODE_TOPIC = "config/mote/cloudmode"
-CONFIG_CLOUD_CLOUDMODE_TOPIC = "config/cloud/cloudmode"
+CONFIG_CLOUD_TOPIC = "cloud"
 
 CONFIG_MOTE_ID_TOPIC = "config/mote/ids"
-CONFIG_CLOUD_ID_TOPIC = "config/cloud/ids"
 
 #########################################################################
 
@@ -69,11 +68,9 @@ cloud_client.tls_insecure_set(False)
 cloud_client.connect(CLOUD_MQTT_URL, 8883, 60)
 print("Connected to the Cloud MQTT Broker.")
 
-cloud_client.subscribe(CONFIG_CLOUD_CLOUDMODE_TOPIC)
-print("Subscribed to cloud topic: " + CONFIG_CLOUD_CLOUDMODE_TOPIC + "\n")
+cloud_client.subscribe(CONFIG_CLOUD_TOPIC)
+print("Subscribed to cloud topic: " + CONFIG_CLOUD_TOPIC + "\n")
 
-cloud_client.subscribe(CONFIG_CLOUD_ID_TOPIC)
-print("Subscribed to cloud topic: " + CONFIG_CLOUD_ID_TOPIC + "\n")
 
 # Then conect to the Local MQTT Client:
 local_client = mqtt.Client()

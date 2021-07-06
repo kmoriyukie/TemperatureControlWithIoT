@@ -63,23 +63,38 @@ static char *buf_ptr;
 
 static mqtt_client_config_t conf;
 
+void readJSON_ufl(const char *json, int *params_u, float *params_f, uint8_t len);
+
+void readJSON_i(const char *json, int *params_i);
+
 void pub_handler(const char *topic, uint16_t topic_len, const uint8_t *chunk,
             uint16_t chunk_len)
 {
   // printf("Pub Handler: topic='%s' (len=%u), chunk_len=%u, content: %s\n", topic, topic_len, chunk_len, chunk);
   
 
-  if(strcmp((char *)topic,CONFIG_CLOUD_CLOUDMODE_TOPIC)==0){
+  if(strcmp((char *)topic,CLOUD_TOPIC)==0){
     printf("%s\n", topic);
-    receive_cloudmode(chunk,chunk_len);
+    static int param[15];
+    readJSON_i(chunk,param);
+    printf("\n\nReceiving V: %i\n\n\n", param[0]);
+    switch(param[0]){
+      case RECEIVE_CLOUDMODE:
+        receive_cloudmode(chunk,chunk_len);
+      break;
+      case RECEIVE_REMOTEID:
+        receive_ids(chunk,chunk_len);
+      break;
+    }
     return;
   }
 
-  if(strcmp((char *)topic,CONFIG_CLOUD_ID_TOPIC)==0){
-    printf("%s\n", topic);
-    receive_ids();
-    return;
-  }
+  // if(strcmp((char *)topic,CLOUD_TOPIC)==0){
+  //   printf("%s\n", topic);
+  //   printf("RESPONSE RECEIVED\n");
+  //   receive_ids(chunk,chunk_len);
+  //   return;
+  // }
 
 }
 
@@ -186,19 +201,19 @@ void subscribe(void)
 {
   mqtt_status_t status;
 
-  status = mqtt_subscribe(&conn, NULL, CONFIG_CLOUD_CLOUDMODE_TOPIC, MQTT_QOS_LEVEL_0);
+  status = mqtt_subscribe(&conn, NULL, CLOUD_TOPIC, MQTT_QOS_LEVEL_0);
 
-  printf("APP - Subscribing to %s\n", CONFIG_CLOUD_CLOUDMODE_TOPIC);
+  printf("APP - Subscribing to %s\n", CLOUD_TOPIC);
   if(status == MQTT_STATUS_OUT_QUEUE_FULL) {
     printf("APP - Tried to subscribe but command queue was full!\n");
   }
 
-  status = mqtt_subscribe(&conn, NULL, CONFIG_CLOUD_ID_TOPIC, MQTT_QOS_LEVEL_0);
+  // status = mqtt_subscribe(&conn, NULL, CONFIG_CLOUD_ID_TOPIC, MQTT_QOS_LEVEL_0);
 
-  printf("APP - Subscribing to %s\n", CONFIG_CLOUD_ID_TOPIC);
-  if(status == MQTT_STATUS_OUT_QUEUE_FULL) {
-    printf("APP - Tried to subscribe but command queue was full!\n");
-  }
+  // printf("APP - Subscribing to %s\n", CONFIG_CLOUD_ID_TOPIC);
+  // if(status == MQTT_STATUS_OUT_QUEUE_FULL) {
+  //   printf("APP - Tried to subscribe but command queue was full!\n");
+  // }
 }
 
 /*---------------------------------------------------------------------------*/
