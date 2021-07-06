@@ -17,7 +17,9 @@ extern receive_mqtt_t RECEIVE_MODE;
 extern send_mqtt_t SEND_MODE;
 extern cloudmode_t CLOUD_MODE;
 
-void readJSON_uf(const char *json, int *params_u, float *params_f);
+bool update_MOTE_IDs(uint8_t local_ID, uint8_t remote_ID);
+
+void readJSON_i(const char *json, int *params_u);
 
 bool ids_sent = false;
 
@@ -42,7 +44,7 @@ void receive_cloudmode(const char *msg,uint16_t len){
 	// Change CLOUD_MODE
 
 	int params_u[2];
-	readJSON_uf(msg, params_u,NULL);
+	readJSON_i(msg, params_u);
 
 	switch(params_u[1]){
 		case 0:

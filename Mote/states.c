@@ -27,6 +27,10 @@ void initialize_states(void (*handle)(void)){
 	#else
 	static ROLE_t i_r = SLAVE;
 	set_state(ROLE,&i_r);
+
+	// Remove
+	static MODE_t i_m = WORKING;
+	set_state(MODE,&i_m);
 	#endif
 }
 
@@ -42,10 +46,10 @@ void set_state(STATETYPE_t type,void *value){
 			case NONE:
 			break;
 			case MASTER_CONFIG:
-
+				exit_master_config();
 			break;
 			case MASTER_WORKING:
-
+				exit_master_working();
 			break;
 			case SLAVE_CONFIG:
 				exit_slave_config();

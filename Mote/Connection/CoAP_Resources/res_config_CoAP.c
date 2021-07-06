@@ -49,7 +49,7 @@
 
 #include "msg.h"
 #include "../../states.h"
-#include "readJSON.h"
+// #include "readJSON.h"
 
 extern ROLE_t node_role;
 extern MODE_t node_mode;
@@ -57,6 +57,8 @@ extern MODE_t node_mode;
 static void res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
 
 static void res_post_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
+
+void readJSON_i(const char *json, int *params_i);
 
 RESOURCE(res_config,
          "title=\"Config\"",
@@ -134,7 +136,7 @@ static void res_post_handler(void *request, void *response, uint8_t *buffer, uin
 	// printf("Received: %s\n", json);
 
 	static int params[1];
-	readJSON_uf(json, params,NULL);
+	readJSON_i(json, params);
 
 	if(params[0] <= 0){
 		REST.set_response_payload(response, MSG_ERROR_INVALID_PARAMETERS, 17);

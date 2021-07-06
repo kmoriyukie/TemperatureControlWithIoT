@@ -27,7 +27,8 @@ obj_z1/./../master.o: ../master.c ../master.h \
  ../../../../contiki/core/./sys/clock.h \
  ../../../../contiki/core/./sys/energest.h \
  ../../../../contiki/core/lib/list.h ../Connection/msg.h \
- ../Sensors/sens_battery.h ../../../../contiki/core/./lib/sensors.h
+ ../Sensors/sens_battery.h ../../../../contiki/core/./lib/sensors.h \
+ ../states.h
 ../master.c ../master.h :
  ../../../../contiki/core/./contiki.h :
  ../../../../contiki/core/./contiki-version.h :
@@ -58,3 +59,4 @@ obj_z1/./../master.o: ../master.c ../master.h \
  ../../../../contiki/core/./sys/energest.h :
  ../../../../contiki/core/lib/list.h ../Connection/msg.h :
  ../Sensors/sens_battery.h ../../../../contiki/core/./lib/sensors.h :
+ ../states.h :

@@ -48,12 +48,12 @@
 
 #include "msg.h"
 
-void readJSON_uf(const char *json, int *params_u, float *params_f);
+void readJSON_sensor(const char *json, int *params_u, float *params_f);
 
 static void res_post_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset);
 
 RESOURCE(res_sensors,
-         "title=\"Config\"",
+         "title=\"Sensor\"",
          NULL,
          res_post_handler,
          NULL,
@@ -85,7 +85,7 @@ static void res_post_handler(void *request, void *response, uint8_t *buffer, uin
 
 	static uint8_t params_u[3];
 	static float params_f[3];
-	readJSON_uf(json, params_u, params_f);
+	readJSON_sensor(json, params_u, params_f);
 
 	static struct slave_msg_t msg;
 

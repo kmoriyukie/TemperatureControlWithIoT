@@ -18,8 +18,10 @@
 #include "stdbool.h"
 #include "stdio.h"
 
-#include "readJSON.h"
+// #include "readJSON.h"
 #include "msg.h"
+
+#include "states.h"
 
 bool ID_sended = false;
 uint8_t remote_ID = 0;
@@ -27,6 +29,10 @@ uint8_t remote_ID = 0;
 #define LOCAL_PORT      UIP_HTONS(COAP_DEFAULT_PORT + 1)
 #define REMOTE_PORT     UIP_HTONS(COAP_DEFAULT_PORT)
 #define SERVER_NODE(ipaddr)   uip_ip6addr(ipaddr, 0xfd00, 0, 0, 0, 0, 0, 0, 0x1) // Address of VM on TunSlip6 - fd00::1 
+
+void readJSON_i(const char *json, int *params_i);
+
+static uip_ipaddr_t server_ipaddr;
 
 /*---------------------------*/
 /*----------Working----------*/
@@ -39,6 +45,8 @@ bool reading_done_flag = false;
 
 PROCESS(slave_working, "Slave Workinig");
 PROCESS(take_readings, "Readings");
+
+void working_post_handler(void *response);
 
 PROCESS_THREAD(slave_working, ev, data){
 	PROCESS_BEGIN();
@@ -55,6 +63,27 @@ PROCESS_THREAD(slave_working, ev, data){
 	Ntry = 0;
 
 	printf("Slave Workinig\n");
+
+	// Communication 
+	static coap_packet_t request[1];
+
+	// static char sensorData[];
+	static char msg[70];
+
+	coap_init_message(request, COAP_TYPE_CON, COAP_POST, 0);
+
+	char *confgURL = "sensors";
+
+	coap_set_header_uri_path(request, confgURL);
+
+	// coap_set_payload(request, (uint8_t *)msg, sizeof(msg) - 1);
+
+	// // uint8_t count_post = 0;
+
+	// while(!ID_sended){
+	// 	COAP_BLOCKING_REQUEST(&server_ipaddr, REMOTE_PORT, request,
+	// 	                    working_post_handler);
+	// }
 
 	while(true){
 
@@ -84,10 +113,47 @@ PROCESS_THREAD(slave_working, ev, data){
 		}
 
 		if(!timeout_flag){
-			printf("Temperature: %i, Humidity: %i, AriFlow: %i, Battery: %u\n", (int)(readings.temperature),
-																				(int)(readings.humidity),
-																				(int)(readings.airflow),
-																				readings.battery);
+
+			// printf("Temperature: %i, Humidity: %i, AriFlow: %i, Battery: %u\n", (int)(readings.temperature),
+			// 																	(int)(readings.humidity),
+			// 																	(int)(readings.airflow),
+			// 																	readings.battery);
+			#if CONTIKI_TARGET_ZOUL
+				sprintf(msg,"{"
+							"\"L\": %u,"
+							"\"R\": %u,"
+							"\"T\": %i.%u,"
+							"\"H\": %i.%u,"
+							"\"A\": %i.%u,"
+							"\"B\": %u"
+						"}",IEEE_ADDR_NODE_ID,
+							remote_ID,
+							(int)readings.temperature,((int)(readings.temperature*100))%100,
+							(int)readings.humidity,((int)(readings.humidity*100))%100,
+							(int)readings.airflow,((int)(readings.airflow*100))%100,
+							readings.battery);
+			#else
+				sprintf(msg,"{"
+							"\"L\": %u,"
+							"\"R\": %u,"
+							"\"T\": %i.%u,"
+							"\"H\": %i.%u,"
+							"\"A\": %i.%u,"
+							"\"B\": %u"
+						"}",node_id,
+							remote_ID,
+							(int)readings.temperature,((int)(readings.temperature*100))%100,
+							(int)readings.humidity,((int)(readings.humidity*100))%100,
+							(int)readings.airflow,((int)(readings.airflow*100))%100,
+							readings.battery);
+			#endif
+
+
+			printf("MSG: %s\n", msg);
+
+			coap_set_payload(request, (uint8_t *)msg, sizeof(msg) - 1);
+			// COAP_BLOCKING_REQUEST(&server_ipaddr, REMOTE_PORT, request,
+			// 	                    working_post_handler);
 
 		}
 		
@@ -95,6 +161,10 @@ PROCESS_THREAD(slave_working, ev, data){
 	}
 
 	PROCESS_END();
+}
+
+void working_post_handler(void *response){
+
 }
 
 bool sensors_initialized = false;
@@ -171,8 +241,6 @@ void exit_slave_working(void){
 /*----------Config----------*/
 /*--------------------------*/
 
-static uip_ipaddr_t server_ipaddr;
-
 
 
 void config_post_handler(void *response);
@@ -183,7 +251,7 @@ PROCESS(slave_config, "Slave Config");
 
 
 #undef DEBUG
-#define DEBUG 1
+#define DEBUG 0
 
 PROCESS_THREAD(slave_config, ev, data){
 	PROCESS_BEGIN();
@@ -222,11 +290,15 @@ PROCESS_THREAD(slave_config, ev, data){
 
 
 
-	uint8_t count_post = 0;
+	// uint8_t count_post = 0;
 
 	while(!ID_sended){
-		COAP_BLOCKING_REQUEST(&server_ipaddr, REMOTE_PORT, request,
+		PROCESS_YIELD();
+  		if(etimer_expired(&et_timeout)){
+  			COAP_BLOCKING_REQUEST(&server_ipaddr, REMOTE_PORT, request,
 		                    config_post_handler);
+  			etimer_reset(&et_timeout);
+  		}
 	}
 
   	printf("ID sent. Waiting for remote ID.\n");
@@ -256,13 +328,17 @@ PROCESS_THREAD(slave_config, ev, data){
 	                    config_get_handler);
   			etimer_reset(&et_timeout);
   		}
-
   	}
 
   	// printf("ID config DONE\n");
 
 	printf("Remote ID received.\n");
 
+	printf("Changing to Working mode.\n");	
+
+	static MODE_t mod;
+	mod = WORKING;
+	set_state(MODE,&mod);
 
 	PROCESS_END();
 }
@@ -285,7 +361,7 @@ void exit_slave_config(void){
 // #define NUMBER_OF_URLS 4
 
 void config_post_handler(void *response){
-  int len = 0;
+  // int len = 0;
   const uint8_t *payload = NULL;
 
   printf("Post Handler\n");
@@ -295,14 +371,14 @@ void config_post_handler(void *response){
 
   static int params[1];
 
-  readJSON_uf(payload, params,NULL);
+  readJSON_i(payload, params);
 
   if((params[0] == 1) || (params[0] == -2)) ID_sended = true;
   else ID_sended = false;
 }
 
 void config_get_handler(void *response){
-  int len = 0;
+  // int len = 0;
   const uint8_t *payload = NULL;
 
   coap_get_payload(response, &payload);

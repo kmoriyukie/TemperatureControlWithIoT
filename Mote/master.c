@@ -20,6 +20,8 @@ extern struct process coap_server_process; //  /Connection/CoAPServer.c
 #include "stdio.h"
 #include "stdbool.h"
 
+#include "states.h"
+
 
 
 /*---------------------------*/
@@ -30,20 +32,15 @@ LIST(motes_list);
 
 LIST(packet_list);
 
+static uint8_t m_remote_ID = 0;
+
+SENSOR_DATA_t sens_status = SENS_IDLE;
+
 struct slave_msg_t *packet;
 
-void send_packets(void){
-
-
-	static uint8_t n = 0;
-	n = list_length(packet_list); 
-	static uint8_t i;
-	for(i = 0; i < n; i++){
-		// list_pop(packet_list);	
-	}
-}
-
 PROCESS(master_working, "Master Working");
+
+PROCESS(send_packets, "");
 
 PROCESS_THREAD(master_working, ev, data){
 	PROCESS_BEGIN();
@@ -56,6 +53,10 @@ PROCESS_THREAD(master_working, ev, data){
 
 	static struct etimer et;
 
+	process_start(&send_packets,NULL);
+
+	PROCESS_PAUSE();
+
 	etimer_set(&et, SEND_TO_CLOUD_INTERVAL*CLOCK_SECOND);
 
 	while(true){
@@ -63,7 +64,7 @@ PROCESS_THREAD(master_working, ev, data){
 		PROCESS_YIELD();
 
 		if(ev == etimer_expired(&et) || (list_length(packet_list) >= CLOUD_PACKAGE_SIZE)){
-			send_packets();
+			// send_packets();
 		}
 
 		// PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
@@ -75,6 +76,51 @@ PROCESS_THREAD(master_working, ev, data){
 
 	PROCESS_END();
 }
+
+PROCESS_THREAD(send_packets, ev, data){
+	PROCESS_BEGIN();
+	static uint8_t n = 0;
+	static uint8_t i;
+
+	static char msg[230];
+	static struct slave_msg_t *ptr;
+
+	static struct etimer et_timeout;
+
+	while(true){
+		PROCESS_YIELD();
+
+		if((ev == PROCESS_EVENT_POLL) && (sens_status == SENS_READY)){
+			n = list_length(packet_list); 
+
+			sprintf(msg,"{ \"M\": %u,",m_remote_ID);
+
+			for(i = 0; i < n; i++){
+				if(pop_packet(&ptr)){
+					sprintf(msg,"%s\"T%u\": %i.%i,",msg,ptr->remote_id,(int)ptr->temperature,((int)(ptr->temperature*100))%100);
+					sprintf(msg,"%s\"H%u\": %i.%i,",msg,ptr->remote_id,(int)ptr->humidity,((int)(ptr->humidity*100))%100);
+					sprintf(msg,"%s\"A%u\": %i.%i,",msg,ptr->remote_id,(int)ptr->airflow,((int)(ptr->airflow*100))%100);
+					sprintf(msg,"%s\"B%u\": %u,",msg,ptr->remote_id,ptr->battery);
+				}
+			}
+
+			sprintf(msg,"%s\"MB\": %u}",msg,0);
+
+			// etimer_set(&et_timeout, MASTER_TIMOUT*CLOCK_SECOND);
+		}
+		if(etimer_expired(&et_timeout)){
+			etimer_reset(&et_timeout);
+
+			etimer_stop(&et_timeout);
+		}
+	}
+	PROCESS_END();
+}
+
+// void send_packets_(void){
+
+	
+// }
 
 bool push_packet(struct slave_msg_t *packet){
 	struct slave_msg_t *pck = NULL;
@@ -96,7 +142,10 @@ bool push_packet(struct slave_msg_t *packet){
 	list_add(packet_list,pck);
 
 	if(list_length(packet_list) >= CLOUD_PACKAGE_SIZE){
-		//Send
+		if(sens_status == SENS_IDLE){
+			sens_status = SENS_READY;
+			process_poll(&send_packets);
+		}
 	}
 
 	return true;
@@ -134,7 +183,7 @@ PROCESS(config_cloudmode_request, "");
 PROCESS(config_cloudmode_conf, "");
 PROCESS(config_cloudmode_sendLocalIDS, "");
 PROCESS(config_cloudmode_receiveRemoteIDS, "");
-PROCESS(config_cloudmode_work, "");
+// PROCESS(config_cloudmode_work, "");
 
 PROCESS_THREAD(config_cloudmode_request, ev, data){
     PROCESS_BEGIN();
@@ -187,7 +236,6 @@ PROCESS_THREAD(config_cloudmode_conf, ev, data){
 		PROCESS_YIELD();
 		dat = data;
 		if((ev == PROCESS_EVENT_MSG) && dat != NULL){
-			// printf("dat: %i\n", *dat);
         	if(*dat == 21){
         		printf("Start MOTE ADD\n");
         		SEND_MODE = SEND_NONE;
@@ -295,7 +343,7 @@ PROCESS_THREAD(config_cloudmode_receiveRemoteIDS, ev, data){
 	SEND_MODE = SEND_NONE;
 	RECEIVE_MODE = RECEIVE_NONE;
 
-	printf("RECEIVE IDS DONE\n");
+	printf("RECEIVE REMOTE IDS DONE\n");
 
 	process_post(&master_config, PROCESS_EVENT_CONTINUE, &ret);
 
@@ -370,35 +418,39 @@ PROCESS_THREAD(master_config, ev, data){
 			switch(*dat){
 				case 10:
 					// Return from -> Requesting CloudMode
-					switch(CLOUD_MODE){
-						case STATUS_UNDEFINED:
-							printf("ERROR, UNDEFINED CLOUDMODE\n");
-						break;
-						case STATUS_CONFIG:
-							// Requesting Add Motes
-							printf("DAT == 10\n");
-							*ret = 21;
-							process_post(&config_cloudmode_conf, PROCESS_EVENT_MSG, ret);
-						break;
-						case STATUS_WORKING:
-						break;
-						}
+
+					// Requesting Add Motes
+					// printf("DAT == 10\n");
+					*ret = 21;
+					process_post(&config_cloudmode_conf, PROCESS_EVENT_MSG, ret);
 				break;
 				case 11:
 					// Return from -> Add Motes
 
-					// Sending Ids
-					printf("DAT == 11\n");
-					*ret = 22;
-					process_post(&config_cloudmode_sendLocalIDS, PROCESS_EVENT_MSG, ret);
+					switch(CLOUD_MODE){
+						case STATUS_UNDEFINED:
+							printf("ERROR! UNDEFINED CLOUDMODE\n");
+						break;
+						case STATUS_CONFIG:
+							// Sending Ids
+							// printf("DAT == 11\n");
+							*ret = 22;
+							process_post(&config_cloudmode_sendLocalIDS, PROCESS_EVENT_MSG, ret);		
+						break;
+						case STATUS_WORKING:
+							// printf("DAT == 12\n");
+							*ret = 23;
+							process_post(&config_cloudmode_receiveRemoteIDS, PROCESS_EVENT_MSG, ret);		
+						break;
+					}
 				break;
 				case 12:
 					*ret = 23;
-					printf("DAT == 12\n");
+					// printf("DAT == 12\n");
 					process_post(&config_cloudmode_receiveRemoteIDS, PROCESS_EVENT_MSG, ret);
 				break;
 				case 13:
-					printf("DAT == 13\n");
+					// printf("DAT == 13\n");
 					printf("Config DONE\n");
 					configDONE = true;
 				break;
@@ -407,6 +459,11 @@ PROCESS_THREAD(master_config, ev, data){
 		// if(etimer_expired(&et)) etimer_reset(&et);
 	}
 
+	printf("Changing to Working Mode\n");
+
+	static MODE_t mod;
+	mod = WORKING;
+	set_state(MODE,&mod);
 
 	#else
 	#endif
@@ -414,11 +471,13 @@ PROCESS_THREAD(master_config, ev, data){
 	PROCESS_END();
 }
 
-PROCESS_THREAD(config_cloudmode_work, ev, data){
-    PROCESS_BEGIN();
+// PROCESS_THREAD(config_cloudmode_work, ev, data){
+//     PROCESS_BEGIN();
 
-    PROCESS_END();
-}
+
+
+//     PROCESS_END();
+// }
 
 void send_ID_packet(char *buff){
 
@@ -456,6 +515,10 @@ bool update_MOTE_IDs(uint8_t local_ID, uint8_t remote_ID){
 	for(aux = list_head(motes_list);aux != NULL; aux = list_item_next(aux)){
 		if(aux->local_id == local_ID){
 			aux->remote_id = remote_ID;
+			#if CONTIKI_TARGET_ZOUL
+			if(local_ID == IEEE_ADDR_NODE_ID) m_remote_ID = remote_ID;
+			#else
+			#endif
 			printf("Local ID: %u, Remote ID: %u\n", local_ID, remote_ID);
 			return true;
 		}

@@ -2,8 +2,8 @@
 #define MASTER_H
 
 #define SEND_TO_CLOUD_INTERVAL 15
-#define CLOUD_PACKAGE_SIZE 8
-#define PACKAGE_BUFFER 16
+#define CLOUD_PACKAGE_SIZE 3
+#define PACKAGE_BUFFER 6
 
 
 #define MTRY 3
@@ -17,7 +17,13 @@
 
 #include "msg.h"
 
-void send_packets(void);
+typedef enum{
+	SENS_IDLE,
+	SENS_READY,
+	SENS_DONE
+} SENSOR_DATA_t;
+
+// void send_packets_(void);
 
 bool push_packet(struct slave_msg_t *packet);
 
