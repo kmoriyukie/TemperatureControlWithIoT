@@ -32,7 +32,7 @@ PROCESS_THREAD(coap_server_process, ev, data)
   rest_init_engine();
 
   // rest_activate_resource(&res_toggle, "actuators/toggle");  
-
+  printf("%s\n", (char *) data);
   rest_activate_resource(&res_config, "config");  
   rest_activate_resource(&res_sensors, "sensors");  
 

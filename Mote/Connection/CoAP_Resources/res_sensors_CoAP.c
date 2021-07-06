@@ -63,6 +63,7 @@ RESOURCE(res_sensors,
 static void res_post_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset){
 
 	// Verificaçao do modo
+	printf("POST HANDLER SENSORS\n");
 
 
 	static uint8_t *incoming = NULL;
