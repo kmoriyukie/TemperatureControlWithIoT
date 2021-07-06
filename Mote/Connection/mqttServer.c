@@ -253,20 +253,17 @@ static void state_machine(void)
         state = STATE_PUBLISHING;
 
       } else {
-        // ctimer_set(&ct, PUBLISH_LED_ON_DURATION, NULL, NULL);
-        //Publish Here
-        // publish_test();
 
         switch(SEND_MODE){
           case SEND_NONE:
-            printf("MODE NONE\n");
+            // printf("MODE NONE\n");
           break;
           case SEND_CONFIG_CLOUDMODE_REQUEST:
-            printf("MODE CLOUDMODE\n");
+            // printf("MODE CLOUDMODE\n");
             send_cloudmode();
           break;
           case SEND_CONFIG_IDS_REMLOC: 
-            printf("MODE IDS\n");
+            // printf("MODE IDS\n");
             send_local_ids();
           break;
           case SEND_CONFIG_IDS_ACK:

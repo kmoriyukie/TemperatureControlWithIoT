@@ -244,10 +244,10 @@ PROCESS_THREAD(slave_config, ev, data){
 
 	coap_set_header_uri_path(request, getremoteidURL);
 
-	printf(getremoteidURL);
-	printf("\n");
+	// printf(getremoteidURL);
+	// printf("\n");
 
-	// etimer_reset(&et_timeout);
+	etimer_reset(&et_timeout);
 
   	while(remote_ID == 0){
   		PROCESS_YIELD();
@@ -259,44 +259,7 @@ PROCESS_THREAD(slave_config, ev, data){
 
   	}
 
-  	printf("ID config DONE\n");
-/*
-  	etimer_reset(&et_timeout);
-  	while(remote_ID == 0){
-  		PROCESS_YIELD();
-
-  		if(etimer_expired(&et_timeout)){
-  			coap_init_message(request, COAP_TYPE_CON, COAP_GET, 0);
-
-			char getremoteidURL[15];
-
-			#if CONTIKI_TARGET_ZOUL
-				sprintf(getremoteidURL,"config?ID=%u",IEEE_ADDR_NODE_ID);
-			#else
-				sprintf(getremoteidURL,"config?ID=%u",node_id);
-			#endif
-
-			coap_set_header_uri_path(request, getremoteidURL);
-
-			printf(getremoteidURL);
-			printf("\n");
-
-			// #if CONTIKI_TARGET_ZOUL
-			// 	sprintf(msg,"{\"ID\": %u}\0",IEEE_ADDR_NODE_ID);
-			// #else
-			// 	sprintf(msg,"{\"ID\": %u}\0",node_id);
-			// #endif
-
-			// coap_set_payload(request, (uint8_t *)msg, sizeof(msg) - 1);
-
-			COAP_BLOCKING_REQUEST(&server_ipaddr, REMOTE_PORT, request,
-			                    config_get_handler);
-
-
-			// if(ID_sended) break;
-
-			etimer_reset(&et_timeout);
-  		}*/
+  	// printf("ID config DONE\n");
 
 	printf("Remote ID received.\n");
 
@@ -348,9 +311,11 @@ void config_get_handler(void *response){
 
   static int params[1];
 
-  readJSON_uf(payload, params,NULL);
+  readJSON_i(payload, params);
+
+  printf("Response: %i\n", params[0]);
   
-  if((params[0] > 1) && (params[0] < 255)) remote_ID = params[0];
+  if((params[0] >= 1) && (params[0] <= 255)) remote_ID = params[0];
   else remote_ID = 0;
 }
 

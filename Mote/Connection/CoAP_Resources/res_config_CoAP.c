@@ -76,6 +76,7 @@ static void res_get_handler(void *request, void *response, uint8_t *buffer, uint
 	size = REST.get_query_variable(request, "ID", &par);
 	if(size > 3 || size < 1){
 		REST.set_response_payload(response, MSG_ERROR_INVALID_PARAMETERS, 17);
+		printf("Error1\n");
 		return;
 	}
 	else{
@@ -85,18 +86,26 @@ static void res_get_handler(void *request, void *response, uint8_t *buffer, uint
 
 		if(!find_MOTE_localID(ID, &mote)){
 			REST.set_response_payload(response, MSG_MOTE_NOT_FOUND, 17);
+			printf("Error2\n");
 			return;
 		}
+
+		printf("Local: %i, Remote: %i\n",ID,mote->remote_id);
 
 		if(mote->remote_id == 0) REST.set_response_payload(response, MSG_FAILURE, 16);
 		else{
 			static char resp[10];
 			static uint8_t n_num;
-			if(mote->remote_id >= 0 && mote->remote_id <= 9) n_num = 1;
-			if(mote->remote_id >= 10 && mote->remote_id <= 99) n_num = 2;
 			if(mote->remote_id >= 100 && mote->remote_id <= 255) n_num = 3;
+			else{
+				if(mote->remote_id >= 10 && mote->remote_id <= 99) n_num = 2;
+				else{
+					if(mote->remote_id >= 0 && mote->remote_id <= 9) n_num = 1;
+				}
+			}
 			sprintf(resp,"{\"Response\": %i}",mote->remote_id);
-			REST.set_response_payload(response, resp, 9+n_num);
+			printf("Response: \n%s\n\n", resp);
+			REST.set_response_payload(response, resp, 14+n_num);
 		}
 	}
 }

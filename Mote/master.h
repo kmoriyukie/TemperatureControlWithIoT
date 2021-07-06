@@ -9,7 +9,7 @@
 #define MTRY 3
 #define MASTER_TIMOUT 5 //Seconds
 
-#define DISC_TIMOUT 10 //Seconds
+#define DISC_TIMOUT 5 //Seconds
 
 #include "contiki.h"
 #include "list.h"
