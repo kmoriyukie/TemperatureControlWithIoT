@@ -74,10 +74,10 @@ void pub_handler(const char *topic, uint16_t topic_len, const uint8_t *chunk,
   
 
   if(strcmp((char *)topic,CLOUD_TOPIC)==0){
-    printf("%s\n", topic);
+    // printf("%s\n", topic);
     static int param[15];
     readJSON_i(chunk,param);
-    printf("\n\nReceiving V: %i\n\n\n", param[0]);
+    // printf("\n\nReceiving V: %i\n\n\n", param[0]);
     switch(param[0]){
       case RECEIVE_CLOUDMODE:
         receive_cloudmode(chunk,chunk_len);
@@ -88,13 +88,6 @@ void pub_handler(const char *topic, uint16_t topic_len, const uint8_t *chunk,
     }
     return;
   }
-
-  // if(strcmp((char *)topic,CLOUD_TOPIC)==0){
-  //   printf("%s\n", topic);
-  //   printf("RESPONSE RECEIVED\n");
-  //   receive_ids(chunk,chunk_len);
-  //   return;
-  // }
 
 }
 
@@ -118,9 +111,10 @@ void mqtt_event(struct mqtt_connection *m, mqtt_event_t event, void *data)
     msg_ptr = data;
     if(msg_ptr->first_chunk) {
       msg_ptr->first_chunk = 0;
+      /*
       printf("APP - Application received a publish on topic '%s'. Payload "
           "size is %i bytes.\n",
-          msg_ptr->topic, msg_ptr->payload_length);
+          msg_ptr->topic, msg_ptr->payload_length);*/
     }
 
     pub_handler(msg_ptr->topic, strlen(msg_ptr->topic), msg_ptr->payload_chunk,
@@ -384,7 +378,7 @@ void mqttcom_pub(char *topic, char *msg){
   mqtt_publish(&conn, NULL, topic, (uint8_t *)msg,
                strlen(msg), MQTT_QOS_LEVEL_0, MQTT_RETAIN_OFF);
 
-  printf("APP - Publish to %s: %s\n", pub_topic, app_buffer);
+  // printf("APP - Publish to %s: %s\n", pub_topic, app_buffer);
 }
 
 // void mqttcom_rec(char *msg,uint16_t len){

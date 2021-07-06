@@ -136,17 +136,12 @@ PROCESS(config_cloudmode_sendLocalIDS, "");
 PROCESS(config_cloudmode_receiveRemoteIDS, "");
 PROCESS(config_cloudmode_work, "");
 
-// static process_event_t e_config_cloudmode_request, e_config_cloudmode_conf, e_config_cloudmode_sendLocalIDS;
-
 PROCESS_THREAD(config_cloudmode_request, ev, data){
     PROCESS_BEGIN();
 
     #if CONTIKI_TARGET_ZOUL
     static int ret = 10;
     static int *dat = NULL;
-	// PROCESS_PAUSE();
-
-	// e_config_cloudmode_request = process_alloc_event();
 
     static struct etimer et_timeout;
 
@@ -154,7 +149,6 @@ PROCESS_THREAD(config_cloudmode_request, ev, data){
         PROCESS_YIELD();
         dat = data;
         if((ev == PROCESS_EVENT_MSG) && dat != NULL){
-        	printf("CLOUDMODE Thread MSG\n");
         	if(*dat == 20){
         		printf("Start CLOUDMODE REQUEST\n");
         		SEND_MODE = SEND_CONFIG_CLOUDMODE_REQUEST;
@@ -170,8 +164,6 @@ PROCESS_THREAD(config_cloudmode_request, ev, data){
 
     printf("CLOUDMODE DONE\n");
 
-    // process_poll(&master_config);
-
     process_post(&master_config, PROCESS_EVENT_CONTINUE, &ret);
 
     #else
@@ -186,9 +178,6 @@ PROCESS_THREAD(config_cloudmode_conf, ev, data){
     #if CONTIKI_TARGET_ZOUL
     static int ret = 11;
     static int *dat = NULL;
-	// PROCESS_PAUSE();
-
-	// e_config_cloudmode_conf = process_alloc_event();
 
 	static struct etimer et_timeout;
 
@@ -197,7 +186,7 @@ PROCESS_THREAD(config_cloudmode_conf, ev, data){
 	while(true){
 		PROCESS_YIELD();
 		dat = data;
-		if(dat != NULL){
+		if((ev == PROCESS_EVENT_MSG) && dat != NULL){
 			// printf("dat: %i\n", *dat);
         	if(*dat == 21){
         		printf("Start MOTE ADD\n");
@@ -225,7 +214,6 @@ PROCESS_THREAD(config_cloudmode_conf, ev, data){
 
 
 	process_post(&master_config, PROCESS_EVENT_CONTINUE, &ret);
-    // process_poll(&master_config);
 
     #else
     #endif
@@ -241,20 +229,11 @@ PROCESS_THREAD(config_cloudmode_sendLocalIDS, ev, data){
     static int ret = 12;
     static int *dat = NULL;
 
-	// PROCESS_PAUSE();
-
-	// e_config_cloudmode_sendLocalIDS = process_alloc_event();
-
-	// printf("Send IDS thread\n");
-
 	static struct etimer et_timeout;
 
 	while(true){
 		PROCESS_YIELD();
 		dat = data;
-		// printf("Send IDS\n");
-
-
 
 		if((ev == PROCESS_EVENT_MSG) && dat != NULL){
         	if(*dat == 22){
@@ -277,7 +256,6 @@ PROCESS_THREAD(config_cloudmode_sendLocalIDS, ev, data){
 	printf("SEND IDS DONE\n");
 
 	process_post(&master_config, PROCESS_EVENT_CONTINUE, &ret);
-    // process_poll(&master_config);
 
     #else
     #endif
@@ -293,26 +271,17 @@ PROCESS_THREAD(config_cloudmode_receiveRemoteIDS, ev, data){
     static int ret = 13;
     static int *dat = NULL;
 
-	// PROCESS_PAUSE();
-
-	// e_config_cloudmode_sendLocalIDS = process_alloc_event();
-
-	// printf("Send IDS thread\n");
-
 	static struct etimer et_timeout;
 
 	while(true){
 		PROCESS_YIELD();
 		dat = data;
-		// printf("Send IDS\n");
-
-
 
 		if((ev == PROCESS_EVENT_MSG) && dat != NULL){
         	if(*dat == 23){
         		printf("Start RECEIVE REMOTE IDS\n");
         		mote_count = 0;
-        		SEND_MODE = SEND_CONFIG_IDS_REMLOC;
+        		SEND_MODE = SEND_NONE;
 				RECEIVE_MODE = RECEIVE_CONFIG_IDS_REMLOC;
         		etimer_set(&et_timeout, DISC_TIMOUT*CLOCK_SECOND);
         	}
@@ -329,7 +298,6 @@ PROCESS_THREAD(config_cloudmode_receiveRemoteIDS, ev, data){
 	printf("RECEIVE IDS DONE\n");
 
 	process_post(&master_config, PROCESS_EVENT_CONTINUE, &ret);
-    // process_poll(&master_config);
 
     #else
     #endif
@@ -354,6 +322,8 @@ PROCESS_THREAD(master_config, ev, data){
 	SEND_MODE = SEND_NONE;
 
 	list_init(motes_list);
+
+	add_MOTE(IEEE_ADDR_NODE_ID);
 
 	process_start(&config_cloudmode_request,&data);
 	process_start(&config_cloudmode_conf,&data);
@@ -482,13 +452,14 @@ bool find_MOTE_localID(uint8_t ID, struct MOTE_t **item){
 }
 
 bool update_MOTE_IDs(uint8_t local_ID, uint8_t remote_ID){
-	/*static struct MOTE_t *aux;
+	static struct MOTE_t *aux;
 	for(aux = list_head(motes_list);aux != NULL; aux = list_item_next(aux)){
 		if(aux->local_id == local_ID){
 			aux->remote_id = remote_ID;
+			printf("Local ID: %u, Remote ID: %u\n", local_ID, remote_ID);
 			return true;
 		}
-	}*/
+	}
 	return false;	
 }
 
