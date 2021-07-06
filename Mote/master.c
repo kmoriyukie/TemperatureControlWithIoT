@@ -151,9 +151,10 @@ PROCESS_THREAD(config_cloudmode_request, ev, data){
     static struct etimer et_timeout;
 
     while(CLOUD_MODE == STATUS_UNDEFINED){
-        PROCESS_WAIT_EVENT();
+        PROCESS_YIELD();
         dat = data;
-        if(dat != NULL){
+        if((ev == PROCESS_EVENT_MSG) && dat != NULL){
+        	printf("CLOUDMODE Thread MSG\n");
         	if(*dat == 20){
         		printf("Start CLOUDMODE REQUEST\n");
         		SEND_MODE = SEND_CONFIG_CLOUDMODE_REQUEST;
@@ -191,21 +192,22 @@ PROCESS_THREAD(config_cloudmode_conf, ev, data){
 
 	static struct etimer et_timeout;
 
-	bool ev_started = false;
+	static bool ev_started = false;
 
 	while(true){
-		PROCESS_WAIT_EVENT();
+		PROCESS_YIELD();
 		dat = data;
 		if(dat != NULL){
+			// printf("dat: %i\n", *dat);
         	if(*dat == 21){
         		printf("Start MOTE ADD\n");
         		SEND_MODE = SEND_NONE;
 				RECEIVE_MODE = RECEIVE_NONE;
+				ev_started = true;
         		etimer_set(&et_timeout, DISC_TIMOUT*CLOCK_SECOND);
-        		ev_started = true;
         	}
         }
-        if(ev_started || etimer_expired(&et_timeout)){
+        if(ev_started && etimer_expired(&et_timeout)){
         	if(flag_mote_added){
         		flag_mote_added = false;
         		etimer_reset(&et_timeout);
@@ -213,6 +215,8 @@ PROCESS_THREAD(config_cloudmode_conf, ev, data){
         	else break;
         }
 	}
+
+	ev_started = false;
 
 	SEND_MODE = SEND_NONE;
 	RECEIVE_MODE = RECEIVE_NONE;
@@ -246,13 +250,13 @@ PROCESS_THREAD(config_cloudmode_sendLocalIDS, ev, data){
 	static struct etimer et_timeout;
 
 	while(true){
-		PROCESS_WAIT_EVENT();
+		PROCESS_YIELD();
 		dat = data;
 		// printf("Send IDS\n");
 
 
 
-		if(dat != NULL){
+		if((ev == PROCESS_EVENT_MSG) && dat != NULL){
         	if(*dat == 22){
         		printf("Start SEND LOCAL IDS\n");
         		SEND_MODE = SEND_CONFIG_IDS_REMLOC;
@@ -298,13 +302,13 @@ PROCESS_THREAD(config_cloudmode_receiveRemoteIDS, ev, data){
 	static struct etimer et_timeout;
 
 	while(true){
-		PROCESS_WAIT_EVENT();
+		PROCESS_YIELD();
 		dat = data;
 		// printf("Send IDS\n");
 
 
 
-		if(dat != NULL){
+		if((ev == PROCESS_EVENT_MSG) && dat != NULL){
         	if(*dat == 23){
         		printf("Start RECEIVE REMOTE IDS\n");
         		mote_count = 0;
@@ -366,24 +370,36 @@ PROCESS_THREAD(master_config, ev, data){
 
 	PROCESS_PAUSE();
 
-	// Requesting CloudMode
-	*ret = 20;
-	process_post(&config_cloudmode_request, PROCESS_EVENT_MSG, ret);
-
-	static int *dat = NULL;
+	
+	int *dat = NULL;
 
 	static bool configDONE = false;
 
-	while(!configDONE){
-		// PROCESS_YIELD_UNTIL(ev == PROCESS_EVENT);
-		PROCESS_WAIT_EVENT();
+	static struct etimer et;
 
-		if(data != NULL){
+	etimer_set(&et, 5 * CLOCK_SECOND);
+
+	static bool starter = true;
+
+	while(!configDONE){
+		PROCESS_YIELD_UNTIL(ev == PROCESS_EVENT_CONTINUE || etimer_expired(&et));
+		// PROCESS_WAIT_EVENT();
+
+		if(etimer_expired(&et) && starter){
+			starter = false;
+			// Requesting CloudMode
+			// printf("Starting, ret: %i\n",*ret);
+			*ret = 20;
+			// printf("Starting, ret: %i\n",*ret);
+			process_post(&config_cloudmode_request, PROCESS_EVENT_MSG, ret);
+			etimer_reset(&et);
+		}
+
+		if((ev == PROCESS_EVENT_CONTINUE) && (data != NULL)){
 			dat = data;
 			switch(*dat){
 				case 10:
 					// Return from -> Requesting CloudMode
-
 					switch(CLOUD_MODE){
 						case STATUS_UNDEFINED:
 							printf("ERROR, UNDEFINED CLOUDMODE\n");
@@ -417,44 +433,10 @@ PROCESS_THREAD(master_config, ev, data){
 					configDONE = true;
 				break;
 			}
-			// if(*dat == 10){
-			// 	// Return from -> Requesting CloudMode
-
-			// 	switch(CLOUD_MODE){
-			// 		case STATUS_UNDEFINED:
-			// 			printf("ERROR, UNDEFINED CLOUDMODE\n");
-			// 		break;
-			// 		case STATUS_CONFIG:
-			// 			// Requesting Add Motes
-			// 			printf("DAT == 10\n");
-			// 			*ret = 21;
-			// 			process_post(&config_cloudmode_conf, PROCESS_EVENT_MSG, ret);
-			// 		break;
-			// 		case STATUS_WORKING:
-			// 		break;
-			// 	}
-			// }
-			// if(*dat == 11){
-			// 	// Return from -> Add Motes
-
-			// 	// Sending Ids
-			// 	printf("DAT == 11\n");
-			// 	*ret = 22;
-			// 	process_post(&config_cloudmode_sendLocalIDS, PROCESS_EVENT_MSG, ret);
-			// }
-			// if(*dat == 12){
-			// 	*ret = 23;
-			// 	printf("DAT == 12\n");
-			// 	process_post(&config_cloudmode_receiveRemoteIDS, PROCESS_EVENT_MSG, ret);
-			// }
-			// if(*dat == 13){
-			// 	printf("DAT == 13\n");
-			// 	printf("Config DONE\n");
-			// 	break;
-			// }
-
 		}
+		// if(etimer_expired(&et)) etimer_reset(&et);
 	}
+
 
 	#else
 	#endif
