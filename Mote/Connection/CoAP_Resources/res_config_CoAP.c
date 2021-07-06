@@ -94,7 +94,10 @@ static void res_get_handler(void *request, void *response, uint8_t *buffer, uint
 
 		printf("Local: %i, Remote: %i\n",ID,mote->remote_id);
 
-		if(mote->remote_id == 0) REST.set_response_payload(response, MSG_FAILURE, 16);
+		if(mote->remote_id == 0){
+			REST.set_response_payload(response, MSG_FAILURE, 16);
+			printf("%s\n", MSG_FAILURE);
+		}
 		else{
 			static char resp[10];
 			static uint8_t n_num;
@@ -116,6 +119,9 @@ static void res_post_handler(void *request, void *response, uint8_t *buffer, uin
 	if((node_role != MASTER) && (node_mode != CONFIG)) return;
 	static uint8_t *incoming = NULL;
 	static uint8_t size = 0;
+
+	//printf("POST HANDLER CONFIG\n");
+
 	REST.get_request_payload(request,(const uint8_t **)&incoming);
 	size = strlen(incoming);
 	if(size > 11 || size < 9){
