@@ -13,7 +13,8 @@ typedef enum{
 	SEND_NONE,
 	SEND_CONFIG_CLOUDMODE_REQUEST,
 	SEND_CONFIG_IDS_REMLOC,
-	SEND_CONFIG_IDS_ACK
+	SEND_CONFIG_IDS_ACK,
+	SEND_SENSOR_DATA
 } send_mqtt_t;
 
 
@@ -26,5 +27,9 @@ typedef enum{
 receive_mqtt_t RECEIVE_MODE;
 send_mqtt_t SEND_MODE;
 cloudmode_t CLOUD_MODE;
+
+char cloud_sens[256];
+
+
 
 #endif

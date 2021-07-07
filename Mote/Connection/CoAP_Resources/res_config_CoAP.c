@@ -68,7 +68,7 @@ RESOURCE(res_config,
          NULL);
 
 static void res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset){
-	if((node_role != MASTER) && (node_mode != CONFIG)) return;
+	// if((node_role != MASTER) && (node_mode != CONFIG)) return;
 	static uint8_t size = 0;
 
 	const char *par = NULL;
@@ -109,14 +109,14 @@ static void res_get_handler(void *request, void *response, uint8_t *buffer, uint
 				}
 			}
 			sprintf(resp,"{\"Response\": %i}",mote->remote_id);
-			printf("Response: \n%s\n\n", resp);
+			// printf("Response: \n%s\n\n", resp);
 			REST.set_response_payload(response, resp, 14+n_num);
 		}
 	}
 }
 
 static void res_post_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset){
-	if((node_role != MASTER) && (node_mode != CONFIG)) return;
+	// if((node_role != MASTER) || (node_mode != CONFIG)) return;
 	static uint8_t *incoming = NULL;
 	static uint8_t size = 0;
 

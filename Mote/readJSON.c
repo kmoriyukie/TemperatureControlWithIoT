@@ -67,13 +67,16 @@ void readJSON_sensor(const char *json, int *params_u, float *params_f){
         for(j = 2; j < (ptr2-ptr1); j++){
             buff[j-2] = ptr1[j];
         }
+        // printf("BUFF: %s", buff);
         switch((i+f)){
             case 0: case 1: case 5:
                 params_u[i] = atoi(buff);        
+                // printf(" -> %i\n", params_u[i]);
                 i++;
             break;
             case 2: case 3: case 4:
                 params_f[f] = my_atof(buff);
+                // printf(" -> %i\n", (int)params_f[i]);
                 f++;
             break;
         }

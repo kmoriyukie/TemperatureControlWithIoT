@@ -57,18 +57,6 @@ void receive_cloudmode(const char *msg,uint16_t len){
 		break;
 	}
 
-	// if(params_u[0] == 0){
-	// 	CLOUD_MODE = STATUS_CONFIG;
-	// 	printf("CLOUD Config Mode\n");
-	// }
-	// else{
-	// 	if(){
-	// 	CLOUD_MODE = STATUS_WORKING;
-	// 	printf("CLOUD Working Mode\n");
-	// }
-
-
-
 
 
 	// Receive config_mode -> CONFIG_CLOUDMODE_SETCONFIG

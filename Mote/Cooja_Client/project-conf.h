@@ -60,6 +60,9 @@
 #undef NETSTACK_CONF_RDC
 #define NETSTACK_CONF_RDC              nullrdc_driver
 
+ #undef UIP_CONF_BUFFER_SIZE
+#define UIP_CONF_BUFFER_SIZE       256
+
 #undef RPL_CONF_MAX_DAG_PER_INSTANCE
 #define RPL_CONF_MAX_DAG_PER_INSTANCE     1
 
@@ -72,13 +75,16 @@
 
 /* Increase rpl-border-router IP-buffer when using more than 64. */
 #undef REST_MAX_CHUNK_SIZE
-#define REST_MAX_CHUNK_SIZE            48
+#define REST_MAX_CHUNK_SIZE            70
 
 /* Estimate your header size, especially when using Proxy-Uri. */
 /*
    #undef COAP_MAX_HEADER_SIZE
    #define COAP_MAX_HEADER_SIZE           70
  */
+
+// #undef COAP_MAX_PACKET_SIZE
+// #define COAP_MAX_PACKET_SIZE 70
 
 /* Multiplies with chunk size, be aware of memory constraints. */
 #undef COAP_MAX_OPEN_TRANSACTIONS

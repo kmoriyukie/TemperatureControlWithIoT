@@ -31,6 +31,7 @@ PRIVATE_KEY_FILE = "/home/user/GitHub/TemperatureControlWithIoT/Mote/Initializat
 CONFIG_MOTE_CLOUDMODE_TOPIC = "config/mote/cloudmode"
 CONFIG_CLOUD_TOPIC = "cloud"
 
+SENSOR_MOTE = "sensors"
 CONFIG_MOTE_ID_TOPIC = "config/mote/ids"
 
 #########################################################################
@@ -43,6 +44,9 @@ def on_connect(local_client, userdata, flags, rc):
 
     local_client.subscribe(CONFIG_MOTE_ID_TOPIC)
     print("Subscribed to local topic: " + CONFIG_MOTE_ID_TOPIC + "\n")
+
+    local_client.subscribe(SENSOR_MOTE)
+    print("Subscribed to local topic: " + SENSOR_MOTE + "\n")
 
 # Callback for received message in the local network:
 def on_local_message(local_client, userdata, msg):

@@ -22,6 +22,7 @@ extern struct process coap_server_process; //  /Connection/CoAPServer.c
 
 #include "states.h"
 
+uint8_t MASTER_BATTERY;
 
 
 /*---------------------------*/
@@ -42,6 +43,8 @@ PROCESS(master_working, "Master Working");
 
 PROCESS(send_packets, "");
 
+PROCESS(master_batt, "");
+
 PROCESS_THREAD(master_working, ev, data){
 	PROCESS_BEGIN();
 
@@ -55,9 +58,15 @@ PROCESS_THREAD(master_working, ev, data){
 
 	process_start(&send_packets,NULL);
 
+	process_start(&master_batt,"");
+
 	PROCESS_PAUSE();
 
 	etimer_set(&et, SEND_TO_CLOUD_INTERVAL*CLOCK_SECOND);
+
+	static int ret = 99;
+
+	process_post(&master_batt,PROCESS_EVENT_CONTINUE,&ret);
 
 	while(true){
 
@@ -65,6 +74,9 @@ PROCESS_THREAD(master_working, ev, data){
 
 		if(ev == etimer_expired(&et) || (list_length(packet_list) >= CLOUD_PACKAGE_SIZE)){
 			// send_packets();
+			sens_status = SENS_READY;
+			process_poll(&send_packets);
+			process_post(&master_batt,PROCESS_EVENT_CONTINUE,&ret);
 		}
 
 		// PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
@@ -77,12 +89,69 @@ PROCESS_THREAD(master_working, ev, data){
 	PROCESS_END();
 }
 
+static bool sensors_initialized = false;
+// bool reading_done_flag = false;
+
+PROCESS_THREAD(master_batt, ev, data){
+	PROCESS_BEGIN();
+
+	if(!sensors_initialized){
+		#if CONTIKI_TARGET_ZOUL
+		#else
+		sens_battery_initialize();
+		#endif
+		sensors_initialized = true;
+	}
+
+	static uint8_t i;
+
+	static uint16_t battery;
+
+	static int *dat = NULL;
+
+	while(true){
+		PROCESS_YIELD();
+		dat = data;
+		if((ev == PROCESS_EVENT_CONTINUE) && (dat != NULL)){
+			if(*dat == 99){
+				battery = 0;
+
+				for(i = 0; i < 8; i++){
+					#if CONTIKI_TARGET_ZOUL
+						// batt = vdd3_sensor.value(CC2538_SENSORS_VALUE_TYPE_CONVERTED);
+						// printf("BATTERY RAW: %u\n",vdd3_sensor.value(CC2538_SENSORS_VALUE_TYPE_CONVERTED));
+						battery += (10.0/55.0)*(vdd3_sensor.value(CC2538_SENSORS_VALUE_TYPE_CONVERTED)-2750);
+						// printf("BATTERY: %u\n",battery);
+					#else
+						battery += read_battery();
+					#endif
+				}
+
+				#if CONTIKI_TARGET_ZOUL
+					MASTER_BATTERY = (uint8_t) ((battery>>3));
+				#else
+					// readings.battery = (uint8_t) ((battery>>SR_READINGS)*BATTERY_CONST);
+					MASTER_BATTERY = (uint8_t) ((battery>>3)*BATTERY_CONST);
+				#endif
+
+
+				// reading_done_flag = true;
+			}
+		}
+	}
+	PROCESS_END();
+}
+
+bool send_sensors_packet(void);
+
 PROCESS_THREAD(send_packets, ev, data){
 	PROCESS_BEGIN();
+	#if CONTIKI_TARGET_ZOUL
 	static uint8_t n = 0;
 	static uint8_t i;
 
-	static char msg[230];
+	extern char cloud_sens[256];
+
 	static struct slave_msg_t *ptr;
 
 	static struct etimer et_timeout;
@@ -90,37 +159,44 @@ PROCESS_THREAD(send_packets, ev, data){
 	while(true){
 		PROCESS_YIELD();
 
+
+
 		if((ev == PROCESS_EVENT_POLL) && (sens_status == SENS_READY)){
-			n = list_length(packet_list); 
+			n = list_length(packet_list);
+			if(n > 3) n = 3;
 
-			sprintf(msg,"{ \"M\": %u,",m_remote_ID);
+			sprintf(cloud_sens,"{ \"M\": %u,",m_remote_ID);
 
-			for(i = 0; i < n; i++){
-				if(pop_packet(&ptr)){
-					sprintf(msg,"%s\"T%u\": %i.%i,",msg,ptr->remote_id,(int)ptr->temperature,((int)(ptr->temperature*100))%100);
-					sprintf(msg,"%s\"H%u\": %i.%i,",msg,ptr->remote_id,(int)ptr->humidity,((int)(ptr->humidity*100))%100);
-					sprintf(msg,"%s\"A%u\": %i.%i,",msg,ptr->remote_id,(int)ptr->airflow,((int)(ptr->airflow*100))%100);
-					sprintf(msg,"%s\"B%u\": %u,",msg,ptr->remote_id,ptr->battery);
+			for(i = 0; i < 3; i++){
+				if(i < n){
+					if(pop_packet(&ptr)){
+						sprintf(cloud_sens,"%s\"R%u\": %i,",cloud_sens,i+1,ptr->remote_id);
+						sprintf(cloud_sens,"%s\"T%u\": %i.%i,",cloud_sens,i+1,(int)ptr->temperature,((int)(ptr->temperature*100))%100);
+						sprintf(cloud_sens,"%s\"H%u\": %i.%i,",cloud_sens,i+1,(int)ptr->humidity,((int)(ptr->humidity*100))%100);
+						sprintf(cloud_sens,"%s\"A%u\": %i.%i,",cloud_sens,i+1,(int)ptr->airflow,((int)(ptr->airflow*100))%100);
+						sprintf(cloud_sens,"%s\"B%u\": %u,",cloud_sens,i+1,ptr->battery);
+					}
+				}
+				else{
+					sprintf(cloud_sens,"%s\"R%u\": %i,",cloud_sens,i+1,-1);
+					sprintf(cloud_sens,"%s\"T%u\": %i,",cloud_sens,i+1,-1);
+					sprintf(cloud_sens,"%s\"H%u\": %i,",cloud_sens,i+1,-1);
+					sprintf(cloud_sens,"%s\"A%u\": %i,",cloud_sens,i+1,-1);
+					sprintf(cloud_sens,"%s\"B%u\": %u,",cloud_sens,i+1,-1);
 				}
 			}
 
-			sprintf(msg,"%s\"MB\": %u}",msg,0);
+			sprintf(cloud_sens,"%s\"MB\": %u}",cloud_sens,MASTER_BATTERY);
 
-			// etimer_set(&et_timeout, MASTER_TIMOUT*CLOCK_SECOND);
-		}
-		if(etimer_expired(&et_timeout)){
-			etimer_reset(&et_timeout);
+			printf("Send packet:\n%s\n",cloud_sens);
 
-			etimer_stop(&et_timeout);
+			SEND_MODE = SEND_SENSOR_DATA;
+
 		}
 	}
+	#endif
 	PROCESS_END();
 }
-
-// void send_packets_(void){
-
-	
-// }
 
 bool push_packet(struct slave_msg_t *packet){
 	struct slave_msg_t *pck = NULL;
@@ -143,6 +219,7 @@ bool push_packet(struct slave_msg_t *packet){
 
 	if(list_length(packet_list) >= CLOUD_PACKAGE_SIZE){
 		if(sens_status == SENS_IDLE){
+			printf("Buffer limit!\n");
 			sens_status = SENS_READY;
 			process_poll(&send_packets);
 		}
@@ -158,7 +235,6 @@ bool pop_packet(struct slave_msg_t **packet){
 
 	return true;
 }
-
 
 /*--------------------------*/
 /*----------Config----------*/
@@ -456,7 +532,6 @@ PROCESS_THREAD(master_config, ev, data){
 				break;
 			}
 		}
-		// if(etimer_expired(&et)) etimer_reset(&et);
 	}
 
 	printf("Changing to Working Mode\n");
@@ -470,14 +545,6 @@ PROCESS_THREAD(master_config, ev, data){
 
 	PROCESS_END();
 }
-
-// PROCESS_THREAD(config_cloudmode_work, ev, data){
-//     PROCESS_BEGIN();
-
-
-
-//     PROCESS_END();
-// }
 
 void send_ID_packet(char *buff){
 

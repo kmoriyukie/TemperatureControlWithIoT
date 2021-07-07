@@ -44,6 +44,8 @@
 
 #include "mqttCOM.h"
 
+#include "stdbool.h"
+
 //#include "res_config_mqtt.c"
 
 extern receive_mqtt_t RECEIVE_MODE;
@@ -54,18 +56,18 @@ char *pub_topic = DEFAULT_PUBLISH_TOPIC;
 char *sub_topic = DEFAULT_SUBSCRIBE_TOPIC;
 
 static struct mqtt_connection conn;
-static char app_buffer[APP_BUFFER_SIZE];
 
 static struct mqtt_message *msg_ptr = 0;
 static struct etimer publish_periodic_timer;
 static struct ctimer ct;
-static char *buf_ptr;
 
 static mqtt_client_config_t conf;
 
 void readJSON_ufl(const char *json, int *params_u, float *params_f, uint8_t len);
 
 void readJSON_i(const char *json, int *params_i);
+
+bool send_sensors_packet(void);
 
 void pub_handler(const char *topic, uint16_t topic_len, const uint8_t *chunk,
             uint16_t chunk_len)
@@ -257,17 +259,22 @@ static void state_machine(void)
 
         switch(SEND_MODE){
           case SEND_NONE:
-            // printf("MODE NONE\n");
+            printf("MODE NONE\n");
           break;
           case SEND_CONFIG_CLOUDMODE_REQUEST:
-            // printf("MODE CLOUDMODE\n");
+            printf("MODE CLOUDMODE\n");
             send_cloudmode();
           break;
           case SEND_CONFIG_IDS_REMLOC: 
-            // printf("MODE IDS\n");
+            printf("MODE IDS\n");
             send_local_ids();
           break;
           case SEND_CONFIG_IDS_ACK:
+          break;
+          case SEND_SENSOR_DATA:
+            printf("MODE SENSOR\n");
+            send_sensors_packet();
+            SEND_MODE = SEND_NONE;
           break;
         }
       }

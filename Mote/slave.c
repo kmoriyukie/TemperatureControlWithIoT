@@ -18,7 +18,6 @@
 #include "stdbool.h"
 #include "stdio.h"
 
-// #include "readJSON.h"
 #include "msg.h"
 
 #include "states.h"
@@ -67,7 +66,6 @@ PROCESS_THREAD(slave_working, ev, data){
 	// Communication 
 	static coap_packet_t request[1];
 
-	// static char sensorData[];
 	static char msg[70];
 
 	coap_init_message(request, COAP_TYPE_CON, COAP_POST, 0);
@@ -75,15 +73,6 @@ PROCESS_THREAD(slave_working, ev, data){
 	char *confgURL = "sensors";
 
 	coap_set_header_uri_path(request, confgURL);
-
-	// coap_set_payload(request, (uint8_t *)msg, sizeof(msg) - 1);
-
-	// // uint8_t count_post = 0;
-
-	// while(!ID_sended){
-	// 	COAP_BLOCKING_REQUEST(&server_ipaddr, REMOTE_PORT, request,
-	// 	                    working_post_handler);
-	// }
 
 	while(true){
 
@@ -126,7 +115,8 @@ PROCESS_THREAD(slave_working, ev, data){
 							"\"H\": %i.%u,"
 							"\"A\": %i.%u,"
 							"\"B\": %u"
-						"}",IEEE_ADDR_NODE_ID,
+							"}\n",
+							IEEE_ADDR_NODE_ID,
 							remote_ID,
 							(int)readings.temperature,((int)(readings.temperature*100))%100,
 							(int)readings.humidity,((int)(readings.humidity*100))%100,
@@ -140,7 +130,8 @@ PROCESS_THREAD(slave_working, ev, data){
 							"\"H\": %i.%u,"
 							"\"A\": %i.%u,"
 							"\"B\": %u"
-						"}",node_id,
+							"}\n",
+							node_id,
 							remote_ID,
 							(int)readings.temperature,((int)(readings.temperature*100))%100,
 							(int)readings.humidity,((int)(readings.humidity*100))%100,
@@ -152,8 +143,8 @@ PROCESS_THREAD(slave_working, ev, data){
 			printf("MSG: %s\n", msg);
 
 			coap_set_payload(request, (uint8_t *)msg, sizeof(msg) - 1);
-			// COAP_BLOCKING_REQUEST(&server_ipaddr, REMOTE_PORT, request,
-			// 	                    working_post_handler);
+			COAP_BLOCKING_REQUEST(&server_ipaddr, REMOTE_PORT, request,
+				                    working_post_handler);
 
 		}
 		
@@ -167,7 +158,7 @@ void working_post_handler(void *response){
 
 }
 
-bool sensors_initialized = false;
+static bool sensors_initialized = false;
 
 PROCESS_THREAD(take_readings, ev, data){
 	PROCESS_BEGIN();
@@ -181,6 +172,7 @@ PROCESS_THREAD(take_readings, ev, data){
 		sens_airflow_initialize();
 		sens_battery_initialize();
 		#endif
+		sensors_initialized = true;
 	}
 
 	static uint8_t i;
@@ -217,11 +209,6 @@ PROCESS_THREAD(take_readings, ev, data){
 		readings.battery = (uint8_t) ((battery>>SR_READINGS)*BATTERY_CONST);
 	#endif
 
-
-	// printf("Temperature: %i\n",(int)readings.temperature);
-	// printf("Humidity: %u%%\n",(int)readings.humidity);
-	// printf("Airflow: %u\n",(int)readings.airflow);
-	// printf("Battery: %u%%\n",readings.battery);
 	reading_done_flag = true;
 	PROCESS_END();
 }
@@ -248,14 +235,12 @@ void config_post_handler(void *response);
 void config_get_handler(void *response);
 
 PROCESS(slave_config, "Slave Config");
-PROCESS(slave_config_get,"");
 
 #undef DEBUG
 #define DEBUG 0
 
 PROCESS_THREAD(slave_config, ev, data){
 	PROCESS_BEGIN();
-	process_start(&slave_config_get, &data);
 
   	PROCESS_PAUSE();
 	// CoAP Initialization
@@ -298,10 +283,6 @@ PROCESS_THREAD(slave_config, ev, data){
 
   	printf("ID sent. Waiting for remote ID.\n");
 
-
-
-  	// static coap_packet_t request[1];
-
 	static char query[15];
 
 	#if CONTIKI_TARGET_ZOUL
@@ -309,12 +290,6 @@ PROCESS_THREAD(slave_config, ev, data){
 	#else
 		sprintf(query,"?ID=%u",node_id);
 	#endif
-
-	// static struct etimer et_timeout;
-
-	// coap_set_header_uri_query(request,query);
-
-	// static bool trs = false;
 
 	coap_init_message(request, COAP_TYPE_CON, COAP_GET, 0);
 	coap_set_header_uri_path(request, "config");
@@ -331,69 +306,14 @@ PROCESS_THREAD(slave_config, ev, data){
 	                    config_get_handler);
   			etimer_reset(&et_timeout);
   		}
-
   	}
-
-	// process_poll(&slave_config_get);
-
-  	// while(remote_ID == 0){
-  	// 	PROCESS_YIELD();
-  	// }
 
 	printf("Remote ID received.\n");
 
-	PROCESS_END();
-}
+	static MODE_t mod;
+	mod = WORKING;
+	set_state(MODE,&mod);
 
-
-PROCESS_THREAD(slave_config_get, ev, data){
-	PROCESS_BEGIN();
-  	static coap_packet_t request[1];
-
- //  	coap_init_message(request, COAP_TYPE_CON, COAP_GET, 0);
-	// coap_set_header_uri_path(request, "config");
-
-	static char query[15];
-
-	#if CONTIKI_TARGET_ZOUL
-		sprintf(query,"?ID=%u",IEEE_ADDR_NODE_ID);
-	#else
-		sprintf(query,"?ID=%u",node_id);
-	#endif
-
-	static struct etimer et_timeout;
-
-	// coap_set_header_uri_query(request,query);
-
-	static bool trs = false;
-
-	coap_init_message(request, COAP_TYPE_CON, COAP_GET, 0);
-	coap_set_header_uri_path(request, "config");
-	coap_set_header_uri_query(request,query);
-
-/*
-	while(remote_ID == 0){
-		PROCESS_YIELD();
-		if((ev == PROCESS_EVENT_POLL) || trs){
-
-			COAP_BLOCKING_REQUEST(&server_ipaddr, REMOTE_PORT, request,
-				                config_get_handler);
-			trs == true;
-			// printf("TRS\n");
-			etimer_set(&et_timeout,TIMEOUT*CLOCK_SECOND);
-		}
-		if(etimer_expired(&et_timeout)) etimer_reset(&et_timeout);
-		printf("T\n");
-		// if(ev == PROCESS_EVENT_POLL) {
-		// 	COAP_BLOCKING_REQUEST(&server_ipaddr, REMOTE_PORT, request,
-		// 	                config_get_handler);
-		// 	etimer_reset(&et_timeout);
-
-		// 	// while(remote_ID == 0){
-
-		// 	// }
-		// }
-	}*/
 	PROCESS_END();
 }
 
@@ -407,7 +327,6 @@ void exit_slave_config(void){
 
 
 void config_post_handler(void *response){
-  // int len = 0;
   const uint8_t *payload = NULL;
 
   printf("Post Handler\n");
@@ -417,14 +336,13 @@ void config_post_handler(void *response){
 
   static int params[1];
 
-  readJSON_i(payload, params);
+  readJSON_i((const char*)payload, params);
 
   if((params[0] == 1) || (params[0] == -2)) ID_sended = true;
   else ID_sended = false;
 }
 
 void config_get_handler(void *response){
-  // int len = 0;
   const uint8_t *payload = NULL;
 
   coap_get_payload(response, &payload);
@@ -432,7 +350,7 @@ void config_get_handler(void *response){
 
   static int params[1];
 
-  readJSON_i(payload, params);
+  readJSON_i((const char*)payload, params);
 
   printf("Response: %i\n", params[0]);
   

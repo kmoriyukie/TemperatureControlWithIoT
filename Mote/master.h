@@ -1,15 +1,15 @@
 #ifndef MASTER_H
 #define MASTER_H
 
-#define SEND_TO_CLOUD_INTERVAL 15
+#define SEND_TO_CLOUD_INTERVAL 60
 #define CLOUD_PACKAGE_SIZE 3
-#define PACKAGE_BUFFER 6
+#define PACKAGE_BUFFER 16
 
 
 #define MTRY 3
 #define MASTER_TIMOUT 5 //Seconds
 
-#define DISC_TIMOUT 5 //Seconds
+#define DISC_TIMOUT 10 //Seconds
 
 #include "contiki.h"
 #include "list.h"

@@ -47,6 +47,11 @@
 #include "stdbool.h"
 
 #include "msg.h"
+#include "../../states.h"
+
+extern ROLE_t node_role;
+extern MODE_t node_mode;
+
 
 void readJSON_sensor(const char *json, int *params_u, float *params_f);
 
@@ -61,9 +66,9 @@ RESOURCE(res_sensors,
 
 
 static void res_post_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset){
-
+	if((node_role != MASTER) || (node_mode != WORKING)) return;
 	// Verificaçao do modo
-	printf("POST HANDLER SENSORS\n");
+	// printf("POST HANDLER SENSORS\n");
 
 
 	static uint8_t *incoming = NULL;
@@ -71,21 +76,12 @@ static void res_post_handler(void *request, void *response, uint8_t *buffer, uin
 	size = REST.get_request_payload(request,(const uint8_t **)&incoming);
 
 
-	// if(size > 11 || size < 9){
-	// 	REST.set_response_payload(response, MSG_ERROR_INVALID_PARAMETERS, 17);
-	// 	return;
-	// }
-
-
-
-	//Verificaçao de tamanho
-
-
 	static char json[70];
 	memcpy(json,incoming,size);
 
-	static uint8_t params_u[3];
+	static int params_u[3];
 	static float params_f[3];
+
 	readJSON_sensor(json, params_u, params_f);
 
 	static struct slave_msg_t msg;
@@ -97,7 +93,13 @@ static void res_post_handler(void *request, void *response, uint8_t *buffer, uin
 	msg.airflow = params_f[2];
 	msg.battery = params_u[2];
 
-	// printf("St:\n L_ID: %u, R_ID: %u, Temp: %i, Humi: %i, Air: %i, Bat: %u\n",params_u[0],params_u[1],(uint8_t)(params_f[0]*10),(uint8_t)(params_f[1]*10),(uint8_t)(params_f[2]*10),params_u[2]);
+	// printf("Params: L = (%i,%i),R = (%i,%i), T = (%i,%i),H = (%i,%i),A = (%i,%i),B = (%i,%i)\n"
+	// 															 ,(int)msg.local_id,(int)params_u[0]
+	// 															 ,(int)msg.remote_id,(int)params_u[1]
+	// 															 ,(int)msg.temperature,(int)params_f[0]
+	// 															 ,(int)msg.humidity,(int)params_f[1]
+	// 															 ,(int)msg.airflow,(int)params_f[2]
+	// 															 ,(int)msg.battery,(int)params_u[2]);
 
 	if(push_packet(&msg)) REST.set_response_payload(response, MSG_SUCCESS, 16);
 	else REST.set_response_payload(response, MSG_FAILURE, 16);

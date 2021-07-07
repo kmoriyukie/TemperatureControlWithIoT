@@ -6,12 +6,14 @@
 
 
 #define CONFIG_MOTE_CLOUDMODE_TOPIC	   "config/mote/cloudmode"
-#define CONFIG_CLOUD_CLOUDMODE_TOPIC	   "config/cloud/cloudmode"
+// #define CONFIG_CLOUD_CLOUDMODE_TOPIC	   "config/cloud/cloudmode"
 
 #define CLOUD_TOPIC "cloud"
 
 #define CONFIG_MOTE_ID_TOPIC 		   "config/mote/ids"
-#define CONFIG_CLOUD_ID_TOPIC 		   "config/cloud/ids"
+// #define CONFIG_CLOUD_ID_TOPIC 		   "config/cloud/ids"
+
+#define SENSOR_MOTE "sensors"
 
 #define RECEIVE_CLOUDMODE 0
 #define RECEIVE_REMOTEID 1
