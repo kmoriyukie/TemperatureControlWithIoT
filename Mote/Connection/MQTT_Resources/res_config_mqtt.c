@@ -208,7 +208,7 @@ void send_local_ids(void){
 									 mote_count+2,ids_buff[1],
 									 mote_count+3,ids_buff[2],
 									 mote_count+4,ids_buff[3],
-									 mote_count+5,ids_buff[4],-1);
+									 mote_count+5,ids_buff[4],list_length(*aux_motes_list));
 		}
 
 

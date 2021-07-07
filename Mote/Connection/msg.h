@@ -23,6 +23,7 @@ struct sensor_data{
 };
 
 struct slave_msg_t{
+	struct slave_msg_t *next;
 	uint8_t local_id;
 	uint8_t remote_id;
 	float temperature; // degrees celsius

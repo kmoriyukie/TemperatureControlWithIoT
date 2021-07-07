@@ -164,7 +164,6 @@ PROCESS_THREAD(send_packets, ev, data){
 		if((ev == PROCESS_EVENT_POLL) && (sens_status == SENS_READY)){
 			n = list_length(packet_list);
 			if(n > 3) n = 3;
-
 			sprintf(cloud_sens,"{ \"M\": %u,",m_remote_ID);
 
 			for(i = 0; i < 3; i++){
@@ -233,6 +232,7 @@ bool pop_packet(struct slave_msg_t **packet){
 
 	*packet = list_pop(packet_list);
 
+	printf("%i\n", (*packet)->remote_id);
 	return true;
 }
 
@@ -581,6 +581,7 @@ bool update_MOTE_IDs(uint8_t local_ID, uint8_t remote_ID){
 	static struct MOTE_t *aux;
 	for(aux = list_head(motes_list);aux != NULL; aux = list_item_next(aux)){
 		if(aux->local_id == local_ID){
+			printf("UPDATED MOTE\n");
 			aux->remote_id = remote_ID;
 			#if CONTIKI_TARGET_ZOUL
 			if(local_ID == IEEE_ADDR_NODE_ID) m_remote_ID = remote_ID;
