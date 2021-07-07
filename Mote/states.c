@@ -29,8 +29,8 @@ void initialize_states(void (*handle)(void)){
 	set_state(ROLE,&i_r);
 
 	// Remove
-	static MODE_t i_m = WORKING;
-	set_state(MODE,&i_m);
+	// static MODE_t i_m = WORKING;
+	// set_state(MODE,&i_m);
 	#endif
 }
 

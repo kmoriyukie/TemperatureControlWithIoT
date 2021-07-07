@@ -81,6 +81,7 @@ void pub_handler(const char *topic, uint16_t topic_len, const uint8_t *chunk,
     switch(param[0]){
       case RECEIVE_CLOUDMODE:
         receive_cloudmode(chunk,chunk_len);
+        SEND_MODE = SEND_NONE;
       break;
       case RECEIVE_REMOTEID:
         receive_ids(chunk,chunk_len);

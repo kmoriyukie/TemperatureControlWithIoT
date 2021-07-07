@@ -285,10 +285,11 @@ PROCESS_THREAD(slave_config, ev, data){
 
 	coap_set_payload(request, (uint8_t *)msg, sizeof(msg) - 1);
 
+	etimer_reset(&et_timeout);
 
 	while(!ID_sended){
 		PROCESS_YIELD();
-  		if(etimer_expired(&et_timeout)){
+  		if((!ID_sended) && etimer_expired(&et_timeout)){
   			COAP_BLOCKING_REQUEST(&server_ipaddr, REMOTE_PORT, request,
 		                    config_post_handler);
   			etimer_reset(&et_timeout);
@@ -297,11 +298,47 @@ PROCESS_THREAD(slave_config, ev, data){
 
   	printf("ID sent. Waiting for remote ID.\n");
 
-	process_poll(&slave_config_get);
+
+
+  	// static coap_packet_t request[1];
+
+	static char query[15];
+
+	#if CONTIKI_TARGET_ZOUL
+		sprintf(query,"?ID=%u",IEEE_ADDR_NODE_ID);
+	#else
+		sprintf(query,"?ID=%u",node_id);
+	#endif
+
+	// static struct etimer et_timeout;
+
+	// coap_set_header_uri_query(request,query);
+
+	// static bool trs = false;
+
+	coap_init_message(request, COAP_TYPE_CON, COAP_GET, 0);
+	coap_set_header_uri_path(request, "config");
+	coap_set_header_uri_query(request,query);
+
+
+
+	etimer_set(&et_timeout, TIMEOUT * CLOCK_SECOND);
 
   	while(remote_ID == 0){
   		PROCESS_YIELD();
+  		if((remote_ID == 0) && etimer_expired(&et_timeout)){
+  			COAP_BLOCKING_REQUEST(&server_ipaddr, REMOTE_PORT, request,
+	                    config_get_handler);
+  			etimer_reset(&et_timeout);
+  		}
+
   	}
+
+	// process_poll(&slave_config_get);
+
+  	// while(remote_ID == 0){
+  	// 	PROCESS_YIELD();
+  	// }
 
 	printf("Remote ID received.\n");
 
@@ -313,28 +350,50 @@ PROCESS_THREAD(slave_config_get, ev, data){
 	PROCESS_BEGIN();
   	static coap_packet_t request[1];
 
+ //  	coap_init_message(request, COAP_TYPE_CON, COAP_GET, 0);
+	// coap_set_header_uri_path(request, "config");
+
+	static char query[15];
+
+	#if CONTIKI_TARGET_ZOUL
+		sprintf(query,"?ID=%u",IEEE_ADDR_NODE_ID);
+	#else
+		sprintf(query,"?ID=%u",node_id);
+	#endif
+
+	static struct etimer et_timeout;
+
+	// coap_set_header_uri_query(request,query);
+
+	static bool trs = false;
+
+	coap_init_message(request, COAP_TYPE_CON, COAP_GET, 0);
+	coap_set_header_uri_path(request, "config");
+	coap_set_header_uri_query(request,query);
+
+/*
 	while(remote_ID == 0){
 		PROCESS_YIELD();
-		if(ev == PROCESS_EVENT_POLL) {
-			coap_init_message(request, COAP_TYPE_CON, COAP_GET, 0);
-			coap_set_header_uri_path(request, "config");
+		if((ev == PROCESS_EVENT_POLL) || trs){
 
-			char query[15];
-
-			#if CONTIKI_TARGET_ZOUL
-				sprintf(query,"?ID=%u",IEEE_ADDR_NODE_ID);
-			#else
-				sprintf(query,"?ID=%u",node_id);
-			#endif
-
-			coap_set_header_uri_query(request,query);
-
-			while(remote_ID == 0){
-				COAP_BLOCKING_REQUEST(&server_ipaddr, REMOTE_PORT, request,
-			                config_get_handler);	
-			}
+			COAP_BLOCKING_REQUEST(&server_ipaddr, REMOTE_PORT, request,
+				                config_get_handler);
+			trs == true;
+			// printf("TRS\n");
+			etimer_set(&et_timeout,TIMEOUT*CLOCK_SECOND);
 		}
-	}
+		if(etimer_expired(&et_timeout)) etimer_reset(&et_timeout);
+		printf("T\n");
+		// if(ev == PROCESS_EVENT_POLL) {
+		// 	COAP_BLOCKING_REQUEST(&server_ipaddr, REMOTE_PORT, request,
+		// 	                config_get_handler);
+		// 	etimer_reset(&et_timeout);
+
+		// 	// while(remote_ID == 0){
+
+		// 	// }
+		// }
+	}*/
 	PROCESS_END();
 }
 

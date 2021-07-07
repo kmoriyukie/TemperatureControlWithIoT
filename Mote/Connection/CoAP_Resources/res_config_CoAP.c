@@ -78,7 +78,7 @@ static void res_get_handler(void *request, void *response, uint8_t *buffer, uint
 	size = REST.get_query_variable(request, "ID", &par);
 	if(size > 3 || size < 1){
 		REST.set_response_payload(response, MSG_ERROR_INVALID_PARAMETERS, 17);
-		printf("Error1\n");
+		// printf("Error1\n");
 		return;
 	}
 	else{
@@ -88,11 +88,11 @@ static void res_get_handler(void *request, void *response, uint8_t *buffer, uint
 
 		if(!find_MOTE_localID(ID, &mote)){
 			REST.set_response_payload(response, MSG_MOTE_NOT_FOUND, 17);
-			printf("Error2\n");
+			// printf("Error2\n");
 			return;
 		}
 
-		printf("Local: %i, Remote: %i\n",ID,mote->remote_id);
+		// printf("Local: %i, Remote: %i\n",ID,mote->remote_id);
 
 		if(mote->remote_id == 0){
 			REST.set_response_payload(response, MSG_FAILURE, 16);
