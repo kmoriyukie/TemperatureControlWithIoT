@@ -67,7 +67,11 @@
             background-color: #ddd;
             color: black;
         }
-        .toolbar a.selected:hover {
+        .toolbar a:hover.selected {
+            background-color: #ddd;
+            color: black;
+        }
+        .toolbar a:hover.unselected {
             background-color: #ddd;
             color: black;
         }
@@ -86,7 +90,7 @@
         .leftbar{
             order: 0;
             float: left;
-            background-color: #07fdd4;
+            background-color: #48c5b2;
             text-align: center;
             padding: 14px 16px;
             text-decoration: none;
@@ -101,41 +105,174 @@
         .home{
             order: 1;
         }
+        .config{
+            order: 1;
+            display: none;
+            width: 98%;
+            height: 98%;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            /* display: flex; */
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            /* background-color: #ccc; */
+            background-color: #2196F3;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            
+            background-color: rgb(255, 0, 0);
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(26px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        .cloudModeWidget{
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: auto;
+            width: 50%;
+            flex-wrap: nowrap;
+            flex-direction: row;
+            justify-content: center;
+            align-content: center;
+        }
+        .cloudModeWidget p{
+            padding: 16px 16px;
+        }
+        .IdsList{
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            align-content: center;
+            justify-content: center;
+            align-items: center;
+            background-color: #a5a5a5;
+            margin: 0px 10px;
+            border-radius: 0.4cm;
+        }
+         .List_item{
+            float: center;
+            background-color: #ff0000;
+            margin: 4px 10px;
+            border-radius: 0.4cm;
+        }
+
     </style>
+    <script type="text/javascript" src="IDS_List.js"></script>
+    <script type="text/javascript">
+        function initialization(){
+            // HomeMode();
+            ConfigMode();
+            document.getElementById("CloudModeSwitch").checked = GetMode();
+
+            let list = new IDS_List;
+            list.initialize();
+
+        }
+        window.onload = initialization;
+    </script>
   </head>
   <body class="body">
-      <div class="toolbar">
-          <a class="selected" id="HomeBut" href="#" onclick="changeToConfig()">Home</a>
-          <a href="#" id="ConfigBut" onclick="changeToHome()">Config</a>
-      </div>
-      <div class = "main">
+    <div class="toolbar">
+        <a class="selected" id="HomeBut" href="#" onclick="HomeMode()">Home</a>
+        <a href="#" id="ConfigBut" onclick="ConfigMode()">Setup</a>
+    </div>
+    <div class="main">
         <div class="leftbar">
             <div class="icons">
-                <div class="infos"><img src="cold.png" width="90" class="icon"><div class="info"><u>TEMPERATURE</u><br>-10°C</div></div>
-                <div class="infos"><img src="humidity.png" width="90" class="icon"><div class="info"><u>HUMIDITY</u><br>40%</div></div>
-                <div class="infos"><img src="wind.png" width="90" class="icon"><div class="info"><u>WIND FLOW</u><br>1 m/s</div></div>  
+                <div class="infos"><img src="cold.png" width="80" height="80" class="icon" ><div class="info"><u>TEMPERATURE</u><br>-10°C</div></div>
+                <div class="infos"><img src="humidity.png" width="80" height="80" class="icon"><div class="info"><u>HUMIDITY</u><br>40%</div></div>
+                <div class="infos"><img src="wind.png" width="80" height="80" class="icon"><div class="info"><u>WIND FLOW</u><br>1 m/s</div></div>  
             </div>
         </div>
-        <div class="home">
-            <canvas id="container" width="600" height="600" style="border:1px solid black;"></canvas>
+        <div class="home" id="HOME">
+            <div>
+                <canvas id="mainCanvas" width="600" height="600" style="border:1px solid black;"></canvas>
+            </div>
         </div>
-      </div>
+        <div class="config" id="CONFIG">
+    
+            <div vertical-align=top>
+                <div class="cloudModeWidget">
+                    <p order=0>Working</p>
+                    <label class="switch" order=1>
+                        <input type="checkbox" checked id="CloudModeSwitch">
+                        <span class="slider round"></span>
+                    </label>
+                    <p order=2>Setup</p>
+                </div>
+            </div>
+            <div class="IdsList" id="ids_list">
+
+            </div>
+    
+        </div>
+    </div>
       <script src="https://threejs.org/build/three.js"></script>
-      <script>
-          function changeToConfig(){
-            document.getElementById('ConfigBut').className = 'unselected';
-            document.getElementById('HomeBut').className = 'selected';
-          }
-          function changeToHome(){
+      <script> //Tool Bar
+          function ConfigMode(){
             document.getElementById('ConfigBut').className = 'selected';
             document.getElementById('HomeBut').className = 'unselected';
+            document.getElementById("HOME").style.display = "none";
+            document.getElementById("CONFIG").style.display = "block";
           }
-      </script>
-      <script>
+          function HomeMode(){
+            document.getElementById('ConfigBut').className = 'unselected';
+            document.getElementById('HomeBut').className = 'selected';
+            document.getElementById("HOME").style.display = "block";
+            document.getElementById("CONFIG").style.display = "none";
+          }
+      </script> 
+      <script> //Canvas
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera( 75, 1, 0.01, 10000 );
 
-        const renderer = new THREE.WebGLRenderer({canvas: container, alpha: true,antialias: true});
+        const renderer = new THREE.WebGLRenderer({canvas: mainCanvas, alpha: true,antialias: true});
         renderer.setSize( 450, 450 );
         renderer.setClearColor( 0xffffff, 0);
         //document.body.appendChild( renderer.domElement );
@@ -188,6 +325,38 @@
         };
 
         animate();
+      </script>
+      <script> // Config
+        function toggleCloudMode(){
+            if(document.getElementById("CloudModeSwitch").checked) ChangeMode("Working");
+            else ChangeMode("Config");
+            document.getElementById("CloudModeSwitch").checked = !document.getElementById("CloudModeSwitch").checked;
+        }
+        
+        function ChangeMode(Mode) { // 'Working' | 'Config'
+            var xmlhttp = new XMLHttpRequest();
+            const url = "https://69c7mi9azh.execute-api.eu-west-1.amazonaws.com/ChangeMode?Mode=" + Mode;
+            
+            xmlhttp.onreadyfunctionstatechange = function (){
+                console.log(this)
+            }
+
+            xmlhttp.open('GET', url, true);
+            xmlhttp.send(); 
+        }
+        function GetMode(){
+            var xmlhttp = new XMLHttpRequest();
+            const url = 5;
+            mode = "Config";
+            switch(mode){// Negado
+                case "Working":
+                    return false;
+                break;
+                case "Config":
+                    return true;
+                break;
+            }
+        }
       </script>
   </body>
 </body>
