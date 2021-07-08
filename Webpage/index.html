@@ -19,6 +19,7 @@
             /* width:1000px; */
             display: flex;
             margin: 20px auto 5px;
+            font-family: sans-serif;
         }
         /* .layers{
             display: flex;
@@ -95,6 +96,7 @@
             padding: 14px 16px;
             text-decoration: none;
             font-size: 17px;
+            font-family: sans-serif;
             /* display: flex; */
             justify-content: space-between;
             height: 80vh;
@@ -111,6 +113,8 @@
             width: 98%;
             height: 98%;
         }
+    </style>
+    <style> /* CloudMode */
         .switch {
             position: relative;
             display: inline-block;
@@ -171,47 +175,105 @@
         }
 
         .cloudModeWidget{
-            display: flex;
+            display: block;
             align-items: center;
             text-align: center;
             margin: auto;
-            width: 50%;
-            flex-wrap: nowrap;
-            flex-direction: row;
+            width: 250px;
             justify-content: center;
             align-content: center;
         }
         .cloudModeWidget p{
             padding: 16px 16px;
+            display: inline-block;
+            width: 50px;
+        }.cent{
+            display: inline-block;
+            justify-content: center;
+            vertical-align:middle;
+            align-content: center;
+            width: 60px;
         }
+    </style>
+    <style> /* Ids List */
         .IdsList{
             display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            background-color: #a5a5a5;
+            /* margin: 0px 10px; */
+            border-radius: 0.4cm;
             flex-direction: column;
+            align-items: center;
+            align-content: space-around;
+            margin: 8px;
+            padding: 0px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+        }
+        .IdsList_line{
+            background-color: #13e925;
+            width: 90%;
+            height: 40px;
+            display: flex;
+            flex-direction: row;
             flex-wrap: nowrap;
             align-content: center;
             justify-content: center;
             align-items: center;
-            background-color: #a5a5a5;
-            margin: 0px 10px;
             border-radius: 0.4cm;
+            padding: 3px;
+            margin: 2.5px;
         }
-         .List_item{
-            float: center;
-            background-color: #ff0000;
-            margin: 4px 10px;
-            border-radius: 0.4cm;
+        .Line_Element{
+            /* background-color: #13e925; */
+            align-items: center;
         }
-
+        .Line_Element label{
+            display: inline-block;
+            font-size: large;
+            width: 160px;
+            height: 20px;
+            font-weight:bold;
+            /* margin: auto; */
+            margin-top: 5px;
+            margin-bottom: 5px;
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+        .Line_Element input{
+            font-size: large;
+            width: 45px;
+            height: 20px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+        .Line_Element_cBar{
+            background-color: #000000;
+            width: 5px;
+            height: 46px;
+            border-style: "solid";
+            border-width: "thick";
+            border-color: #5f5f5f;
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+    </style>
+    <style> /* Map */
+        .Map{
+            background-color: #5f5f5f;
+        }
     </style>
     <script type="text/javascript" src="IDS_List.js"></script>
     <script type="text/javascript">
         function initialization(){
-            // HomeMode();
             ConfigMode();
-            document.getElementById("CloudModeSwitch").checked = GetMode();
-
+            // PromiseCloudMode(false);
             let list = new IDS_List;
-            list.initialize();
+            PromiseData(true);
+            // list.PromiseInitialize();
 
         }
         window.onload = initialization;
@@ -225,9 +287,9 @@
     <div class="main">
         <div class="leftbar">
             <div class="icons">
-                <div class="infos"><img src="cold.png" width="80" height="80" class="icon" ><div class="info"><u>TEMPERATURE</u><br>-10°C</div></div>
-                <div class="infos"><img src="humidity.png" width="80" height="80" class="icon"><div class="info"><u>HUMIDITY</u><br>40%</div></div>
-                <div class="infos"><img src="wind.png" width="80" height="80" class="icon"><div class="info"><u>WIND FLOW</u><br>1 m/s</div></div>  
+                <div class="infos"><img src="cold.png" width="80" height="80" class="icon" ><div class="info"><u>TEMPERATURE</u><div id="LatestTemp"></div><br></div></div>
+                <div class="infos"><img src="humidity.png" width="80" height="80" class="icon"><div class="info"><u>HUMIDITY</u><br><div id="LatestHumidity"></div></div></div>
+                <div class="infos"><img src="wind.png" width="80" height="80" class="icon"><div class="info"><u>WIND FLOW</u><br><div id="LatestFlow"></div></div></div>  
             </div>
         </div>
         <div class="home" id="HOME">
@@ -238,17 +300,22 @@
         <div class="config" id="CONFIG">
     
             <div vertical-align=top>
-                <div class="cloudModeWidget">
-                    <p order=0>Working</p>
-                    <label class="switch" order=1>
-                        <input type="checkbox" checked id="CloudModeSwitch">
-                        <span class="slider round"></span>
-                    </label>
-                    <p order=2>Setup</p>
+                <div>
+                    <div class="cloudModeWidget">
+                        <p>Working</p>
+                        <label class="switch cent">
+                            <input type="checkbox" checked id="CloudModeSwitch" onclick="PromiseCloudMode(true)">
+                            <span class="slider round"></span>
+                        </label>
+                        <p>Setup</p>
+                    </div>
                 </div>
             </div>
-            <div class="IdsList" id="ids_list">
+            <!-- <div class="IdsList" id="ids_list">
 
+            </div> -->
+            <div class="Map">
+                
             </div>
     
         </div>
@@ -327,35 +394,87 @@
         animate();
       </script>
       <script> // Config
-        function toggleCloudMode(){
-            if(document.getElementById("CloudModeSwitch").checked) ChangeMode("Working");
-            else ChangeMode("Config");
-            document.getElementById("CloudModeSwitch").checked = !document.getElementById("CloudModeSwitch").checked;
+
+        // function PromisetoggleCloudMode(){
+        //     // let resp = await GetMode();
+        //     PromiseCloudMode();
+        //     if(document.getElementById("CloudModeSwitch").checked) ChangeMode("Working");
+        //     else ChangeMode("Config");
+        //     document.getElementById("CloudModeSwitch").checked = !document.getElementById("CloudModeSwitch").checked;
+        // }
+        // function ChangeMode(Mode) { // 'Working' | 'Config'
+        //     var xmlhttp = new XMLHttpRequest();
+        //     const url = "https://69c7mi9azh.execute-api.eu-west-1.amazonaws.com/ChangeMode?Mode=" + Mode;
+        //     xmlhttp.onload = function (){
+        //         //console.log(this)
+        //     }
+
+        //     xmlhttp.open('GET', url, true);
+        //     xmlhttp.send(); 
+        // }
+
+        // window.addEventListener('load', PromiseData(true))
+
+        function PromiseCloudMode(type){ // false - GetMode, true - SetMode
+            const xmlhttp = new XMLHttpRequest();
+            var url;
+            if(!type){
+                url = "https://69c7mi9azh.execute-api.eu-west-1.amazonaws.com/GetMode";
+            }
+            else{
+                if(document.getElementById("CloudModeSwitch").checked){
+                    Mode = "Config";
+                }
+                else{
+                    Mode = "Working";
+                }
+                url = "https://69c7mi9azh.execute-api.eu-west-1.amazonaws.com/ChangeMode?Mode=" + Mode;
+            }
+            xmlhttp.onload = function(){
+                if(this.readyState == 4 && this.status == 200){
+                    ResolveCloudMode(type,this.response);
+                }
+            }
+            xmlhttp.open('GET',url,true);
+            xmlhttp.send();
         }
-        
-        function ChangeMode(Mode) { // 'Working' | 'Config'
-            var xmlhttp = new XMLHttpRequest();
-            const url = "https://69c7mi9azh.execute-api.eu-west-1.amazonaws.com/ChangeMode?Mode=" + Mode;
-            
-            xmlhttp.onreadyfunctionstatechange = function (){
-                console.log(this)
+        function ResolveCloudMode(type, response){
+            if(!type){
+                switch(response){
+                    case '0':
+                        document.getElementById("CloudModeSwitch").checked = true;
+                    break;
+                    case '1':
+                        document.getElementById("CloudModeSwitch").checked = false; 
+                    break;
+                }
+            }
+            else{
+                PromiseCloudMode(false);
+            }
+        }
+        function PromiseData(type){
+            const xmlhttp = new XMLHttpRequest();
+            var url = "https://6zie9qzah0.execute-api.eu-west-1.amazonaws.com/default"
+            if(type) url = url + '/latest'
+            // console.log(url)
+
+            xmlhttp.onload = function(){
+                if (this.readyState == 4 && this.status == 200) {
+                    ResolveData(type, JSON.parse(this.response))
+                }
             }
 
-            xmlhttp.open('GET', url, true);
-            xmlhttp.send(); 
+            xmlhttp.open('GET', url, true)
+            xmlhttp.send()
         }
-        function GetMode(){
-            var xmlhttp = new XMLHttpRequest();
-            const url = 5;
-            mode = "Config";
-            switch(mode){// Negado
-                case "Working":
-                    return false;
-                break;
-                case "Config":
-                    return true;
-                break;
+        function ResolveData(type, response){
+            if(type){
+                document.getElementById("LatestTemp").innerHTML = response.Temperature.toString() + '°';
+                document.getElementById("LatestHumidity").innerHTML = response.Humidity.toString() + ' %';
+                document.getElementById("LatestFlow").innerHTML = response.Airflow.toString() + ' m/s';
             }
+            else console.log(response)
         }
       </script>
   </body>
