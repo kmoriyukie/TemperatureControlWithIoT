@@ -69,6 +69,14 @@ void readJSON_i(const char *json, int *params_i);
 
 bool send_sensors_packet(void);
 
+void receive_cloudmode(const char *msg,uint16_t len);
+
+void receive_ids(const char *msg,uint16_t len);
+
+void send_cloudmode(void);
+
+void send_local_ids(void);
+
 void pub_handler(const char *topic, uint16_t topic_len, const uint8_t *chunk,
             uint16_t chunk_len)
 {
@@ -87,6 +95,7 @@ void pub_handler(const char *topic, uint16_t topic_len, const uint8_t *chunk,
       break;
       case RECEIVE_REMOTEID:
         receive_ids(chunk,chunk_len);
+        SEND_MODE = SEND_NONE;
       break;
     }
     return;
@@ -259,15 +268,19 @@ static void state_machine(void)
 
         switch(SEND_MODE){
           case SEND_NONE:
-            printf("MODE NONE\n");
+            // printf("MODE NONE\n");
           break;
           case SEND_CONFIG_CLOUDMODE_REQUEST:
             printf("MODE CLOUDMODE\n");
             send_cloudmode();
           break;
-          case SEND_CONFIG_IDS_REMLOC: 
-            printf("MODE IDS\n");
+          case SEND_CONFIG_IDS_LOC: 
+            printf("MODE LOC IDS\n");
             send_local_ids();
+          break;
+          case SEND_CONFIG_IDS_REM: 
+            printf("MODE REM IDS\n");
+            request_remote_ids();
           break;
           case SEND_CONFIG_IDS_ACK:
           break;

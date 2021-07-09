@@ -231,4 +231,10 @@ void send_local_ids(void){
 	// Send ids_confirmation
 }
 
+void request_remote_ids(void){
+	printf("Sending Remote Ids Request\n");
+	static char REMOTE_REQ[] = "{\"device\": \"RE-Mote\"}";
+	mqttcom_pub(CONFIG_MOTE_REMOT_ID_TOPIC,REMOTE_REQ);
+}
+
 #endif

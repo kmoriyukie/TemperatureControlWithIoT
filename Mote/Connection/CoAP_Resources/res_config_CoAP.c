@@ -96,7 +96,7 @@ static void res_get_handler(void *request, void *response, uint8_t *buffer, uint
 
 		if(mote->remote_id == 0){
 			REST.set_response_payload(response, MSG_FAILURE, 16);
-			printf("%s\n", MSG_FAILURE);
+			// printf("%s\n", MSG_FAILURE);
 		}
 		else{
 			static char resp[10];

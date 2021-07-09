@@ -33,6 +33,7 @@ CONFIG_CLOUD_TOPIC = "cloud"
 
 SENSOR_MOTE = "sensors"
 CONFIG_MOTE_ID_TOPIC = "config/mote/ids"
+CONFIG_MOTE_REMOTE_ID_TOPIC = "config/mote/remote_ids"
 
 #########################################################################
 
@@ -44,6 +45,9 @@ def on_connect(local_client, userdata, flags, rc):
 
     local_client.subscribe(CONFIG_MOTE_ID_TOPIC)
     print("Subscribed to local topic: " + CONFIG_MOTE_ID_TOPIC + "\n")
+
+    local_client.subscribe(CONFIG_MOTE_REMOTE_ID_TOPIC)
+    print("Subscribed to local topic: " + CONFIG_MOTE_REMOTE_ID_TOPIC + "\n")
 
     local_client.subscribe(SENSOR_MOTE)
     print("Subscribed to local topic: " + SENSOR_MOTE + "\n")

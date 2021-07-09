@@ -154,7 +154,7 @@ PROCESS_THREAD(send_packets, ev, data){
 
 	static struct slave_msg_t *ptr;
 
-	static struct etimer et_timeout;
+	// static struct etimer et_timeout;
 
 	while(true){
 		PROCESS_YIELD();
@@ -362,8 +362,8 @@ PROCESS_THREAD(config_cloudmode_sendLocalIDS, ev, data){
 		if((ev == PROCESS_EVENT_MSG) && dat != NULL){
         	if(*dat == 22){
         		printf("Start SEND LOCAL IDS\n");
-        		SEND_MODE = SEND_CONFIG_IDS_REMLOC;
-				RECEIVE_MODE = RECEIVE_CONFIG_IDS_REMLOC;
+        		SEND_MODE = SEND_CONFIG_IDS_LOC;
+				RECEIVE_MODE = RECEIVE_CONFIG_IDS_LOC;
         		mote_count = 0;
         		etimer_set(&et_timeout, DISC_TIMOUT*CLOCK_SECOND);
         	}
@@ -405,8 +405,8 @@ PROCESS_THREAD(config_cloudmode_receiveRemoteIDS, ev, data){
         	if(*dat == 23){
         		printf("Start RECEIVE REMOTE IDS\n");
         		mote_count = 0;
-        		SEND_MODE = SEND_NONE;
-				RECEIVE_MODE = RECEIVE_CONFIG_IDS_REMLOC;
+        		SEND_MODE = SEND_CONFIG_IDS_REM;
+				RECEIVE_MODE = RECEIVE_CONFIG_IDS_LOC;
         		etimer_set(&et_timeout, DISC_TIMOUT*CLOCK_SECOND);
         	}
         }
@@ -498,6 +498,7 @@ PROCESS_THREAD(master_config, ev, data){
 					// Requesting Add Motes
 					// printf("DAT == 10\n");
 					*ret = 21;
+					// printf("Adding Motes\n");
 					process_post(&config_cloudmode_conf, PROCESS_EVENT_MSG, ret);
 				break;
 				case 11:
@@ -516,6 +517,7 @@ PROCESS_THREAD(master_config, ev, data){
 						case STATUS_WORKING:
 							// printf("DAT == 12\n");
 							*ret = 23;
+							// printf("Receiving Remote Ids\n");
 							process_post(&config_cloudmode_receiveRemoteIDS, PROCESS_EVENT_MSG, ret);		
 						break;
 					}
@@ -533,6 +535,8 @@ PROCESS_THREAD(master_config, ev, data){
 			}
 		}
 	}
+
+	configDONE = false;
 
 	printf("Changing to Working Mode\n");
 
