@@ -36,12 +36,24 @@ class IDS_List{
             // List_r.style.borderWidth = "thin";
             // List_l.style.float = "left";
             // List_r.style.textAlign = "left";
-            const currentDiv = document.getElementById("CONFIG");
-            currentDiv.appendChild(List_c);
+
+
+
+            // const currentDiv = document.getElementById("CONFIG");
+            // currentDiv.appendChild(List_c);
+            // // currentDiv.appendChild(List_r);
+            // this.id_list.forEach(element => {    
+            //     this.createItem(element,List_c);
+            // });
+
+            const list = document.getElementById("ids_list");
+            // currentDiv.appendChild(List_c);
             // currentDiv.appendChild(List_r);
             this.id_list.forEach(element => {    
-                this.createItem(element,List_c);
+                this.createItem(element,list);
             });
+
+            // ids_list
         }
     }
     PromiseIDsList(){
