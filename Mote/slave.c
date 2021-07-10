@@ -21,6 +21,8 @@
 #include "msg.h"
 
 #include "states.h"
+// #include "./../event_threads.h"
+#include "events_threads.h"
 
 bool ID_sended = false;
 uint8_t remote_ID = 0;
@@ -259,8 +261,8 @@ PROCESS_THREAD(slave_config, ev, data){
 
 	coap_set_header_uri_path(request, confgURL);
 
-	printf(confgURL);
-	printf("\n");
+	// printf(confgURL);
+	// printf("\n");
 
 #if CONTIKI_TARGET_ZOUL
 	sprintf(msg,"{\"ID\": %u}\n",IEEE_ADDR_NODE_ID);

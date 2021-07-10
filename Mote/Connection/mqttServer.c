@@ -77,6 +77,10 @@ void send_cloudmode(void);
 
 void send_local_ids(void);
 
+void request_remote_ids(void);
+
+void receive_blink_request(const char *msg,uint16_t len);
+
 void pub_handler(const char *topic, uint16_t topic_len, const uint8_t *chunk,
             uint16_t chunk_len)
 {
@@ -96,6 +100,10 @@ void pub_handler(const char *topic, uint16_t topic_len, const uint8_t *chunk,
       case RECEIVE_REMOTEID:
         receive_ids(chunk,chunk_len);
         SEND_MODE = SEND_NONE;
+      break;
+      case RECEIVE_BLINK_REQ:
+        receive_blink_request(chunk,chunk_len);
+        // SEND_MODE = SEND_NONE;
       break;
     }
     return;

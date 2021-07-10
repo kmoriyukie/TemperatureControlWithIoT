@@ -45,4 +45,10 @@ void exec_master_config(void);
 
 void exit_master_config(void);
 
+bool find_onBlink_list(uint8_t ID, struct blink_t **item);
+
+void blinkList_push(uint8_t loc_id);
+
+void blinkList_remove(struct blink_t **item);
+
 #endif

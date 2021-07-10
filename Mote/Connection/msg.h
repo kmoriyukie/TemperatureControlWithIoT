@@ -38,6 +38,11 @@ struct MOTE_t{
 	uint8_t remote_id;
 };
 
+struct blink_t{
+	struct blink_t *next;
+	uint8_t local_id;
+};
+
 // struct master_msg_t{
 	
 // };
@@ -47,6 +52,7 @@ struct MOTE_t{
 #define MSG_MOTE_ALREADY_EXISTS "{\"Response\": -2}\n" //17
 #define MSG_MOTE_NOT_FOUND "{\"Response\": -3}\n" //17
 #define MSG_CONFIG_MODE "{\"Response\": -9}\n" //17
+// #define MSG_BLINK "{\"Response\": -8}\n" //17
 
 
 /*---------------------------------------------------------------------------*/

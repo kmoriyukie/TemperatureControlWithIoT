@@ -12,12 +12,16 @@
 
 #define CONFIG_MOTE_ID_TOPIC 		   "config/mote/ids"
 #define CONFIG_MOTE_REMOT_ID_TOPIC 		   "config/mote/remote_ids"
+
 // #define CONFIG_CLOUD_ID_TOPIC 		   "config/cloud/ids"
 
 #define SENSOR_MOTE "sensors"
 
 #define RECEIVE_CLOUDMODE 0
 #define RECEIVE_REMOTEID 1
+#define RECEIVE_BLINK_REQ 2
+#define RECEIVE_CONFIG_MODE 3
+
 
 void mqttcom_pub(char *topic, char *msg);
 

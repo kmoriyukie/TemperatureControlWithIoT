@@ -33,6 +33,8 @@ LIST(motes_list);
 
 LIST(packet_list);
 
+LIST(blink_list);
+
 static uint8_t m_remote_ID = 0;
 
 SENSOR_DATA_t sens_status = SENS_IDLE;
@@ -218,7 +220,7 @@ bool push_packet(struct slave_msg_t *packet){
 
 	if(list_length(packet_list) >= CLOUD_PACKAGE_SIZE){
 		if(sens_status == SENS_IDLE){
-			printf("Buffer limit!\n");
+			// printf("Buffer limit!\n");
 			sens_status = SENS_READY;
 			process_poll(&send_packets);
 		}
@@ -447,6 +449,8 @@ PROCESS_THREAD(master_config, ev, data){
 
 	list_init(motes_list);
 
+	list_init(blink_list);
+
 	add_MOTE(IEEE_ADDR_NODE_ID);
 
 	process_start(&config_cloudmode_request,&data);
@@ -564,7 +568,7 @@ bool add_MOTE(uint8_t ID){
 		mote->remote_id = 0;
 		list_add(motes_list,mote);
 		flag_mote_added = 1;
-		printf("MOTE added\n");
+		printf("MOTE ADDED\n");
 		return true;
 	}
 }
@@ -585,7 +589,7 @@ bool update_MOTE_IDs(uint8_t local_ID, uint8_t remote_ID){
 	static struct MOTE_t *aux;
 	for(aux = list_head(motes_list);aux != NULL; aux = list_item_next(aux)){
 		if(aux->local_id == local_ID){
-			printf("UPDATED MOTE\n");
+			printf("MOTE UPDATED\n");
 			aux->remote_id = remote_ID;
 			#if CONTIKI_TARGET_ZOUL
 			if(local_ID == IEEE_ADDR_NODE_ID) m_remote_ID = remote_ID;
@@ -612,4 +616,34 @@ void exec_master_config(void){
 
 void exit_master_config(void){
 	process_exit(&master_config);
+}
+
+bool find_onBlink_list(uint8_t ID, struct blink_t **item){
+	struct MOTE_t *mote = NULL;
+	if(find_MOTE_localID(ID, &mote)){
+		static struct blink_t *aux;
+		for(aux = list_head(blink_list);aux != NULL; aux = list_item_next(aux)){
+			if(aux->local_id == ID){
+				*item = aux;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+void blinkList_push(uint8_t loc_id){
+	struct blink_t *mote = NULL;
+	if(!find_onBlink_list(loc_id,&mote)){
+		struct blink_t *ble = NULL;
+		ble = malloc(sizeof(struct blink_t));
+		ble->local_id = loc_id;
+		list_add(blink_list,ble);
+	}
+}
+
+
+
+void blinkList_remove(struct blink_t **item){
+	list_remove(blink_list,*item);
 }

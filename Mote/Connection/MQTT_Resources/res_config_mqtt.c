@@ -85,7 +85,6 @@ void set_ID_list(list_t *list){
 	aux_motes_list = list;
 }
 
-// void readJSON_uf(const char *json, int *params_u, float *params_f);
 
 void receive_ids(const char *msg,uint16_t len){
 	// receive ids_confirmation
@@ -107,13 +106,6 @@ void receive_ids(const char *msg,uint16_t len){
 	static int param_i[8];
 	readJSON_i(msg,param_i);
 
-	// printf("Rec\n");
-
-	// for (i = 0; i < sizeof(param_u)/sizeof(int); ++i)
-	// {
-	// 	printf("%i\n", param_u[i]);
-	// }
-
 
 	for(i = 0; i < 3; i++){
 		// printf("%i\n", param_u[i]);
@@ -121,34 +113,8 @@ void receive_ids(const char *msg,uint16_t len){
 		printf("L: %i, R: %i\n",param_i[2*i+1],param_i[2*i+2]);
 	}
 
-	printf("IDS1\n");
-
 	if(param_i[7] != -1) ids_received = true;
 	else ids_received = false;
-
-	// ids_received = (param_i[7] != -1);
-
-	printf("IDS2\n");
-
-	// if(len < 88 || len > 110){
-	// 	printf("INVALID MESSAGE\n");
-	// 	return;
-	// }
-	// else{
-	// 	static uint8_t i;
-	// 	int param_u[11];
-	// 	readJSON_uf(msg,param_u,NULL);
-
-	// 	for(i = 0; i < 5; i++){
-	// 		if(param_u[i*2] != -1) update_MOTE_IDs(param_u[i*2],param_u[i*2+1]);
-	// 	}
-
-	// 	ids_received = (param_u[10] != -1);
-
-	// }
-
-
-
 }
 
 void send_local_ids(void){
@@ -235,6 +201,19 @@ void request_remote_ids(void){
 	printf("Sending Remote Ids Request\n");
 	static char REMOTE_REQ[] = "{\"device\": \"RE-Mote\"}";
 	mqttcom_pub(CONFIG_MOTE_REMOT_ID_TOPIC,REMOTE_REQ);
+}
+
+
+
+
+void receive_blink_request(const char *msg,uint16_t len){
+
+	int params_u[2];
+	readJSON_i(msg, params_u);
+
+	printf("Blink Request MQTT %i,%u\n",params_u[0],params_u[1]);
+
+	if(params_u[1] >= 0 && params_u[1] <= 255) blinkList_push((uint8_t)params_u[1]);
 }
 
 #endif

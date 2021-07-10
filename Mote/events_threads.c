@@ -14,6 +14,10 @@
 /************************LED*************************/
 /****************************************************/
 
+// uint8_t led_state = 0b0;
+
+extern ROLE_t node_role = SLAVE;
+extern MODE_t node_mode = CONFIG;
 
 static uint8_t color = 0;
 static uint8_t blink_counter;
@@ -39,6 +43,8 @@ PROCESS_THREAD(led_blink, ev, data){
 
 	PROCESS_END();
 }
+
+// PROCESS()
 
 void led_ctr(const uint8_t color){
 	if((color&0b100)==0b100) leds_on(LEDS_RED);
