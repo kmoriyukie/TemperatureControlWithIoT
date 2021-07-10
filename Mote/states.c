@@ -21,9 +21,9 @@ task_running_t task_running = NONE;
 
 // extern task_running_t task_running;
 
-void (*blink_event_handle)(uint8_t *ret);//0brgb
+void (*blink_event_handle)(int *ret);//0brgb
 
-void initialize_states(void (*handle)(uint8_t *ret)){
+void initialize_states(void (*handle)(int *ret)){
 	blink_event_handle = handle;
 	ret = malloc(sizeof(uint8_t));
 	#if CONTIKI_TARGET_ZOUL

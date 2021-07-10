@@ -33,6 +33,8 @@ void send_ID_packet(char *buff);
 
 bool add_MOTE(uint8_t ID);
 
+bool add_MOTE_REMLOC(uint8_t loc,uint8_t rem);
+
 bool find_MOTE_localID(uint8_t ID, struct MOTE_t **item);
 
 bool update_MOTE_IDs(uint8_t local_ID, uint8_t remote_ID);

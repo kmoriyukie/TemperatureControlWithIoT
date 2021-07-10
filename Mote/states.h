@@ -31,7 +31,7 @@ typedef enum{
 
 // bool exit_flag = false;
 
-void initialize_states(void (*handle)(uint8_t *ret));
+void initialize_states(void (*handle)(int *ret));
 
 // void set_role(ROLE_t role_);
 

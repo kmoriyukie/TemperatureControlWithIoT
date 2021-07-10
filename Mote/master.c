@@ -407,7 +407,9 @@ PROCESS_THREAD(config_cloudmode_receiveRemoteIDS, ev, data){
         	if(*dat == 23){
         		printf("Start RECEIVE REMOTE IDS\n");
         		mote_count = 0;
-        		SEND_MODE = SEND_CONFIG_IDS_REM;
+        		if(CLOUD_MODE == STATUS_WORKING) SEND_MODE = SEND_CONFIG_IDS_REM;
+        		else SEND_MODE = SEND_NONE;//SEND_CONFIG_IDS_REM;
+        		// if
 				RECEIVE_MODE = RECEIVE_CONFIG_IDS_LOC;
         		etimer_set(&et_timeout, DISC_TIMOUT*CLOCK_SECOND);
         	}
@@ -573,6 +575,21 @@ bool add_MOTE(uint8_t ID){
 	}
 }
 
+bool add_MOTE_REMLOC(uint8_t loc,uint8_t rem){
+	struct MOTE_t *mote = NULL;
+	if(find_MOTE_localID(loc, &mote)) return false;
+	else{
+		// printf("Mote ADD\n");
+		mote = malloc(sizeof(struct MOTE_t));
+		mote->local_id = loc;
+		mote->remote_id = rem;
+		list_add(motes_list,mote);
+		// flag_mote_added = 1;
+		printf("MOTE ADDED\n");
+		return true;
+	}	
+}
+
 bool find_MOTE_localID(uint8_t ID, struct MOTE_t **item){
 	static struct MOTE_t *aux;
 	for(aux = list_head(motes_list);aux != NULL; aux = list_item_next(aux)){
@@ -599,7 +616,7 @@ bool update_MOTE_IDs(uint8_t local_ID, uint8_t remote_ID){
 			return true;
 		}
 	}
-	return false;	
+	return add_MOTE_REMLOC(local_ID,remote_ID);
 }
 
 void exec_master_working(void){
