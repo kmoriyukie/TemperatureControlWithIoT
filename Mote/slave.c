@@ -63,7 +63,7 @@ PROCESS_THREAD(slave_working, ev, data){
 
 	Ntry = 0;
 
-	printf("Slave Workinig\n");
+	// printf("Slave Workinig\n");
 
 	// Communication 
 	static coap_packet_t request[1];
