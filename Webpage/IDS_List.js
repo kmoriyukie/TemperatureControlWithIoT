@@ -21,7 +21,7 @@ class IDS_List{
         if(response!= undefined){
             let json = JSON.parse(response);
             
-            json.forEach(element => this.id_list.push(new ListElement(element.local_ID, element.remote_ID)));
+            json.forEach(element => this.id_list.push(new ListElement(element.local_ID, element.remote_ID, element.Layer)));
 
             const List_c = document.createElement("ul");
             List_c.style.borderColor = "black";
@@ -123,11 +123,11 @@ class ListElement{
         }
 
         xmlhttp.open('POST', url, true);
-        xmlhttp.send(JSON.stringify({local_ID: this.local_id, remote_ID: this.remote_id}));
+        xmlhttp.send(JSON.stringify({local_ID: this.local_id, remote_ID: this.remote_id, Layer: this.Layer}));
         // return false;
     }
     ResolveUpdateRemoteID(response){
-        console.log('{ local_ID: '+ response.local_ID.toString() +', remote_ID: '+ response.remote_ID.toString()+'}');
+        console.log('{ local_ID: '+ response.local_ID.toString() +', remote_ID: '+ response.remote_ID.toString()+ ', Layer: ' + response.Layer.toString() +'}');
         this.inputHandler.value = response.remote_ID;
     }
     createLineElement(txt,id,type){

@@ -7,7 +7,7 @@
     <style>
         @font-face {
             font-family: Bebas;
-            src: url(BebasNeue-Regular.woff);
+            src: url('assets/BebasNeue-Regular.woff');
         }
         .ttl {
             font-family: Bebas;
@@ -266,7 +266,7 @@
             height: 46px;
             border-style: "solid";
             border-width: "thick";
-            border-color: #5f5f5f;
+            border-color: hsl(256, 100%, 50%);
             margin-left: 5px;
             margin-right: 5px;
         }
@@ -276,13 +276,14 @@
         .HomeCanvas canvas{
             /* padding: 15px; */
             /* margin: 0 auto 0 auto; */
-            margin-top:20px;
+            margin-top: 20px;
             display: inline-block;
             width: 100%; 
             height: 100%;
             top:20px;
             /* float: left; */
-            background-color: #48c5b2;
+            background-color: rgb(255, 247, 235);
+            /* background-color: #48c5b2; */
             text-align: center;  
             border-radius: 0.4cm;
        
@@ -290,26 +291,37 @@
     </style>
     <style> /* ConfigCanvas */
         .ConfigCanvas canvas{
-            padding: 15px;
-            margin: 0 auto 0 auto;
+            border-radius: 0.4cm;
+
+            margin-top: 20px;
             display:inline-block;
-            background-color: #8f5858;
+            background-color: rgb(255, 247, 235);
+            /* background-color: #8f5858; */
+        }
+    </style>
+    <style>
+        .test{
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            border-width: 1;
         }
     </style>
     <script type="text/javascript" src="IDS_List.js"></script>
     <script type="text/javascript">
         function initialization(){
-            // ConfigMode();
+            ConfigMode();
+            // HomeMode();
             // PromiseCloudMode(false);
-            let list = new IDS_List;
-            PromiseData(true);
-            // list.PromiseInitialize();
+            // let list = new IDS_List;
+            // PromiseData(true);
 
         }
         window.onload = initialization;
     </script>
     <script src="https://threejs.org/build/three.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.4.0/lib/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.4.4/math.js" type="text/javascript"></script>
     <script src="my_p5.js"></script>
     <script src="Map.js"></script>
   </head>
@@ -321,9 +333,9 @@
     <div class="cont">
     <div class="leftbar">
         <div class="icons">
-            <div class="infos"><img src="cold.png" width="80" height="80" class="icon" ><div class="info"><u>TEMPERATURE</u><div id="LatestTemp"></div><br></div></div>
-            <div class="infos"><img src="humidity.png" width="80" height="80" class="icon"><div class="info"><u>HUMIDITY</u><br><div id="LatestHumidity"></div></div></div>
-            <div class="infos"><img src="wind.png" width="80" height="80" class="icon"><div class="info"><u>WIND FLOW</u><br><div id="LatestFlow"></div></div></div>  
+            <div class="infos"><img src="/assets/cold.png" width="80" height="80" class="icon" ><div class="info"><u>TEMPERATURE</u><div id="LatestTemp"></div><br></div></div>
+            <div class="infos"><img src="/assets/humidity.png" width="80" height="80" class="icon"><div class="info"><u>HUMIDITY</u><br><div id="LatestHumidity"></div></div></div>
+            <div class="infos"><img src="/assets/wind.png" width="80" height="80" class="icon"><div class="info"><u>WIND FLOW</u><br><div id="LatestFlow"></div></div></div>  
         </div>
     </div>
     <div class="main">
@@ -368,15 +380,16 @@
             document.getElementById('HomeBut').className = 'unselected';
             document.getElementById("HOME").style.display = "none";
             document.getElementById("CONFIG").style.display = "block";
+            CONF_CANV.visible = true;
+            HOME_CANV.visible = false;
           }
           function HomeMode(){
             document.getElementById('ConfigBut').className = 'unselected';
             document.getElementById('HomeBut').className = 'selected';
             document.getElementById("HOME").style.display = "block";
             document.getElementById("CONFIG").style.display = "none";
-          }
-          function func(){
-              MOD = MOD+"ble";
+            CONF_CANV.visible = false;
+            HOME_CANV.visible = true;
           }
       </script> 
       <!-- <script> //Canvas
@@ -483,7 +496,8 @@
             // console.log(url)
 
             xmlhttp.onload = function(){
-                if (this.readyState == 4 && this.status == 200) {
+                if (this.readyState == 4 && this.status == 200 && this.response.length != 0) {
+                    console.log(this.response)
                     ResolveData(type, JSON.parse(this.response))
                 }
             }
