@@ -306,6 +306,10 @@
             height: 50px;
             border-width: 1;
         }
+        .date{
+            margin-top: 30px;
+            text-align: left;
+        }
     </style>
     <script type="text/javascript" src="IDS_List.js"></script>
     <script type="text/javascript">
@@ -314,7 +318,7 @@
             // HomeMode();
             // PromiseCloudMode(false);
             // let list = new IDS_List;
-            // PromiseData(true);
+            // PromiseData();
 
         }
         window.onload = initialization;
@@ -336,6 +340,7 @@
             <div class="infos"><img src="/assets/cold.png" width="80" height="80" class="icon" ><div class="info"><u>TEMPERATURE</u><div id="LatestTemp"></div><br></div></div>
             <div class="infos"><img src="/assets/humidity.png" width="80" height="80" class="icon"><div class="info"><u>HUMIDITY</u><br><div id="LatestHumidity"></div></div></div>
             <div class="infos"><img src="/assets/wind.png" width="80" height="80" class="icon"><div class="info"><u>WIND FLOW</u><br><div id="LatestFlow"></div></div></div>  
+            <div class="date" margin="20">Last Updated: <div id = "lastup"></div></div>
         </div>
     </div>
     <div class="main">
@@ -392,65 +397,20 @@
             HOME_CANV.visible = true;
           }
       </script> 
-      <!-- <script> //Canvas
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera( 75, 1, 0.01, 10000 );
-
-        const renderer = new THREE.WebGLRenderer({canvas: mainCanvas, alpha: true,antialias: true});
-        renderer.setSize( 450, 450 );
-        renderer.setClearColor( 0xffffff, 0);
-        //document.body.appendChild( renderer.domElement );
-
-        const geometry = new THREE.BoxGeometry();
-        const material1 = new THREE.MeshBasicMaterial( { color: 0x3375FF } );
-        const material2 = new THREE.MeshBasicMaterial( { color: 0x3396FF } );
-        const material3 = new THREE.MeshBasicMaterial( { color: 0x33C3FF } );
-        const cube = new THREE.Mesh( geometry, material1 );
-        const cube2 = new THREE.Mesh( geometry, material2 );
-        const cube3 = new THREE.Mesh( geometry, material3 );
-
-        var geo = new THREE.EdgesGeometry( cube.geometry );
-        var geo2 = new THREE.EdgesGeometry( cube2.geometry );
-        var geo3 = new THREE.EdgesGeometry( cube2.geometry );
-        
-        var mat = new THREE.LineBasicMaterial( { color: 0x000000, linewidth: 5 } );
-        var wireframe = new THREE.LineSegments( geo, mat );
-        wireframe.renderOrder = 1; // make sure wireframes are rendered 2nd
-        var wireframe2 = new THREE.LineSegments( geo2, mat );
-        wireframe2.renderOrder = 1; // make sure wireframes are rendered 2nd
-        
-        var wireframe3 = new THREE.LineSegments( geo3, mat );
-        wireframe3.renderOrder = 1; // make sure wireframes are rendered 2nd
-        
-        cube.add( wireframe);
-        cube.scale.y = 0.3;
-
-        cube2.add(wireframe2);
-
-        cube3.add(wireframe3);
-
-        cube.add(cube2);
-        cube2.add(cube3);
-        
-        cube2.translateY(1.2);
-        cube3.translateY(1.2);
-        
-        scene.add( cube );
-        
-        camera.position.z = 2;
-        camera.position.x = 1;
-        camera.position.y = 1;
-        camera.lookAt(0,0,0);
-
-        const animate = function () {
-            requestAnimationFrame( animate );
-            //cube.rotation.y +=0.005;
-            renderer.render( scene, camera );
+      <script> // Config
+        var layerInfo = {
+            layer1: {
+                Temperature: 0,
+                Humidity:0,
+                Airflow: 0
+            },
+            layer2: {
+                Temperature: 0,
+                Humidity:0,
+                Airflow: 0
+            }
         };
 
-        animate();
-      </script> -->
-      <script> // Config
         function PromiseCloudMode(type){ // false - GetMode, true - SetMode
             const xmlhttp = new XMLHttpRequest();
             var url;
@@ -489,10 +449,9 @@
                 PromiseCloudMode(false);
             }
         }
-        function PromiseData(type){
+        function PromiseData(){
             const xmlhttp = new XMLHttpRequest();
-            var url = "https://6zie9qzah0.execute-api.eu-west-1.amazonaws.com/default"
-            if(type) url = url + '/latest'
+            var url = "https://6zie9qzah0.execute-api.eu-west-1.amazonaws.com/";
             // console.log(url)
 
             xmlhttp.onload = function(){
@@ -505,13 +464,13 @@
             xmlhttp.open('GET', url, true)
             xmlhttp.send()
         }
-        function ResolveData(type, response){
-            if(type){
-                document.getElementById("LatestTemp").innerHTML = response.Temperature.toString() + '°';
-                document.getElementById("LatestHumidity").innerHTML = response.Humidity.toString() + ' %';
-                document.getElementById("LatestFlow").innerHTML = response.Airflow.toString() + ' m/s';
-            }
-            else console.log(response)
+        function ResolveData(response){
+            document.getElementById("LatestTemp").innerHTML = response.Temperature.toString() + '°';
+            document.getElementById("LatestHumidity").innerHTML = response.Humidity.toString() + ' %';
+            document.getElementById("LatestFlow").innerHTML = response.Airflow.toString() + ' m/s';
+            document.getElementById("lastup").innerHTML = response.DateTime.toString();
+
+            layerInfo = response.Layer1;
         }
       </script>
       <script>

@@ -40,7 +40,13 @@ class HomeCanvas extends p5{
             }
         }
 
-        this.Bubbles = [new bubble({x: 0, y: 0}, 100), new bubble({x: 0, y: -55}, 100)];
+        this.info1 = new InfoBox({x: -15, y: -12}, 200);
+        this.info1 = new InfoBox({x: -15, y: - 12 - 55}, 200);
+
+        this.Bubbles = [new bubble({x: 150, y: 140}, 100), new bubble({x: 150, y: 0}, 100)];
+        this.Bubbles.forEach(element => {
+            element.appendix = true;
+        });
         this.parent.push(new Map(this));
         // this.mape = new Map(this);
 
@@ -73,13 +79,15 @@ class HomeCanvas extends p5{
         this.push();
         this.perspective(Math.PI / 3.0, this.width / this.height, 1, 500);
         this.camera(10, 0, 350, 0, -55, 0, 0, -1, 0);
+
         this.BoxStack.draw(this);
-        this.translate(-15,-12,300);
+        
+        this.translate(0,0,300);
         this.scale(0.1);
         this.rotate(this.PI, [0,0,1]);
         this.Bubbles.forEach(element =>{
             element.draw(this.engine);
-            this.translate(0,-55,0);
+            // this.translate(0,-55,0);
         });
         this.pop();
 
@@ -87,7 +95,6 @@ class HomeCanvas extends p5{
 
         this.parent.forEach(element =>{
             element.draw(engine);
-            // this.translate(0,-55,0);
         });
 
         // this.mape.draw();

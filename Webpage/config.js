@@ -40,14 +40,15 @@ class ConfigCanvas extends p5{
 
     m_draw(){
         this.background('rgb(255, 247, 235)');
+        // this.background('rgb(255, 255, 255)');
 
 
         this.push();
         // this.map.draw();
         // this.rotate(math.PI/4);
         // this.MapTransf = math.multiply(this.MapTransf,myTransf.rotationMatrix(math.PI/4));
-        this.translate(20,0);
-        this.MapTransf = myTransf.translationMatrix([20,0]);
+        // this.translate(20,0);
+        // this.MapTransf = myTransf.translationMatrix([20,0]);
         this.parent.forEach(element => {
             element.draw();
         });
@@ -77,10 +78,11 @@ class ConfigCanvas extends p5{
         return false;
     }
     onClick(){
-        console.log("Click Config");
+        // console.log("Click Config");
     }
     default_dHit(point){
         this.onClick();
+        // console.table("Click Config",point);
         this.parent.forEach(element => {
             switch(element.type){
                 case "Map":
