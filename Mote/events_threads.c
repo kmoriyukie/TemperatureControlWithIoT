@@ -249,7 +249,7 @@ PROCESS_THREAD(led_blink, ev, data){
 	leds_off(LEDS_ALL);
 	static struct etimer et;
 
-	printf("Led Event Started\n");
+	// printf("Led Event Started\n");
 	for(blink_counter = 0; blink_counter < N_BLINKS; blink_counter++){
 		etimer_set(&et, BLINK_TON*CLOCK_SECOND);
 		led_ctr(color);
@@ -306,7 +306,7 @@ PROCESS_THREAD(button_pressed, ev, data){
 
 	SENSORS_ACTIVATE(button_sensor);
 
-	printf("Button Event Started\n");
+	// printf("Button Event Started\n");
 
 
 

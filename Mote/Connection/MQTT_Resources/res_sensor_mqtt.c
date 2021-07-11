@@ -12,14 +12,16 @@
 
 extern receive_mqtt_t RECEIVE_MODE;
 extern send_mqtt_t SEND_MODE;
+extern bool sensPUP_flag;
 
 bool send_sensors_packet(void);
 
 void readJSON_i(const char *json, int *params_u);
 
 bool send_sensors_packet(void){
-	printf("CLOUD SENS: %s\n", cloud_sens);
+	// printf("CLOUD SENS: %s\n", cloud_sens);
 	mqttcom_pub(SENSOR_MOTE,cloud_sens);
+	sensPUP_flag = true;
 	return true;
 }
 

@@ -67,8 +67,6 @@ RESOURCE(res_sensors,
 
 static void res_post_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset){
 	if((node_role != MASTER) || (node_mode != WORKING)) return;
-	// Verificaçao do modo
-	// printf("POST HANDLER SENSORS\n");
 
 
 	static uint8_t *incoming = NULL;
@@ -92,14 +90,6 @@ static void res_post_handler(void *request, void *response, uint8_t *buffer, uin
 	msg.humidity = params_f[1];
 	msg.airflow = params_f[2];
 	msg.battery = params_u[2];
-
-	// printf("Params: L = (%i,%i),R = (%i,%i), T = (%i,%i),H = (%i,%i),A = (%i,%i),B = (%i,%i)\n"
-	// 															 ,(int)msg.local_id,(int)params_u[0]
-	// 															 ,(int)msg.remote_id,(int)params_u[1]
-	// 															 ,(int)msg.temperature,(int)params_f[0]
-	// 															 ,(int)msg.humidity,(int)params_f[1]
-	// 															 ,(int)msg.airflow,(int)params_f[2]
-	// 															 ,(int)msg.battery,(int)params_u[2]);
 
 	if(push_packet(&msg)) REST.set_response_payload(response, MSG_SUCCESS, 16);
 	else REST.set_response_payload(response, MSG_FAILURE, 16);

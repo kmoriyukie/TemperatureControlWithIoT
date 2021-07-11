@@ -37,7 +37,7 @@ LIST(blink_list);
 
 static uint8_t m_remote_ID = 0;
 
-SENSOR_DATA_t sens_status = SENS_IDLE;
+// SENSOR_DATA_t sens_status = SENS_IDLE;
 
 struct slave_msg_t *packet;
 
@@ -76,7 +76,7 @@ PROCESS_THREAD(master_working, ev, data){
 
 		if(ev == etimer_expired(&et) || (list_length(packet_list) >= CLOUD_PACKAGE_SIZE)){
 			// send_packets();
-			sens_status = SENS_READY;
+			// sens_status = SENS_READY;
 			process_poll(&send_packets);
 			process_post(&master_batt,PROCESS_EVENT_CONTINUE,&ret);
 		}
@@ -146,52 +146,66 @@ PROCESS_THREAD(master_batt, ev, data){
 
 bool send_sensors_packet(void);
 
+bool sensPUP_flag = false;
+
 PROCESS_THREAD(send_packets, ev, data){
 	PROCESS_BEGIN();
 	#if CONTIKI_TARGET_ZOUL
 	static uint8_t n = 0;
 	static uint8_t i;
+	// static uint8_t j;
 
 	extern char cloud_sens[256];
 
 	static struct slave_msg_t *ptr;
 
-	// static struct etimer et_timeout;
+	
 
 	while(true){
 		PROCESS_YIELD();
 
 
 
-		if((ev == PROCESS_EVENT_POLL) && (sens_status == SENS_READY)){
+		if((ev == PROCESS_EVENT_POLL) || sensPUP_flag){
+			sensPUP_flag = false;
 			n = list_length(packet_list);
-			if(n > 3) n = 3;
-			sprintf(cloud_sens,"{ \"M\": %u,",m_remote_ID);
 
-			for(i = 0; i < 3; i++){
-				if(i < n){
-					if(pop_packet(&ptr)){
-						sprintf(cloud_sens,"%s\"R%u\": %i,",cloud_sens,i+1,ptr->remote_id);
-						sprintf(cloud_sens,"%s\"T%u\": %i.%i,",cloud_sens,i+1,(int)ptr->temperature,((int)(ptr->temperature*100))%100);
-						sprintf(cloud_sens,"%s\"H%u\": %i.%i,",cloud_sens,i+1,(int)ptr->humidity,((int)(ptr->humidity*100))%100);
-						sprintf(cloud_sens,"%s\"A%u\": %i.%i,",cloud_sens,i+1,(int)ptr->airflow,((int)(ptr->airflow*100))%100);
-						sprintf(cloud_sens,"%s\"B%u\": %u,",cloud_sens,i+1,ptr->battery);
+			// for(j = 0; j < n; j++){
+			// 	sensPUP_flag = false;
+
+			// }
+			if(n >= 3){
+				sprintf(cloud_sens,"{ \"M\": %u,",m_remote_ID);
+
+				for(i = 0; i < 3; i++){
+					if(i < n){
+						if(pop_packet(&ptr)){
+							sprintf(cloud_sens,"%s\"R%u\": %i,",cloud_sens,i+1,ptr->remote_id);
+							sprintf(cloud_sens,"%s\"T%u\": %i.%i,",cloud_sens,i+1,(int)ptr->temperature,((int)(ptr->temperature*100))%100);
+							sprintf(cloud_sens,"%s\"H%u\": %i.%i,",cloud_sens,i+1,(int)ptr->humidity,((int)(ptr->humidity*100))%100);
+							sprintf(cloud_sens,"%s\"A%u\": %i.%i,",cloud_sens,i+1,(int)ptr->airflow,((int)(ptr->airflow*100))%100);
+							sprintf(cloud_sens,"%s\"B%u\": %u,",cloud_sens,i+1,ptr->battery);
+							free(ptr);
+						}
+					}
+					else{
+						sprintf(cloud_sens,"%s\"R%u\": %i,",cloud_sens,i+1,-1);
+						sprintf(cloud_sens,"%s\"T%u\": %i,",cloud_sens,i+1,-1);
+						sprintf(cloud_sens,"%s\"H%u\": %i,",cloud_sens,i+1,-1);
+						sprintf(cloud_sens,"%s\"A%u\": %i,",cloud_sens,i+1,-1);
+						sprintf(cloud_sens,"%s\"B%u\": %u,",cloud_sens,i+1,-1);
 					}
 				}
-				else{
-					sprintf(cloud_sens,"%s\"R%u\": %i,",cloud_sens,i+1,-1);
-					sprintf(cloud_sens,"%s\"T%u\": %i,",cloud_sens,i+1,-1);
-					sprintf(cloud_sens,"%s\"H%u\": %i,",cloud_sens,i+1,-1);
-					sprintf(cloud_sens,"%s\"A%u\": %i,",cloud_sens,i+1,-1);
-					sprintf(cloud_sens,"%s\"B%u\": %u,",cloud_sens,i+1,-1);
-				}
+
+				sprintf(cloud_sens,"%s\"MB\": %u}",cloud_sens,MASTER_BATTERY);
+
+
+				printf("Send packet:\n%s\n",cloud_sens);
+
+				printf("List has %i packets left!\n\n",list_length(packet_list));
+
+				SEND_MODE = SEND_SENSOR_DATA;
 			}
-
-			sprintf(cloud_sens,"%s\"MB\": %u}",cloud_sens,MASTER_BATTERY);
-
-			printf("Send packet:\n%s\n",cloud_sens);
-
-			SEND_MODE = SEND_SENSOR_DATA;
 
 		}
 	}
@@ -219,11 +233,11 @@ bool push_packet(struct slave_msg_t *packet){
 	list_add(packet_list,pck);
 
 	if(list_length(packet_list) >= CLOUD_PACKAGE_SIZE){
-		if(sens_status == SENS_IDLE){
-			// printf("Buffer limit!\n");
-			sens_status = SENS_READY;
-			process_poll(&send_packets);
-		}
+		process_poll(&send_packets);
+		// if(sens_status == SENS_IDLE){
+		// 	// printf("Buffer limit!\n");
+		// 	sens_status = SENS_READY;
+		// }
 	}
 
 	return true;
@@ -234,7 +248,7 @@ bool pop_packet(struct slave_msg_t **packet){
 
 	*packet = list_pop(packet_list);
 
-	printf("%i\n", (*packet)->remote_id);
+	// printf("%i\n", (*packet)->remote_id);
 	return true;
 }
 
@@ -571,6 +585,7 @@ bool add_MOTE(uint8_t ID){
 		list_add(motes_list,mote);
 		flag_mote_added = 1;
 		printf("MOTE ADDED\n");
+		printMoteList();
 		return true;
 	}
 }
@@ -586,8 +601,17 @@ bool add_MOTE_REMLOC(uint8_t loc,uint8_t rem){
 		list_add(motes_list,mote);
 		// flag_mote_added = 1;
 		printf("MOTE ADDED\n");
+		printMoteList();
 		return true;
 	}	
+}
+
+void printMoteList(void){
+	static struct MOTE_t *aux;
+	printf("\n\nMote List:\n");
+	for(aux = list_head(motes_list);aux != NULL; aux = list_item_next(aux)){
+		printf("\tLocal ID: %i, Remote ID: %i:\n\n",aux->local_id,aux->remote_id);
+	}
 }
 
 bool find_MOTE_localID(uint8_t ID, struct MOTE_t **item){
