@@ -68,7 +68,6 @@ RESOURCE(res_config,
          NULL);
 
 static void res_get_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset){
-	// if((node_role != MASTER) && (node_mode != CONFIG)) return;
 	static uint8_t size = 0;
 
 	const char *par = NULL;
@@ -78,7 +77,6 @@ static void res_get_handler(void *request, void *response, uint8_t *buffer, uint
 	size = REST.get_query_variable(request, "ID", &par);
 	if(size > 3 || size < 1){
 		REST.set_response_payload(response, MSG_ERROR_INVALID_PARAMETERS, 17);
-		// printf("Error1\n");
 		return;
 	}
 	else{
@@ -88,15 +86,11 @@ static void res_get_handler(void *request, void *response, uint8_t *buffer, uint
 
 		if(!find_MOTE_localID(ID, &mote)){
 			REST.set_response_payload(response, MSG_MOTE_NOT_FOUND, 17);
-			// printf("Error2\n");
 			return;
 		}
 
-		// printf("Local: %i, Remote: %i\n",ID,mote->remote_id);
-
 		if(mote->remote_id == 0){
 			REST.set_response_payload(response, MSG_FAILURE, 16);
-			// printf("%s\n", MSG_FAILURE);
 		}
 		else{
 			static char resp[10];
@@ -109,37 +103,24 @@ static void res_get_handler(void *request, void *response, uint8_t *buffer, uint
 				}
 			}
 			sprintf(resp,"{\"Response\": %i}",mote->remote_id);
-			// printf("Response: \n%s\n\n", resp);
 			REST.set_response_payload(response, resp, 14+n_num);
 		}
 	}
 }
 
 static void res_post_handler(void *request, void *response, uint8_t *buffer, uint16_t preferred_size, int32_t *offset){
-	// if((node_role != MASTER) || (node_mode != CONFIG)) return;
 	static uint8_t *incoming = NULL;
 	static uint8_t size = 0;
 
-	//printf("POST HANDLER CONFIG\n");
 
 	REST.get_request_payload(request,(const uint8_t **)&incoming);
 	size = strlen(incoming);
 	if(size > 11 || size < 9){
-		// printf("Size error: %u\n",size);
-		// char bla[64];
-		// memcpy(bla,incoming,size);
-		// printf("MSG");
-		// printf("MSG: %s\n", bla);
 		REST.set_response_payload(response, MSG_ERROR_INVALID_PARAMETERS, 17);
 		return;
 	}
-	// char bla[64];
-	// memcpy(bla,incoming,size);
-	// printf("MSG");
-	// printf("MSG: %s\n", bla);
 	static char json[11];
 	memcpy(json,incoming,size);
-	// printf("Received: %s\n", json);
 
 	static int params[1];
 	readJSON_i(json, params);
