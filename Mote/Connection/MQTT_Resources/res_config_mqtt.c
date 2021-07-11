@@ -110,7 +110,7 @@ void receive_ids(const char *msg,uint16_t len){
 	for(i = 0; i < 3; i++){
 		// printf("%i\n", param_u[i]);
 		if(param_i[2*i+1] != -1) update_MOTE_IDs(param_i[2*i+1],param_i[2*i+2]);
-		printf("L: %i, R: %i\n",param_i[2*i+1],param_i[2*i+2]);
+		// printf("L: %i, R: %i\n",param_i[2*i+1],param_i[2*i+2]);
 	}
 
 	if(param_i[7] != -1) ids_received = true;

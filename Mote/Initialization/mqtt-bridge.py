@@ -55,13 +55,13 @@ def on_connect(local_client, userdata, flags, rc):
 # Callback for received message in the local network:
 def on_local_message(local_client, userdata, msg):
     #publish the exact same message on the MQTT broker in the cloud:
-    print("Local -> Cloud: Topic [" + msg.topic + "]. Msg \""+str(msg.payload)+"\"")
+    print("Local -> Cloud: Topic [" + msg.topic + "]. Msg \""+str(msg.payload)+"\"\n\n")
     cloud_client.publish(msg.topic,str(msg.payload))
 
 # Callback for received message in the cloud:
 def on_cloud_message(cloud_client, userdata, msg):
     #publish the exact same message on the local MQTT broker:
-    print("Cloud -> Local: Topic [" + msg.topic + "]. Msg \""+str(msg.payload)+"\"")
+    print("Cloud -> Local: Topic [" + msg.topic + "]. Msg \""+str(msg.payload)+"\"\n\n")
     local_client.publish(msg.topic,str(msg.payload))
 
 #########################################################################
