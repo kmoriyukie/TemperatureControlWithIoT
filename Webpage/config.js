@@ -10,14 +10,7 @@ class ConfigCanvas extends p5{
         this.parent = [];
         this.parent.push(new Map(this));
         this.parent[0].mode = "config";
-        // this.map = ;
         this.mouseClicked = this.m_mouseclick;
-        // this.preload = this.m_preload;
-
-        // this.info = new InfoBox({x:0, y:0},300);
-        // this.preload = function(){
-        //     this.info.preload();
-        // }
         this.MapTransf = math.identity(3);
         this.visible = true;
         this.sc = 1;
@@ -41,28 +34,12 @@ class ConfigCanvas extends p5{
 
     m_draw(){
         this.background('rgb(255, 247, 235)');
-        // this.background('#3d3838');
-        // this.background('rgb(255, 255, 255)');
-
 
         this.push();
-        // this.map.draw();
-        // this.rotate(math.PI/4);
-        // this.MapTransf = math.multiply(this.MapTransf,myTransf.rotationMatrix(math.PI/4));
-        // this.translate(20,0);
-        // this.MapTransf = myTransf.translationMatrix([20,0]);
         this.parent.forEach(element => {
             element.draw();
         });
-        // this.translate(this.width/2, this.height/2)
-        // this.info.draw(this,this.img);
         this.pop();
-        // if(this.mouseIsPressed) {
-        //     this.fill(0);
-        // }else{
-        //     this.fill(255);
-        // }
-        // this.ellipse(this.mouseX, this.mouseY, 80, 80);
     }
     m_mouseclick(){
         if(!this.visible) return;
@@ -80,17 +57,13 @@ class ConfigCanvas extends p5{
         return false;
     }
     onClick(){
-        // console.log("Click Config");
     }
     default_dHit(point){
         this.onClick();
-        // console.table("Click Config",point);
         this.parent.forEach(element => {
             switch(element.type){
                 case "Map":
                     let newP = math.multiply(this.MapTransf, math.matrix([point[0],point[1],1]));
-                    // console.log(point);
-                    // console.log(newP._data);
                     element.detect_hitbox([newP._data[0],newP._data[1]]);
                 break;
             }

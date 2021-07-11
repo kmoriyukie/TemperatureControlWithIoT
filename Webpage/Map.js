@@ -21,26 +21,14 @@ class my_object{
         this.type = "none";
     }
     detect_hitbox(point){
-        //Hitbox
-        //Hitbox
-        //Hitbox
-        //Hitbox
-        //Hitbox
         return false;
     }
     default_dHit(point){
         this.onClick();
-        // console.log(this.type);
         switch(this.type){
             case "bubble":
-                // if(this.label == "22"){
-                //     console.table(this.type,point);    
-                // }
-            // case "walls":
-            // case "Map":
             break;
             default:
-                // console.table(this.type,point);
             break;
         }
         this.parent.forEach(element => {
@@ -59,12 +47,6 @@ class my_object{
         });
     }
     unselectParents(){
-        // this.bubblemode = false;
-        // this.balloon.visible = false;
-        // this.parent.forEach(element => {
-        //     console.log(element.type);
-        //     element.unselectParents();
-        // });
     }
 }
 
@@ -287,9 +269,6 @@ class InfoBox extends my_object{
     }
 
     onClick(){
-        // if(this.color == this.highlight) this.color = '#e28743';
-        // else this.color = this.highlight;
-        // this.visible = !this.visible;
     }
     detect_hitbox(point){
         if(!this.visible) return;
@@ -402,11 +381,6 @@ class Mote extends my_object{
         this.balloon.StrokeColor = 'black';
         this.info = new InfoBox({x: this.dim[0]+20, y: -105}, 200);
 
-        // this.info.temp = 50;
-        // this.info.humidity =10;
-        // this.info.airflow = 10;
-        // this.info.battery = 50;        
-        
         this.threshT = 40;
         this.threshH = 6;
         this.threshA = 3;
@@ -430,7 +404,6 @@ class Mote extends my_object{
         }
     }
     checkStatus(){
-        // console.log(this.info);
         if( this.info.data.Temperature > this.threshT ||
             this.info.data.Humidity > this.threshH ||
             this.info.data.Airflow < this.threshA ||
@@ -475,8 +448,6 @@ class Mote extends my_object{
         }
         if(!this.visible) return;
 
-
-        // console.log(this.info);
         if(this.info.data == undefined){
             switch(this.label){
                 case "11":
@@ -504,7 +475,6 @@ class Mote extends my_object{
                     };
                 break;
             }
-            // console.log();
         }
         this.checkStatus();
 
@@ -535,7 +505,6 @@ class Mote extends my_object{
         engine.scale(this.scale);
         engine.rotate(0);
         engine.translate(this.pos[0],this.pos[1]);
-        // this.dim[1]-3*this.pos[1]/2 -this.pos[1]
         this.transforms(this.scale,this.rot,[-this.pos[0],-this.pos[1]]);
         engine.strokeWeight(1);
         engine.fill(this.color);
@@ -619,15 +588,7 @@ class Map extends my_object{
         this.walls = new Walls(75,50,0,this.scale, this.dim);
         this.layer = "none";
         this.walls.layer = this.layer;
-        // this.info = new InfoBox({x: 0, y: 0}, 200);
-        // this.info.testSize = 32;
-        // this.balloon = new bubble({x: 0,y: 0},100);// new bubble({x: 0,y: 0},100), new bubble({x: 0,y: 0},100), new bubble({x: 0,y: 0},100)];
-
         this.parent.push(this.walls);
-        // this.parent.push(this.balloon);
-        // this.mote = this.addMote();
-
-        // this.parent.push(this.info);
         this.transf = math.identity(3);
         
         this.parent.push()

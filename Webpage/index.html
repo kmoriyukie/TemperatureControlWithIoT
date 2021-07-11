@@ -23,11 +23,6 @@
             align-content: center;
             display:block;
         }
-        /* .layers{
-            display: flex;
-            justify-content: space-between;
-            border:2px solid black;
-        } */
         .image{
             align-self: auto;
         }
@@ -53,8 +48,9 @@
         }
         .toolbar {
             display: flex;
+            font-family: Bebas;
             overflow: hidden;
-            background-color: rgb(71, 71, 71);
+            background-color: #05445E;
             border-radius: 0.4cm;
         }
 
@@ -64,7 +60,7 @@
             text-align: center;
             padding: 14px 16px;
             text-decoration: none;
-            font-size: 17px;
+            font-size: 20px;
         }
         .toolbar a:hover {
             background-color: #ddd;
@@ -83,26 +79,20 @@
             color: white;
         }
         .toolbar a.unselected {
-            background-color: rgb(71, 71, 71);
+            background-color: #05445E;
             color: #f2f2f2;
         }
-        /* .toolbar a.default {
-            background-color: #13a5e9;
-            color: white;
-        } */
         .leftbar{
             display: inline-block;
             order: 0;
             position: sticky;
             top:20px;
-            /* float: left; */
-            background-color: #48c5b2;
+            background-color: #52cfbd;
             text-align: center;
             padding: 14px 16px;
             text-decoration: none;
             font-size: 17px;
             font-family: sans-serif;
-            /* display: flex; */
             justify-content: space-between;
             height: 350px;
             width: 260px;
@@ -123,7 +113,6 @@
         .switch {
             position: relative;
             display: inline-block;
-            /* display: flex; */
             width: 60px;
             height: 34px;
         }
@@ -141,8 +130,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            /* background-color: #ccc; */
-            background-color: #2196F3;
+            background-color: #04D4F0;
             -webkit-transition: .4s;
             transition: .4s;
         }
@@ -209,8 +197,7 @@
             display: flex;
             flex-wrap: nowrap;
             justify-content: space-between;
-            background-color: #a5a5a5;
-            /* margin: 0px 10px; */
+            background-color: rgb(255, 247, 235);
             border-radius: 0.4cm;
             flex-direction: column;
             align-items: center;
@@ -218,11 +205,10 @@
             margin: 0 0 0 8px;
             padding: 10px;
             padding-top: 5px;
-            /* padding-left: 5px; */
             padding-bottom: 5px;
         }
         .IdsList_line{
-            background-color: #13e925;
+            background-color: #75E6DA;
             width: 90%;
             height: 40px;
             display: flex;
@@ -236,7 +222,6 @@
             margin: 2.5px;
         }
         .Line_Element{
-            /* background-color: #13e925; */
             align-items: center;
         }
         .Line_Element label{
@@ -245,7 +230,6 @@
             width: 160px;
             height: 20px;
             font-weight:bold;
-            /* margin: auto; */
             margin-top: 5px;
             margin-bottom: 5px;
             margin-left: 5px;
@@ -273,16 +257,12 @@
     </style>
     <style> /* HomeCanvas */
         .HomeCanvas canvas{
-            /* padding: 15px; */
-            /* margin: 0 auto 0 auto; */
             margin-top: 20px;
             display: inline-block;
             width: 100%; 
             height: 100%;
             top:20px;
-            /* float: left; */
             background-color: rgb(255, 247, 235);
-            /* background-color: #48c5b2; */
             text-align: center;  
             border-radius: 0.4cm;
        
@@ -298,7 +278,6 @@
             text-align: center;
             display:inline-block;
             background-color: rgb(255, 247, 235);
-            /* background-color: #8f5858; */
         }
     </style>
     <style>
@@ -357,9 +336,7 @@
                 Battery: 100
             },
         }
-        // console.log("Ble");
         function initialization(){
-            // ConfigMode();
             HomeMode();
             PromiseCloudMode(false);
             let list = new IDS_List;
@@ -410,8 +387,6 @@
     function PromiseData(){
         const xmlhttp = new XMLHttpRequest();
         var url = "https://6zie9qzah0.execute-api.eu-west-1.amazonaws.com/latest";
-        // console.log(url)
-
         xmlhttp.onload = function(){
             if (this.readyState == 4 && this.status == 200 && this.response.length != 0) {
                 ResolveData(JSON.parse(this.response));
@@ -434,7 +409,6 @@
     function PromiseMote(){
         const xmlhttp = new XMLHttpRequest();
         var url = "https://6zie9qzah0.execute-api.eu-west-1.amazonaws.com/mote";
-        // console.log(url)
 
         xmlhttp.onload = function(){
             if (this.readyState == 4 && this.status == 200 && this.response.length != 0) {
@@ -446,13 +420,10 @@
         xmlhttp.send()
     }
     function ResolveMote(response){
-        // console.log("BleBle");
         moteInfo.m1 = response.m1;
         moteInfo.m2 = response.m2;
         moteInfo.m3 = response.m3;
         moteInfo.m4 = response.m4;
-        // console.log(response);
-        // console.log(moteInfo);
     }
     </script>
     <script src="https://threejs.org/build/three.js"></script>
@@ -477,11 +448,6 @@
     </div>
     <div class="main">
         <div class="home" id="HOME">
-                <!-- <script src="home.js"> -->
-
-            <!-- <div>
-                <canvas id="mainCanvas" width="600" height="600" style="border:1px solid black;"></canvas>
-            </div> -->
             <div class="HomeCanvas" id="HomeCanvas">
                 <script src="home.js"></script>
                 </script>
@@ -529,7 +495,6 @@
             CONF_CANV.visible = false;
             HOME_CANV.visible = true;
             curLayer = "Layer 0";
-            // curLayer = "none";
             HOME_CANV.map.visible = false;
           }
       </script> 
