@@ -36,11 +36,11 @@ class my_object{
                 // if(this.label == "22"){
                 //     console.table(this.type,point);    
                 // }
-            case "walls":
-            case "Map":
+            // case "walls":
+            // case "Map":
             break;
             default:
-                console.table(this.type,point);
+                // console.table(this.type,point);
             break;
         }
         this.parent.forEach(element => {
@@ -68,30 +68,48 @@ class Walls extends my_object{
         this.parent_dim = parent_dim;
         this.dim = [parent_dim[0]-2*this.pos[0],parent_dim[1]-2*this.pos[1]];
         this.transf = math.identity(3);
+
+        m = new Mote(0+this.pos[0]/2,this.dim[1]/2,0);
+        m.layer = 1;
+        m.label = "11"
+        m.info.temp = moteInfo.m1.Temperature;
+        m.info.humidity = moteInfo.m1.Humidity;
+        m.info.airflow = moteInfo.m1.Airflow;
+        m.info.battery = moteInfo.m1.Battery;
+        this.parent.push(m);
+        this.type = "walls";
+        this.scale = sc;
+
+        m = new Mote(this.dim[0]-this.pos[0]/2,this.dim[1]/2,0);
+        m.layer = 1;
+        m.label = "12";
+        m.info.temp = moteInfo.m2.Temperature;
+        m.info.humidity = moteInfo.m2.Humidity;
+        m.info.airflow = moteInfo.m2.Airflow;
+        m.info.battery = moteInfo.m2.Battery;
+        
+        this.parent.push(m);
+
         var m = new Mote(this.dim[0]/2,3*this.pos[1]/2,0);
         m.layer = 0;
         m.label = "21";
-        m.info.temp = 0;
+        m.info.temp = moteInfo.m3.Temperature;
+        m.info.humidity = moteInfo.m3.Humidity;
+        m.info.airflow = moteInfo.m3.Airflow;
+        m.info.battery = moteInfo.m3.Battery;
+        
         this.parent.push(m);
         
         m = new Mote(this.dim[0]/2,this.dim[1]-3*this.pos[1]/2,0);
         m.layer = 0;
         m.label = "22";
-        m.info.temp = 0;
-        this.parent.push(m);
+        m.info.temp = moteInfo.m4.Temperature;
+        m.info.humidity = moteInfo.m4.Humidity;
+        m.info.airflow = moteInfo.m4.Airflow;
+        m.info.battery = moteInfo.m4.Battery;
         
-        m = new Mote(this.dim[0]-this.pos[0]/2,this.dim[1]/2,0);
-        m.layer = 1;
-        m.label = "11";
-        m.info.temp = 7;
         this.parent.push(m);
-        m = new Mote(0+this.pos[0]/2,this.dim[1]/2,0);
-        m.layer = 1;
-        m.label = "12"
-        m.info.temp = 6;
-        this.parent.push(m);
-        this.type = "walls";
-        this.scale = sc;
+
     }
 
     detect_hitbox(point){
@@ -139,6 +157,23 @@ class Walls extends my_object{
         engine.rect(0,0,-2*this.pos[0]+this.dim[0],this.dim[1]-2*this.pos[1]);
         engine.pop();
 
+
+        // if(this.layer)
+
+        // for(let i = 0; i < 4; i++){
+        //     switch(this.layer){
+        //         case "none":
+        //             this.parent[i].draw(engine);
+        //         break;
+        //         case "Layer 1":
+        //             if(i == 0 || i == 1) this.parent[i].draw(engine);
+        //         break;
+        //         case "Layer 2":
+        //             if(i == 2 || i == 3) this.parent[i].draw(engine);
+        //         break;
+        //     }
+        // }
+
         this.parent.forEach(element => {
             element.draw(engine);
         });
@@ -153,10 +188,10 @@ class Walls extends my_object{
     }
 }
 
-
 class bubble extends my_object{
     rot = 0;
     axis = [0,0,0];
+
 
     constructor(pos, size){
         super();
@@ -173,26 +208,32 @@ class bubble extends my_object{
         this.font = "Helvetica"
         this.appendix = false;
 
+        this.visible = false;
+
     }
 
 
     onClick(){
-        // console.log("Ble");
-        if(this.color == this.highlight) this.color = '#e28743';
-        else this.color = this.highlight;
-        // this.visible = !this.visible;
+        if(this.mode == "bubhome"){
+            // function toggleMap(){
+            //     HOME_CANV.map.visible = true;
+            // }
+            if(this.bubNUM == 0){
+                curLayer = "0";
+            }
+            if(this.bubNUM == 1){
+                curLayer = "1";
+            }
+            toggleMap();
+        }
     }
     detect_hitbox(point){
         if(!this.visible) return;
 
+
         let newP = math.multiply(this.transf,math.matrix([point[0],point[1],1]));
+        let dist = math.sqrt(math.pow(newP._data[0],2)+math.pow(newP._data[1],2));
 
-        let distX = point[0] - newP._data[0];
-        let distY = point[1] - newP._data[1];
-
-        let dist = math.sqrt(math.pow(distX,2)+math.pow(distY,2));
-
-        // console.log(dist);
         if(dist<=this.dim[0]/2){
             this.default_dHit([newP._data[0],newP._data[1]]);
             return true;
@@ -203,13 +244,14 @@ class bubble extends my_object{
     draw(engine){
         if(!this.visible) return;
         engine.push();
-        // engine.rect(0,0,50,50);
-        engine.translate(this.pos[0],this.pos[1]);
+        engine.translate(this.pos[0],this.pos[1],0.3);
         engine.strokeWeight(1);
+        // engine.rect(0,0,50,50);
         engine.fill(this.color);
         engine.stroke(this.color);
+
         engine.ellipse(0, 0,this.dim[0],this.dim[0]);
-        this.transforms(1,this.rot,this.pos);
+        this.transforms(1,0,[-this.pos[0],-this.pos[1]]);
         
         if(this.appendix){
             engine.push()
@@ -377,7 +419,7 @@ class Mote extends my_object{
         this.label = "999";
         this.scale = 1;
 
-        this.balloon = new bubble({x: -3/2.0*this.dim[0], y: -3/2.0*this.dim[0]}, 1/2.0*this.dim[0]);
+        this.balloon = new bubble({x: 1/2*this.dim[0], y: -1/3*this.dim[0]}, 1/2.0*this.dim[0]);
         this.balloon.textSize = 20;
         this.balloon.label = "!";
         this.balloon.visible = this.bubblemode;
@@ -403,7 +445,7 @@ class Mote extends my_object{
 
         this.layer = "0";
 
-        // this.parent_dim = parent_dim;
+        this.error = false;
         
     }
     togglebubble(){
@@ -412,21 +454,40 @@ class Mote extends my_object{
         this.info.visible = !this.bubblemode & this.infomode;
     }
 
-    getData(){
+    checkStatus(){
+        if(this.info.temp <= this.threshT && this.info.humidity <= this.threshH && this.info.airflow >= this.threshA && this.info.battery >= this.threshB){
+            this.error = false;
+        }
+        else{ // Sensor error
+            this.error = true;
+        }
     }
     draw(engine){
+        // console.log(this.visible);
+        if(curLayer != "none"){
+            if(curLayer != this.layer){
+                this.visible = false;
+            }
+            else this.visible = true;
+        }
+        else{
+            this.visible = true;
+        }
         if(!this.visible) return;
-        if(this.info.temp <= this.threshT && this.info.humidity <= this.threshH && this.info.airflow >= this.threshA && this.info.battery >= this.threshB){
+        // if()
+        this.checkStatus();
+        if(!this.error ||  HOME_CANV.visible == false){
             if(this.layer == "0"){
                 this.color = "#6600ff";
                 this.textColor = 'white';
             }
             else this.color = "#3399ff"
         }
-        else{ // Sensor error
-            this.color = 'red';
+        else{
+            this.color = "red";
             this.textColor = 'white';
         }
+
         if(this.label == 11){
             this.info.align = "left";
             this.info.pos[0] = -200 - 65;
@@ -464,6 +525,7 @@ class Mote extends my_object{
     }
     detect_hitbox(point){
         if(!this.visible) return;
+        
         // console.table(this.transf._data);
         let newP = math.multiply(this.transf,math.matrix([point[0],point[1],1]));
 
@@ -501,10 +563,10 @@ class Mote extends my_object{
 class Map extends my_object{
     engine;
     scale;
-    // pos;
-    // dim;
     walls;
     visible;
+    mode;
+    layer;
 
     parent;
     constructor(eng){
@@ -513,10 +575,13 @@ class Map extends my_object{
         this.parent = [];
         this.type = "Map";
         this.visible = true;
+        this.mode = "config";
         
         this.dim = [900, 600];
         this.scale = 1;
         this.walls = new Walls(75,50,0,this.scale, this.dim);
+        this.layer = "none";
+        this.walls.layer = this.layer;
         // this.info = new InfoBox({x: 0, y: 0}, 200);
         // this.info.testSize = 32;
         // this.balloon = new bubble({x: 0,y: 0},100);// new bubble({x: 0,y: 0},100), new bubble({x: 0,y: 0},100), new bubble({x: 0,y: 0},100)];
@@ -533,10 +598,13 @@ class Map extends my_object{
     }
     draw(){
         if(!this.visible) return;
-        // this.engine.background(255);
 
         this.engine.push();
-
+        if(this.mode == "home"){
+            // this.engine.background(255);
+            this.engine.background('rgb(255, 247, 235)');
+            this.engine.translate(0,0,0.5);
+        }
         
         this.engine.scale(this.scale);
         this.transforms(this.scale,0,[0,0]);
@@ -574,11 +642,10 @@ class Map extends my_object{
         }
         return false;
     }
-    // default_dHit(point){
-    //     this.onClick();
-    //     // console.table(point);
-    //     this.parent.forEach(element => {
-    //         element.detect_hitbox(point);
-    //     });
-    // }
 }
+
+function toggleMap(){
+    HOME_CANV.map.visible = true;
+}
+
+curLayer = "none";

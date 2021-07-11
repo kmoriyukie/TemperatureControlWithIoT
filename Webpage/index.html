@@ -271,7 +271,6 @@
             margin-right: 5px;
         }
     </style>
-        
     <style> /* HomeCanvas */
         .HomeCanvas canvas{
             /* padding: 15px; */
@@ -314,14 +313,141 @@
     <script type="text/javascript" src="IDS_List.js"></script>
     <script type="text/javascript">
         function initialization(){
-            ConfigMode();
-            // HomeMode();
+            // ConfigMode();
+            HomeMode();
             // PromiseCloudMode(false);
             // let list = new IDS_List;
             // PromiseData();
+            PromiseMote();
 
         }
         window.onload = initialization;
+    </script>
+    <script> // Config
+    var layerInfo = {
+        layer1: {
+            Temperature: 0,
+            Humidity:0,
+            Airflow: 0
+        },
+        layer2: {
+            Temperature: 0,
+            Humidity:0,
+            Airflow: 0
+        }
+    };
+    var moteInfo = {
+        m1: {
+            DateTime: "",
+            Temperature: 0,
+            Humidity:0,
+            Airflow: 0,
+            Battery: 0
+        },
+        m2: {
+            DateTime: "",
+            Temperature: 0,
+            Humidity:0,
+            Airflow: 0,
+            Battery: 0
+        },
+        m3: {
+            DateTime: "",
+            Temperature: 0,
+            Humidity:0,
+            Airflow: 0,
+            Battery: 0
+        },
+        m4: {
+            DateTime: "",
+            Temperature: 0,
+            Humidity:0,
+            Airflow: 0,
+            Battery: 0
+        },
+    }
+    function PromiseCloudMode(type){ // false - GetMode, true - SetMode
+        const xmlhttp = new XMLHttpRequest();
+        var url;
+        if(!type){
+            url = "https://69c7mi9azh.execute-api.eu-west-1.amazonaws.com/GetMode";
+        }
+        else{
+            if(document.getElementById("CloudModeSwitch").checked){
+                Mode = "Config";
+            }
+            else{
+                Mode = "Working";
+            }
+            url = "https://69c7mi9azh.execute-api.eu-west-1.amazonaws.com/ChangeMode?Mode=" + Mode;
+        }
+        xmlhttp.onload = function(){
+            if(this.readyState == 4 && this.status == 200){
+                ResolveCloudMode(type,this.response);
+            }
+        }
+        xmlhttp.open('GET',url,true);
+        xmlhttp.send();
+    }
+    function ResolveCloudMode(type, response){
+        if(!type){
+            switch(response){
+                case '0':
+                    document.getElementById("CloudModeSwitch").checked = true;
+                break;
+                case '1':
+                    document.getElementById("CloudModeSwitch").checked = false; 
+                break;
+            }
+        }
+        else{
+            PromiseCloudMode(false);
+        }
+    }
+    function PromiseData(){
+        const xmlhttp = new XMLHttpRequest();
+        var url = "https://6zie9qzah0.execute-api.eu-west-1.amazonaws.com/latest";
+        // console.log(url)
+
+        xmlhttp.onload = function(){
+            if (this.readyState == 4 && this.status == 200 && this.response.length != 0) {
+                ResolveData(JSON.parse(this.response));
+            }
+        }
+
+        xmlhttp.open('GET', url, true)
+        xmlhttp.send()
+    }
+    function ResolveData(response){
+        document.getElementById("LatestTemp").innerHTML = response.Global.Temperature.toPrecision(3).toString() + '°';
+        document.getElementById("LatestHumidity").innerHTML = response.Global.Humidity.toPrecision(3).toString() + ' %';
+        document.getElementById("LatestFlow").innerHTML = response.Global.Airflow.toPrecision(3).toString() + ' cm/s';
+        document.getElementById("lastup").innerHTML = response.DateTime;
+
+        layerInfo.layer1 = response.Layer1;
+        layerInfo.layer2 = response.Layer2;
+    }
+
+    function PromiseMote(){
+        const xmlhttp = new XMLHttpRequest();
+        var url = "https://6zie9qzah0.execute-api.eu-west-1.amazonaws.com/mote";
+        // console.log(url)
+
+        xmlhttp.onload = function(){
+            if (this.readyState == 4 && this.status == 200 && this.response.length != 0) {
+                ResolveMote(JSON.parse(this.response));
+            }
+        }
+
+        xmlhttp.open('GET', url, true)
+        xmlhttp.send()
+    }
+    function ResolveMote(response){
+        m1 = response.m1;
+        m2 = response.m2;
+        m3 = response.m3;
+        m4 = response.m4;
+    }
     </script>
     <script src="https://threejs.org/build/three.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.4.0/lib/p5.js"></script>
@@ -378,7 +504,6 @@
         </div>
     </div>
     </div>
-      <!-- <script src="sketch.js"></script> -->
       <script> //Tool Bar
           function ConfigMode(){
             document.getElementById('ConfigBut').className = 'selected';
@@ -387,6 +512,7 @@
             document.getElementById("CONFIG").style.display = "block";
             CONF_CANV.visible = true;
             HOME_CANV.visible = false;
+            curLayer = "none";
           }
           function HomeMode(){
             document.getElementById('ConfigBut').className = 'unselected';
@@ -395,87 +521,12 @@
             document.getElementById("CONFIG").style.display = "none";
             CONF_CANV.visible = false;
             HOME_CANV.visible = true;
+            curLayer = "Layer 0";
           }
       </script> 
-      <script> // Config
-        var layerInfo = {
-            layer1: {
-                Temperature: 0,
-                Humidity:0,
-                Airflow: 0
-            },
-            layer2: {
-                Temperature: 0,
-                Humidity:0,
-                Airflow: 0
-            }
-        };
-
-        function PromiseCloudMode(type){ // false - GetMode, true - SetMode
-            const xmlhttp = new XMLHttpRequest();
-            var url;
-            if(!type){
-                url = "https://69c7mi9azh.execute-api.eu-west-1.amazonaws.com/GetMode";
-            }
-            else{
-                if(document.getElementById("CloudModeSwitch").checked){
-                    Mode = "Config";
-                }
-                else{
-                    Mode = "Working";
-                }
-                url = "https://69c7mi9azh.execute-api.eu-west-1.amazonaws.com/ChangeMode?Mode=" + Mode;
-            }
-            xmlhttp.onload = function(){
-                if(this.readyState == 4 && this.status == 200){
-                    ResolveCloudMode(type,this.response);
-                }
-            }
-            xmlhttp.open('GET',url,true);
-            xmlhttp.send();
-        }
-        function ResolveCloudMode(type, response){
-            if(!type){
-                switch(response){
-                    case '0':
-                        document.getElementById("CloudModeSwitch").checked = true;
-                    break;
-                    case '1':
-                        document.getElementById("CloudModeSwitch").checked = false; 
-                    break;
-                }
-            }
-            else{
-                PromiseCloudMode(false);
-            }
-        }
-        function PromiseData(){
-            const xmlhttp = new XMLHttpRequest();
-            var url = "https://6zie9qzah0.execute-api.eu-west-1.amazonaws.com/";
-            // console.log(url)
-
-            xmlhttp.onload = function(){
-                if (this.readyState == 4 && this.status == 200 && this.response.length != 0) {
-                    console.log(this.response)
-                    ResolveData(type, JSON.parse(this.response))
-                }
-            }
-
-            xmlhttp.open('GET', url, true)
-            xmlhttp.send()
-        }
-        function ResolveData(response){
-            document.getElementById("LatestTemp").innerHTML = response.Temperature.toString() + '°';
-            document.getElementById("LatestHumidity").innerHTML = response.Humidity.toString() + ' %';
-            document.getElementById("LatestFlow").innerHTML = response.Airflow.toString() + ' m/s';
-            document.getElementById("lastup").innerHTML = response.DateTime.toString();
-
-            layerInfo = response.Layer1;
-        }
-      </script>
+      
       <script>
       </script>
   </body>
 </body>
 </html>
-<!--<img src="exampleLayers.png" width="500" class="image">-->

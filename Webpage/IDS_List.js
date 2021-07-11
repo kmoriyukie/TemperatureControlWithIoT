@@ -109,7 +109,6 @@ class ListElement{
         this.local_id = l_id;
         this.remote_id = r_id;
     }
-
     PromiseUpdateRemoteID(){
         const xmlhttp = new XMLHttpRequest;
         const url = 'https://69c7mi9azh.execute-api.eu-west-1.amazonaws.com/UpdateIDs';
@@ -159,6 +158,7 @@ class ListElement{
             input.name = "remote_id";
             input.readOnly = false;
             input.value = this.remote_id;
+            if(this.local_id == 0) input.disabled = true;
             input.type = "Number";
             this.inputHandler = input;
             const obj = this;
