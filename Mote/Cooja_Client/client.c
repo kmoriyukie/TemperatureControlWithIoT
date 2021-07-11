@@ -1,7 +1,7 @@
 #include "contiki.h"
-
-#include "events_threads.h"
-#include "states.h"
+#include <stdio.h>
+#include "../events_threads.h"
+#include "../states.h"
 
 extern struct process button_pressed;
 

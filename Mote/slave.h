@@ -4,9 +4,9 @@
 #define N_READINGS 8
 #define SR_READINGS 3
 
-#define READINGS_TIME 5 //Seconds
+#define READINGS_TIME 25 //Seconds
 #define MTRY 3
-#define TIMOUT 5 //Seconds
+#define TIMEOUT 15 //Seconds
 
 void exec_slave_working(void);
 

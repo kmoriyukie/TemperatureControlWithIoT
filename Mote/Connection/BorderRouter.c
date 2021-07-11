@@ -1,59 +1,33 @@
-/*
- * Copyright (c) 2010, Swedish Institute of Computer Science.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the Institute nor the names of its contributors
- *    may be used to endorse or promote products derived from this software
- *    without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE INSTITUTE AND CONTRIBUTORS ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE INSTITUTE OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- */
-
-/**
- * \file
- *         Slip fallback interface
- * \author
- *         Niclas Finne <nfi@sics.se>
- *         Joakim Eriksson <joakime@sics.se>
- *         Joel Hoglund <joel@sics.se>
- *         Nicolas Tsiftes <nvt@sics.se>
- */
-
+#include "contiki.h"
+#include "contiki-lib.h"
 #include "contiki-net.h"
+
 #include "net/netstack.h"
 #include "dev/slip.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define DEBUG DEBUG_NONE
+#include "net/ip/uip-debug.h"
+
 #include "net/ip/uip.h"
 #include "net/ipv6/uip-ds6.h"
 #include "net/rpl/rpl.h"
+
 
 static uip_ipaddr_t prefix;
 static uint8_t prefix_set;
 
 PROCESS(border_router_process, "Border router process");
 
-/*---------------------------------------------------------------------------*/
+// /*---------------------------------------------------------------------------*/
 void
 request_prefix(void)
 {
+  /* mess up uip_buf with a dirty request... */
   uip_buf[0] = '?';
   uip_buf[1] = 'P';
   uip_len = 2;
@@ -74,7 +48,9 @@ set_prefix_64(uip_ipaddr_t *prefix_64)
 
   dag = rpl_set_root(RPL_DEFAULT_INSTANCE, &ipaddr);
   if(dag != NULL) {
-    rpl_set_prefix(dag, &prefix, 64);  }
+    rpl_set_prefix(dag, &prefix, 64);
+    PRINTF("created a new RPL dag\n");
+  }
 }
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(border_router_process, ev, data)
@@ -88,6 +64,7 @@ PROCESS_THREAD(border_router_process, ev, data)
 
   PROCESS_PAUSE();
 
+  PRINTF("RPL-Border router started\n");
   while(!prefix_set) {
     etimer_set(&et, CLOCK_SECOND);
     request_prefix();
@@ -95,6 +72,8 @@ PROCESS_THREAD(border_router_process, ev, data)
   }
 
   NETSTACK_MAC.off(1);
+
+  // print_local_addresses();
 
   while(1) {
     PROCESS_YIELD();

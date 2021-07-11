@@ -49,16 +49,9 @@
 PROCESS(MQTTServerProcess, "MQTT Process");
 
 #define MQTT_BRIDGE_IP_ADDR  	  "aaaa::1" // Tunslip VM IP
-#define BUFFER_SIZE               64
-#define APP_BUFFER_SIZE           128
-#define MAX_SLAVE_COUNT			  64
-
-#define DEFAULT_PUBLISH_TOPIC     "mote/send"
-#define DEFAULT_SUBSCRIBE_TOPIC   "mote/receive"
-
-
-#define CONFIG_MODE				   "config/mode"
-#define CONFIG_ID_TOPIC 		   "config/ids"
+//#define BUFFER_SIZE               64
+//#define APP_BUFFER_SIZE           128
+//#define MAX_SLAVE_COUNT			  64
 
 #define DEFAULT_KEEP_ALIVE_TIMER     60
 
