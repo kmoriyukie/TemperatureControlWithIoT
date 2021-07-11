@@ -363,16 +363,16 @@ class InfoBox extends my_object{
         engine.textSize(this.textSize);
 
 
-        engine.text(this.data.Temperature.toString() + "°",0,0)
+        engine.text(this.data.Temperature.toString() + "°c",0,0);
 
         engine.translate(0, this.dim[0]/5.0);
-        engine.text(this.data.Humidity.toString() + "%",0,0)
+        engine.text(this.data.Humidity.toString() + "%",0,0);
 
-        engine.translate(0, this.textSize+10)
-        engine.text(this.data.Airflow.toString() + " m/s",0,0)
+        engine.translate(0, this.textSize+10);
+        engine.text(this.data.Airflow.toString() + " cm/s",0,0);
 
-        engine.translate(0, this.textSize+10)
-        engine.text(this.data.Battery.toString() + "%",0,0)
+        engine.translate(0, this.textSize+10);
+        engine.text(this.data.Battery.toString() + "%",0,0);
 
         engine.pop();
     }
@@ -402,10 +402,10 @@ class Mote extends my_object{
         this.balloon.StrokeColor = 'black';
         this.info = new InfoBox({x: this.dim[0]+20, y: -105}, 200);
 
-        this.info.temp = 50;
-        this.info.humidity =10;
-        this.info.airflow = 10;
-        this.info.battery = 50;        
+        // this.info.temp = 50;
+        // this.info.humidity =10;
+        // this.info.airflow = 10;
+        // this.info.battery = 50;        
         
         this.threshT = 40;
         this.threshH = 6;
@@ -430,11 +430,14 @@ class Mote extends my_object{
         }
     }
     checkStatus(){
-        if(this.info.temp <= this.threshT && this.info.humidity <= this.threshH && this.info.airflow >= this.threshA && this.info.battery >= this.threshB){
-            this.error = false;
+        if( this.info.data.Temperature > this.threshT ||
+            this.info.data.Humidity > this.threshH ||
+            this.info.data.Airflow < this.threshA ||
+            this.info.data.Battery < this.threshB){
+            this.error = true;
         }
         else{ // Sensor error
-            this.error = true;
+            this.error = false;
         }
     }
     Remap (value,from,to) {
@@ -493,19 +496,19 @@ class Mote extends my_object{
             if(this.layer == "0"){
                 this.color = 'rgb(3, 36, 252)';
             }
-            else this.color = "#03f0fc";
+            else this.color = "#3bd1d9";
 
             this.balloon.visible = false;
         }
         else{
-            if(this.error) this.bubblemode = true;
+            if(this.error) this.balloon.visible = true;
+            else this.balloon.visible = false;
 
-            
+            this.color = this.motegenerateColor(this.info.data.Temperature);    
         }
 
         this.textColor = 'white';
 
-        this.color = this.motegenerateColor(this.info.temp);
         
 
         if(this.label == 12){
