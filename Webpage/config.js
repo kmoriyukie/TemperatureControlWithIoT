@@ -41,6 +41,7 @@ class ConfigCanvas extends p5{
 
     m_draw(){
         this.background('rgb(255, 247, 235)');
+        // this.background('#3d3838');
         // this.background('rgb(255, 255, 255)');
 
 

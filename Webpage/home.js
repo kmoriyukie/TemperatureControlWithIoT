@@ -114,6 +114,8 @@ class HomeCanvas extends p5{
     m_draw(){
         this.background('rgb(255, 247, 235)');
         // this.background('rgb(255, 255, 255)');
+        // this.background('#3d3838');
+
         
         
         
