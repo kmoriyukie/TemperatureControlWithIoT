@@ -430,6 +430,7 @@ class Mote extends my_object{
         }
     }
     checkStatus(){
+        // console.log(this.info);
         if( this.info.data.Temperature > this.threshT ||
             this.info.data.Humidity > this.threshH ||
             this.info.data.Airflow < this.threshA ||
@@ -454,6 +455,14 @@ class Mote extends my_object{
         G = 255 - this.Remap(temp,3,252);
         return [R,G,B];
     }
+    getDef(){
+        return {
+            Temperature: 15,
+            Humidity: 37,
+            Airflow: 11,
+            Battery: 100
+        };
+    }
     draw(engine){
         if(curLayer != "none"){
             if(curLayer != this.layer){
@@ -466,19 +475,25 @@ class Mote extends my_object{
         }
         if(!this.visible) return;
 
+
+        // console.log(this.info);
         if(this.info.data == undefined){
             switch(this.label){
                 case "11":
-                    this.info.data = moteInfo.m1;
+                    if(moteInfo.m1 == undefined) this.info.data = this.getDef();
+                    else this.info.data = moteInfo.m1;
                 break;
                 case "12":
-                    this.info.data = moteInfo.m2;
+                    if(moteInfo.m2 == undefined) this.info.data = this.getDef();
+                    else this.info.data = moteInfo.m2;
                 break;
                 case "21":
-                    this.info.data = moteInfo.m3;
+                    if(moteInfo.m3 == undefined) this.info.data = this.getDef();
+                    else this.info.data = moteInfo.m3;
                 break;
                 case "22":
-                    this.info.data = moteInfo.m4;
+                    if(moteInfo.m4 == undefined) this.info.data = this.getDef();
+                    else this.info.data = moteInfo.m4;
                 break;
                 default:
                     this.info.data = {
@@ -489,6 +504,7 @@ class Mote extends my_object{
                     };
                 break;
             }
+            // console.log();
         }
         this.checkStatus();
 
