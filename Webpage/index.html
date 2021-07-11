@@ -104,7 +104,7 @@
             font-family: sans-serif;
             /* display: flex; */
             justify-content: space-between;
-            height: 80vh;
+            height: 45vh;
             width: 260px;
             border-radius: 0.4cm;
             
@@ -312,60 +312,60 @@
     </style>
     <script type="text/javascript" src="IDS_List.js"></script>
     <script type="text/javascript">
+        var layerInfo = {
+            layer1: {
+                Temperature: 0,
+                Humidity:0,
+                Airflow: 0
+            },
+            layer2: {
+                Temperature: 0,
+                Humidity:0,
+                Airflow: 0
+            }
+        };
+        var moteInfo = {
+            m1: {
+                DateTime: "",
+                Temperature: 39,
+                Humidity:0,
+                Airflow: 0,
+                Battery: 0
+            },
+            m2: {
+                DateTime: "",
+                Temperature: 41,
+                Humidity:0,
+                Airflow: 0,
+                Battery: 0
+            },
+            m3: {
+                DateTime: "",
+                Temperature: 5,
+                Humidity:7,
+                Airflow: 0,
+                Battery: 0
+            },
+            m4: {
+                DateTime: "",
+                Temperature: 5,
+                Humidity:5,
+                Airflow: 0,
+                Battery: 0
+            },
+        }
+        // console.log("Ble");
         function initialization(){
             // ConfigMode();
             HomeMode();
             // PromiseCloudMode(false);
             // let list = new IDS_List;
             // PromiseData();
-            PromiseMote();
-
+            // PromiseMote();
         }
         window.onload = initialization;
     </script>
     <script> // Config
-    var layerInfo = {
-        layer1: {
-            Temperature: 0,
-            Humidity:0,
-            Airflow: 0
-        },
-        layer2: {
-            Temperature: 0,
-            Humidity:0,
-            Airflow: 0
-        }
-    };
-    var moteInfo = {
-        m1: {
-            DateTime: "",
-            Temperature: 0,
-            Humidity:0,
-            Airflow: 0,
-            Battery: 0
-        },
-        m2: {
-            DateTime: "",
-            Temperature: 0,
-            Humidity:0,
-            Airflow: 0,
-            Battery: 0
-        },
-        m3: {
-            DateTime: "",
-            Temperature: 0,
-            Humidity:0,
-            Airflow: 0,
-            Battery: 0
-        },
-        m4: {
-            DateTime: "",
-            Temperature: 0,
-            Humidity:0,
-            Airflow: 0,
-            Battery: 0
-        },
-    }
     function PromiseCloudMode(type){ // false - GetMode, true - SetMode
         const xmlhttp = new XMLHttpRequest();
         var url;
@@ -443,10 +443,13 @@
         xmlhttp.send()
     }
     function ResolveMote(response){
-        m1 = response.m1;
-        m2 = response.m2;
-        m3 = response.m3;
-        m4 = response.m4;
+        // console.log("BleBle");
+        moteInfo.m1 = response.m1;
+        moteInfo.m2 = response.m2;
+        moteInfo.m3 = response.m3;
+        moteInfo.m4 = response.m4;
+        // console.log(response);
+        // console.log(moteInfo);
     }
     </script>
     <script src="https://threejs.org/build/three.js"></script>
@@ -513,6 +516,7 @@
             CONF_CANV.visible = true;
             HOME_CANV.visible = false;
             curLayer = "none";
+            HOME_CANV.map.visible = false;
           }
           function HomeMode(){
             document.getElementById('ConfigBut').className = 'unselected';
@@ -522,6 +526,8 @@
             CONF_CANV.visible = false;
             HOME_CANV.visible = true;
             curLayer = "Layer 0";
+            // curLayer = "none";
+            HOME_CANV.map.visible = false;
           }
       </script> 
       

@@ -9,19 +9,15 @@ function generateColor(temp){
     let R = Remap(temp,0,255);
     let B;
     let G;
-    // if(R > 90){
-        // B =  Remap(temp,50,168);
-        
-        // G = 255 - Remap(temp,50,130);
-    // }
-    // else{
-        B = 255 - Remap(temp,60,140);
-        
-        G = Remap(temp,0,120);
-    // }
+
+    B = 255 - Remap(temp,60,140);
+    
+    G = Remap(temp,0,120);
     return [R,G,B];
     
 }
+
+
 
 class HomeCanvas extends p5{
     dim = [900, 600];
@@ -70,13 +66,13 @@ class HomeCanvas extends p5{
         this.info1 = new InfoBox({x: -15, y: - 12 - 55}, 200);
 
         this.Bubbles = [new bubble({x: 270, y: 70}, 100), new bubble({x: 270, y: -40}, 100)];
-        let j = 0;
+        let j = 1;
         this.Bubbles.forEach(element => {
             element.appendix = true;
             element.visible = true;
             element.mode = "bubhome";
             element.bubNUM = j;
-            j++;
+            j--;
         });
         // this.parent.push(new Map(this));
         this.map = new Map(this);
@@ -86,22 +82,27 @@ class HomeCanvas extends p5{
         this.transf = math.identity(3);
         this.visible = true;
         this.sc = 1;
-        this.onPreload();
         this.map.visible = false;
         let b = -50;
         this.a = b;
         this.BubbleT = [];
 
+        this.Bubbles[0].label = "L1";
+        this.Bubbles[1].label = "L2";
+        
         this.threshT = 1;
+        this.onPreload();
+        
     }
     onPreload(){
         this.font = this.loadFont(
             "assets/Staatliches-Regular.ttf"
         );
         
-        this.parent.forEach(element => {
-            element.onPreload();
-        });
+        this.map.onPreload();
+        // this.parent.forEach(element => {
+        //     element.onPreload();
+        // });
     }
     m_setup(){
         // this.createCanvas(3*this.displayWidth/5, 4*this.displayHeight/6, this.WEBGL);

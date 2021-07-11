@@ -9,6 +9,7 @@ class ConfigCanvas extends p5{
         this.draw = this.m_draw;
         this.parent = [];
         this.parent.push(new Map(this));
+        this.parent[0].mode = "config";
         // this.map = ;
         this.mouseClicked = this.m_mouseclick;
         // this.preload = this.m_preload;
